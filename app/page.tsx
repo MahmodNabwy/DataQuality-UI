@@ -361,8 +361,8 @@ export default function Page() {
   }
 
   return (
-    <div className="min-h-screen  from-[#0986ed] via-[#0986ed]/20 to-[#0986ed]">
-      <header className="sticky top-0 z-50 border-b border-[#0986ed]/30 bg-[#0986ed]/95 backdrop-blur-md shadow-lg">
+    <div className="min-h-screen bg-[#1D546C]  from-[#0986ed] via-[#0986ed]/20 to-[#0986ed]">
+      <header className="sticky top-0 z-50 border-b border-[#0986ed]/30 bg-[#1a4e67f2]/95 backdrop-blur-md shadow-lg">
         <div className="container mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div>
@@ -428,7 +428,7 @@ export default function Page() {
         </div>
       </header>
 
-      <nav className="sticky top-[72px] z-40 w-full border-b border-[#0986ed]/20 bg-[#F4F4F4]/95 backdrop-blur-sm leading-9 shadow-sm">
+      <nav className="sticky top-[72px] z-40 w-full border-b border-[#0986ed]/20 bg-[#fffffff2] backdrop-blur-sm leading-9 shadow-sm">
         <div className="container mx-auto px-6">
           <Tabs
             value={activeTab}
@@ -438,7 +438,7 @@ export default function Page() {
             <TabsList className="grid w-full grid-cols-5 bg-transparent border-0 p-0 h-auto gap-2">
               <TabsTrigger
                 value="projects"
-                className="py-3 px-6 data-[state=active]:bg-[#0986ed] data-[state=active]:text-white data-[state=active]:shadow-lg rounded-lg font-semibold text-[#1f254b] hover:bg-white/80 transition-all duration-200"
+                className="py-3 px-6 data-[state=active]:bg-[#053964] data-[state=active]:text-white data-[state=active]:shadow-lg rounded-lg font-semibold text-[#1f254b] hover:bg-white/80 transition-all duration-200"
               >
                 <FolderOpen className="w-4 h-4 inline-block mr-2" />
                 المشاريع
@@ -446,28 +446,28 @@ export default function Page() {
               <TabsTrigger
                 value="summary"
                 disabled={!currentProject}
-                className="py-3 px-6 data-[state=active]:bg-[#0986ed] data-[state=active]:text-white data-[state=active]:shadow-lg rounded-lg font-semibold text-[#1f254b] hover:bg-white/80 transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed"
+                className="py-3 px-6 data-[state=active]:bg-[#053964] data-[state=active]:text-white data-[state=active]:shadow-lg rounded-lg font-semibold text-[#1f254b] hover:bg-white/80 transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed"
               >
                 ملخص النتائج
               </TabsTrigger>
               <TabsTrigger
                 value="indicators"
                 disabled={!currentProject}
-                className="py-3 px-6 data-[state=active]:bg-[#0986ed] data-[state=active]:text-white data-[state=active]:shadow-lg rounded-lg font-semibold text-[#1f254b] hover:bg-white/80 transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed"
+                className="py-3 px-6 data-[state=active]:bg-[#053964] data-[state=active]:text-white data-[state=active]:shadow-lg rounded-lg font-semibold text-[#1f254b] hover:bg-white/80 transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed"
               >
                 المؤشرات
               </TabsTrigger>
               <TabsTrigger
                 value="issues"
                 disabled={!currentProject}
-                className="py-3 px-6 data-[state=active]:bg-[#0986ed] data-[state=active]:text-white data-[state=active]:shadow-lg rounded-lg font-semibold text-[#1f254b] hover:bg-white/80 transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed"
+                className="py-3 px-6 data-[state=active]:bg-[#053964] data-[state=active]:text-white data-[state=active]:shadow-lg rounded-lg font-semibold text-[#1f254b] hover:bg-white/80 transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed"
               >
                 المشاكل
               </TabsTrigger>
               <TabsTrigger
                 value="audit"
                 disabled={!currentProject}
-                className="py-3 px-6 data-[state=active]:bg-[#0986ed] data-[state=active]:text-white data-[state=active]:shadow-lg rounded-lg font-semibold text-[#1f254b] hover:bg-white/80 transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed"
+                className="py-3 px-6 data-[state=active]:bg-[#053964] data-[state=active]:text-white data-[state=active]:shadow-lg rounded-lg font-semibold text-[#1f254b] hover:bg-white/80 transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed"
               >
                 سجل التدقيق
               </TabsTrigger>

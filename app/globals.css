@@ -181,3 +181,49 @@
     margin-right: 1rem;
   }
 }
+
+/* Tajawal Font Optimization */
+.font-tajawal {
+  font-family: var(--font-tajawal), Arial, sans-serif;
+  font-feature-settings: "kern" 1, "liga" 1;
+  font-optical-sizing: auto;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Arabic Typography Enhancement */
+:lang(ar) {
+  font-family: var(--font-tajawal), Arial, sans-serif;
+  line-height: 1.6;
+  letter-spacing: 0.01em;
+}
+
+/* Better Arabic text rendering */
+.arabic-text {
+  font-family: var(--font-tajawal), Arial, sans-serif;
+  line-height: 1.7;
+  word-spacing: 0.1em;
+  text-align: right;
+}
+
+/* Enhanced readability for Arabic numerals */
+.arabic-numbers {
+  font-variant-numeric: proportional-nums;
+  direction: ltr;
+  unicode-bidi: embed;
+}
+
+/* Better button text alignment in Arabic */
+[dir="rtl"] button,
+[dir="rtl"] .btn {
+  font-family: var(--font-tajawal), Arial, sans-serif;
+  font-weight: 500;
+}
+
+/* Enhanced heading typography */
+[dir="rtl"] h1, [dir="rtl"] h2, [dir="rtl"] h3, [dir="rtl"] h4, [dir="rtl"] h5, [dir="rtl"] h6 {
+  font-family: var(--font-tajawal), Arial, sans-serif;
+  font-weight: 700;
+  line-height: 1.4;
+}

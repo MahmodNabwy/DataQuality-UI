@@ -105,7 +105,7 @@ export default function QASummary({
       value: results.processedAt
         ? new Date(results.processedAt).toLocaleString()
         : null,
-      icon: <Clock className="w-10 h-10" />,
+      icon: <Clock className="w-8 h-8" />,
       color: "from-purple-600/30 to-purple-700/30",
       borderColor: "border-purple-600/50",
       textColor: "text-purple-300",
@@ -117,7 +117,7 @@ export default function QASummary({
         (reviewedCount / results.summary.totalIndicators) *
         100
       ).toFixed(1)}%`,
-      icon: <FileCheck className="w-10 h-10" />,
+      icon: <FileCheck className="w-8 h-8" />,
       color: "from-teal-600/30 to-teal-700/30",
       borderColor: "border-teal-600/50",
       textColor: "text-teal-300",
@@ -126,7 +126,7 @@ export default function QASummary({
       label: "معدل جودة البيانات",
       value: qualityScore ? `${qualityScore.overall}/100` : "غير متاح",
       subValue: qualityScore ? getRatingConfig(qualityScore.rating).label : "",
-      icon: <BarChart3 className="w-10 h-10" />,
+      icon: <BarChart3 className="w-8 h-8" />,
       color: qualityScore
         ? qualityScore.overall >= 95
           ? "from-green-600/30 to-green-700/30"
@@ -160,11 +160,11 @@ export default function QASummary({
   return (
     <div className="space-y-8">
       {qualityScore && (
-        <Card className={"border  bg-[#31A3F3] via-[#0986ed]/20 to-[#0986ed] "}>
+        <Card className={"border  bg-[#053964] via-[#0986ed]/20 to-[#0986ed] "}>
           <CardContent className="pt-8 pb-8">
             <div className="flex flex-col md:flex-row items-center justify-between gap-8">
               <div className="text-center md:text-right flex-1">
-                <p className="text-sm text-blue-200 mb-2">
+                <p className="text-xl text-blue-200 mb-2">
                   درجة جودة البيانات الشاملة
                 </p>
                 <div className="flex items-center justify-center md:justify-start gap-4">
@@ -232,28 +232,28 @@ export default function QASummary({
               </div>
             </div>
 
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8 pt-6 border-t border-blue-700/30">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8 pt-6 border-t border-white">
               <div className="text-center">
-                <p className="text-xs text-white mb-1">الاكتمال</p>
-                <p className="text-2xl font-bold text-blue-100">
+                <p className="text-xl text-white mb-1">الاكتمال</p>
+                <p className="text-xl font-bold text-blue-100">
                   {qualityScore.breakdown.completeness}%
                 </p>
               </div>
               <div className="text-center">
-                <p className="text-xs text-white mb-1">الدقة</p>
-                <p className="text-2xl font-bold text-blue-100">
+                <p className="text-xl text-white mb-1">الدقة</p>
+                <p className="text-xl font-bold text-blue-100">
                   {qualityScore.breakdown.accuracy}%
                 </p>
               </div>
               <div className="text-center">
-                <p className="text-xs text-white mb-1">الاتساق</p>
-                <p className="text-2xl font-bold text-blue-100">
+                <p className="text-xl text-white mb-1">الاتساق</p>
+                <p className="text-xl font-bold text-blue-100">
                   {qualityScore.breakdown.consistency}%
                 </p>
               </div>
               <div className="text-center">
-                <p className="text-xs text-white mb-1">الصحة</p>
-                <p className="text-2xl font-bold text-blue-100">
+                <p className="text-xl text-white mb-1">الصحة</p>
+                <p className="text-xl font-bold text-blue-100">
                   {qualityScore.breakdown.validity}%
                 </p>
               </div>
@@ -277,18 +277,18 @@ export default function QASummary({
         transition-all duration-300
       `}
           >
-            <CardContent className="p-6">
+            <CardContent className="p-2">
               <div className="flex items-start justify-between">
-                <span className="text-5xl opacity-90 drop-shadow-sm">
+                <span className="text-2xl opacity-90 drop-shadow-sm">
                   {stat.icon}
                 </span>
                 <div className="space-y-2">
-                  <p className="text-2xl text-white/80 font-medium tracking-wide">
+                  <p className="text-sm text-white/80 font-medium tracking-wide">
                     {stat.label}
                   </p>
 
                   <p
-                    className={`text-4xl font-extrabold leading-tight ${stat.textColor}`}
+                    className={`text-sm pr-4 font-extrabold leading-tight ${stat.textColor}`}
                   >
                     {stat.value}
                   </p>
@@ -302,8 +302,8 @@ export default function QASummary({
       <Card className="border-blue-700/50 bg-linear-to-br from-blue-900/40 to-purple-900/40 backdrop-blur">
         <CardHeader>
           <CardTitle className="text-blue-100 flex justify-between items-center  gap-2">
-            <TrendingUp className="w-10 h-10" />
-            <span className="text-white text-4xl">إحصائيات متقدمة</span>
+            <TrendingUp className="w-6 h-6" />
+            <span className="text-white text-xl">إحصائيات متقدمة</span>
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -311,13 +311,13 @@ export default function QASummary({
             {advancedStats.map((stat, idx) => (
               <div
                 key={idx}
-                className={`p-4 bg-linear-to-br ${stat.color} rounded-lg border ${stat.borderColor} hover:border-opacity-80 transition-all`}
+                className={`p-2 bg-linear-to-br ${stat.color} rounded-lg border ${stat.borderColor} hover:border-opacity-80 transition-all`}
               >
-                <div className="flex  justify-between items-center gap-3 mb-3">
+                <div className="flex justify-between items-center gap-3 mb-3">
                   <div className={stat.textColor}>{stat.icon}</div>
-                  <p className="text-xl text-white">{stat.label}</p>
+                  <p className="text-xm text-white">{stat.label}</p>
                 </div>
-                <p className={`text-2xl font-bold ${stat.textColor}`}>
+                <p className={`text-xl font-bold ${stat.textColor}`}>
                   {stat.value}
                 </p>
                 {stat.subValue && (
@@ -355,7 +355,7 @@ export default function QASummary({
           {/* Check Types */}
           <div className="mt-6 space-y-3 border-t border-blue-700/30 pt-6">
             <p className="font-semibold text-blue-100">
-              تفاصيل أنواع الفحوصات:
+              : تفاصيل أنواع الفحوصات
             </p>
             <div className="grid gap-2">
               {Object.entries(results.summary.checksByType || {}).map(

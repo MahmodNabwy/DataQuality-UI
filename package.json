@@ -1,6 +1,7 @@
 {
-  "name": "my-v0-project",
-  "version": "0.1.0",
+  "name": "dataquality-ui",
+  "version": "1.0.0",
+  "description": "Data Quality Control System - Frontend UI built with Next.js, TypeScript, and Tailwind CSS",
   "private": true,
   "scripts": {
     "build": "next build",

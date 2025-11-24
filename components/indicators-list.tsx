@@ -259,9 +259,9 @@ export default function IndicatorsList({
   useEffect(() => {
     if (projectId) {
       const project = loadProject(projectId);
-      if (project.issueStatuses) {
-        setIssueStatuses(project.projectData.issueStatuses);
-      }
+      // if (project.issueStatuses) {
+      //   setIssueStatuses(project.projectData.issueStatuses);
+      // }
     }
   }, [projectId]);
 
@@ -868,7 +868,7 @@ export default function IndicatorsList({
 
   return (
     <div className="space-y-4">
-      <Card className="border-blue-800/50 bg-gradient-to-r from-blue-900/40 to-purple-900/40 backdrop-blur">
+      <Card className="bg-[#31A3F3] via-[#0986ed]/20 to-[#0986ed]">
         <CardContent className="pt-6">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div className="text-center">
@@ -890,29 +890,25 @@ export default function IndicatorsList({
             </div>
             <div className="text-center p-4 bg-blue-900/30 rounded-lg border border-blue-800/40">
               <CheckCircle className="w-8 h-8 text-green-400 mx-auto mb-2" />
-              <p className="text-2xl font-bold text-green-300">
-                {healthyCount}
-              </p>
-              <p className="text-blue-300 text-sm">مؤشرات سليمة</p>
+              <p className="text-2xl font-bold text-white">{healthyCount}</p>
+              <p className="text-white text-sm">مؤشرات سليمة</p>
             </div>
             <div className="text-center p-4 bg-blue-900/30 rounded-lg border border-blue-800/40">
               <AlertCircle className="w-8 h-8 text-red-400 mx-auto mb-2" />
-              <p className="text-2xl font-bold text-red-300">{issuesCount}</p>
-              <p className="text-blue-300 text-sm">تحتاج فحص</p>
+              <p className="text-2xl font-bold text-white">{issuesCount}</p>
+              <p className="text-white text-sm">تحتاج فحص</p>
             </div>
             <div className="text-center p-4 bg-blue-900/30 rounded-lg border border-blue-800/40">
               <CheckCheck className="w-8 h-8 text-purple-400 mx-auto mb-2" />
-              <p className="text-2xl font-bold text-purple-300">
-                {reviewedCount}
-              </p>
-              <p className="text-blue-300 text-sm">تم الفحص</p>
+              <p className="text-2xl font-bold text-white">{reviewedCount}</p>
+              <p className="text-white text-sm">تم الفحص</p>
             </div>
           </div>
         </CardContent>
       </Card>
 
       {editSession.dataEdits.length > 0 && (
-        <Card className="border-yellow-800/50 bg-gradient-to-r from-yellow-900/40 to-orange-900/40 backdrop-blur">
+        <Card className="bg-[#31A3F3] via-[#0986ed]/20 to-[#0986ed]">
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
@@ -958,12 +954,12 @@ export default function IndicatorsList({
               placeholder="ابحث عن المؤشرات (عربي/إنجليزي)..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="bg-blue-950/40 border-blue-800/50 text-blue-100 placeholder:text-blue-400/50 pr-10"
+              className="bg-[#31A3F3] via-[#0986ed]/20 to-[#0986ed] pr-10"
             />
           </div>
 
           <Select value={searchYearFilter} onValueChange={setSearchYearFilter}>
-            <SelectTrigger className="bg-blue-950/40 border-blue-800/50 text-blue-100">
+            <SelectTrigger className="bg-[#31A3F3] via-[#0986ed]/20 to-[#0986ed]">
               <SelectValue placeholder="تصفية حسب السنة" />
             </SelectTrigger>
             <SelectContent>
@@ -980,7 +976,7 @@ export default function IndicatorsList({
             value={searchQualityFilter}
             onValueChange={setSearchQualityFilter}
           >
-            <SelectTrigger className="bg-blue-950/40 border-blue-800/50 text-blue-100">
+            <SelectTrigger className="bg-[#31A3F3] via-[#0986ed]/20 to-[#0986ed]">
               <SelectValue placeholder="تصفية حسب الجودة" />
             </SelectTrigger>
             <SelectContent>
@@ -995,7 +991,7 @@ export default function IndicatorsList({
 
         <div className="flex gap-2 items-center">
           <Select value={issueTypeFilter} onValueChange={setIssueTypeFilter}>
-            <SelectTrigger className="w-[250px] bg-blue-950/40 border-blue-800/50 text-blue-100">
+            <SelectTrigger className="w-[250px] bg-[#31A3F3] via-[#0986ed]/20 to-[#0986ed]">
               <Filter className="w-4 h-4 ml-2" />
               <SelectValue placeholder="نوع المشكلة" />
             </SelectTrigger>

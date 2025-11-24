@@ -1,15 +1,20 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Tajawal } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 
-const _geist = Geist({ subsets: ["latin"] });
-const _geistMono = Geist_Mono({ subsets: ["latin"] });
+const tajawal = Tajawal({
+  subsets: ["arabic", "latin"],
+  weight: ["200", "300", "400", "500", "700", "800", "900"],
+  variable: "--font-tajawal",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
-  title: "v0 App",
-  description: "Created with v0",
-  generator: "v0.app",
+  title: "نظام فحص جودة البيانات الإحصائية",
+  description:
+    "نظام شامل لفحص جودة البيانات الإحصائية مبني باستخدام Next.js و TypeScript",
+  generator: "DataQuality-UI",
   icons: {
     icon: [
       {
@@ -35,8 +40,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ar" dir="rtl">
-      <body className={`font-sans antialiased`}>
+    <html lang="ar" dir="rtl" className={tajawal.variable}>
+      <body className={`font-tajawal antialiased`}>
         {children}
         <Analytics />
       </body>

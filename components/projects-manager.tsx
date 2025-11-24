@@ -205,7 +205,7 @@ export default function ProjectsManager({
   return (
     <div className="min-h-screen  from-[#0986ed] via-[#0986ed]/20 to-[#0986ed] p-6">
       <div className="container mx-auto max-w-6xl">
-        <Card className="border-blue-800/50 bg-[#0986ed] backdrop-blur mb-6">
+        <Card className="border-blue-800/50 bg-[#053964] backdrop-blur mb-6">
           <CardHeader>
             <CardTitle className="text-2xl text-white">
               إنشاء مشروع جديد
@@ -246,7 +246,7 @@ export default function ProjectsManager({
           </CardContent>
         </Card>
 
-        <Card className="border-blue-800/50 bg-[#0986ed] backdrop-blur mb-6">
+        <Card className="border-blue-800/50 bg-[#053964] backdrop-blur mb-6">
           <CardHeader>
             <CardTitle className="text-2xl text-white">
               المشاريع المحفوظة
@@ -262,7 +262,7 @@ export default function ProjectsManager({
                 placeholder="ابحث عن مشروع..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pr-10 bg-blue-900/20 border-blue-700/50 text-blue-100 placeholder:text-blue-400"
+                className="pr-10 bg-white border-blue-700/50 text-blue-100 placeholder:text-gray-600"
               />
               {searchQuery && (
                 <Button
@@ -299,7 +299,7 @@ export default function ProjectsManager({
             {filteredProjects.map((project) => (
               <Card
                 key={project.id}
-                className="border-blue-800/50 bg-[#0986ed] backdrop-blur hover:bg-[#0779d4] transition-all cursor-pointer group"
+                className="border-blue-800/50 bg-[#053964] backdrop-blur transition-all cursor-pointer group"
               >
                 <CardContent className="p-6">
                   <div className="flex items-start justify-between mb-4">
@@ -341,29 +341,29 @@ export default function ProjectsManager({
                   </div>
 
                   <div className="flex items-center gap-2 mb-4">
-                    {project.projectData?.auditTrail &&
+                    {/* {project.projectData?.auditTrail &&
                       project.projectData.auditTrail.logs.length > 0 && (
                         <Badge className="bg-blue-600 text-white">
                           {project.projectData.auditTrail.logs.length} تعديل
                         </Badge>
-                      )}
-                    {project.projectData?.workSession &&
+                      )} */}
+                    {/* {project.projectData?.workSession &&
                       project.projectData.workSession.reviewedIndicators
                         .length > 0 && (
                         <Badge className="bg-green-600 text-white">
                           {
-                            project.projectData.workSession.reviewedIndicators
+                            project.workSession.reviewedIndicators
                               .length
                           }{" "}
                           تم الفحص
                         </Badge>
-                      )}
+                      )} */}
                     {project.qaResults &&
                       project.qaResults.issues &&
                       project.qaResults.issues.length > 0 && (
                         <Badge className="bg-amber-600 text-white">
                           <AlertCircle className="w-3 h-3 mr-1" />
-                          {project.projectData.qaResults.issues.length} مشكلة
+                          {project.qaResults.issues.length} مشكلة
                         </Badge>
                       )}
                   </div>
