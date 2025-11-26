@@ -381,33 +381,15 @@ export default function Page() {
                   onClick={handleSaveProject}
                   className={`gap-2 text-sm py-2.5 px-6 font-semibold rounded-lg transition-all duration-200 shadow-md hover:shadow-lg ${
                     hasUnsavedChanges
-                      ? "bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white border-none"
-                      : "bg-gradient-to-r from-emerald-500 to-green-500 hover:from-emerald-600 hover:to-green-600 text-white border-none"
+                      ? "bg-linear-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white border-none"
+                      : "bg-linear-to-r from-emerald-500 to-green-500 hover:from-emerald-600 hover:to-green-600 text-white border-none"
                   }`}
                 >
+                  {hasUnsavedChanges ? "حفظ التغييرات" : "تم الحفظ"}
                   <Save className="w-4 h-4" />
-                  {hasUnsavedChanges ? "حفظ التغييرات" : "محفوظ"}
                 </Button>
               )}
 
-              <div className="flex items-center gap-3 px-4 py-2.5 bg-[#F1F3E0]/10 rounded-lg border border-[#F1F3E0]/20 backdrop-blur-sm">
-                <UserIcon className="w-5 h-5 text-[#FFE08F]" />
-                <div className="text-right">
-                  <div className="text-sm font-semibold text-[#F1F3E0]">
-                    {authSession.name}
-                  </div>
-                  <div className="text-xs text-[#F1F3E0]/70 font-medium">
-                    {authSession.role === "admin" ? "مدير" : "مستخدم"}
-                  </div>
-                </div>
-              </div>
-              <Button
-                onClick={handleLogout}
-                className="gap-2 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white text-sm py-2.5 px-6 font-semibold rounded-lg transition-all duration-200 shadow-md hover:shadow-lg border-none"
-              >
-                <LogOut className="w-4 h-4" />
-                تسجيل الخروج
-              </Button>
               {currentProject && (
                 <Button
                   onClick={() => {
@@ -417,12 +399,39 @@ export default function Page() {
                       currentProject.fileName
                     );
                   }}
-                  className="gap-2 bg-gradient-to-r from-[#0986ed] to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white shadow-lg text-sm py-2.5 px-6 font-semibold rounded-lg transition-all duration-200 hover:shadow-xl border-none"
+                  className="gap-2 bg-linear-to-r from-[#0986ed] to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white shadow-lg text-sm py-2.5 px-6 font-semibold rounded-lg transition-all duration-200 hover:shadow-xl border-none"
                 >
-                  <Download className="w-4 h-4" />
                   تحميل النتائج
+                  <Download className="w-4 h-4" />
                 </Button>
               )}
+
+              <div
+                className="flex flex-row-reverse items-center gap-3 px-4 py-3 
+                bg-[#F1F3E0]/10 hover:bg-[#F1F3E0]/20 
+                rounded-xl border border-[#F1F3E0]/30
+                backdrop-blur-md transition-all duration-300"
+              >
+                <div className="p-2 rounded-full bg-[#FFE08F]/20 shadow-sm">
+                  <UserIcon className="w-5 h-5 text-[#FFE08F]" />
+                </div>
+                <div className="text-left leading-tight">
+                  <div className="text-sm font-semibold text-[#F1F3E0] tracking-wide">
+                    {authSession.name}
+                  </div>
+                  <div className="text-sm text-[#F1F3E0]/60 font-medium">
+                    {authSession.role === "admin" ? "مدير" : "مستخدم"}
+                  </div>
+                </div>
+              </div>
+
+              <Button
+                onClick={handleLogout}
+                className="gap-2 bg-linear-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white text-sm py-2.5 px-6 font-semibold rounded-lg transition-all duration-200 shadow-md hover:shadow-lg border-none"
+              >
+                تسجيل الخروج
+                <LogOut className="w-4 h-4" />
+              </Button>
             </div>
           </div>
         </div>
@@ -435,10 +444,10 @@ export default function Page() {
             onValueChange={setActiveTab}
             className="w-full"
           >
-            <TabsList className="grid w-full grid-cols-5 bg-transparent border-0 p-0 h-auto gap-2">
+            <TabsList className="grid w-full  grid-cols-5 bg-transparent border-0 p-0 h-auto gap-2">
               <TabsTrigger
                 value="projects"
-                className="py-3 px-6 data-[state=active]:bg-[#053964] data-[state=active]:text-white data-[state=active]:shadow-lg rounded-lg font-semibold text-[#1f254b] hover:bg-white/80 transition-all duration-200"
+                className="cursor-pointer py-3 px-6 data-[state=active]:bg-[#1f66a0] data-[state=active]:text-white data-[state=active]:shadow-lg rounded-lg font-semibold text-[#1f254b] hover:bg-white/80 transition-all duration-200"
               >
                 <FolderOpen className="w-4 h-4 inline-block mr-2" />
                 المشاريع
@@ -446,28 +455,28 @@ export default function Page() {
               <TabsTrigger
                 value="summary"
                 disabled={!currentProject}
-                className="py-3 px-6 data-[state=active]:bg-[#053964] data-[state=active]:text-white data-[state=active]:shadow-lg rounded-lg font-semibold text-[#1f254b] hover:bg-white/80 transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed"
+                className="cursor-pointer py-3 px-6 data-[state=active]:bg-[#1f66a0] data-[state=active]:text-white data-[state=active]:shadow-lg rounded-lg font-semibold text-[#1f254b] hover:bg-white/80 transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed"
               >
                 ملخص النتائج
               </TabsTrigger>
               <TabsTrigger
                 value="indicators"
                 disabled={!currentProject}
-                className="py-3 px-6 data-[state=active]:bg-[#053964] data-[state=active]:text-white data-[state=active]:shadow-lg rounded-lg font-semibold text-[#1f254b] hover:bg-white/80 transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed"
+                className="cursor-pointer py-3 px-6 data-[state=active]:bg-[#1f66a0] data-[state=active]:text-white data-[state=active]:shadow-lg rounded-lg font-semibold text-[#1f254b] hover:bg-white/80 transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed"
               >
                 المؤشرات
               </TabsTrigger>
               <TabsTrigger
                 value="issues"
                 disabled={!currentProject}
-                className="py-3 px-6 data-[state=active]:bg-[#053964] data-[state=active]:text-white data-[state=active]:shadow-lg rounded-lg font-semibold text-[#1f254b] hover:bg-white/80 transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed"
+                className="cursor-pointer py-3 px-6 data-[state=active]:bg-[#1f66a0] data-[state=active]:text-white data-[state=active]:shadow-lg rounded-lg font-semibold text-[#1f254b] hover:bg-white/80 transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed"
               >
                 المشاكل
               </TabsTrigger>
               <TabsTrigger
                 value="audit"
                 disabled={!currentProject}
-                className="py-3 px-6 data-[state=active]:bg-[#053964] data-[state=active]:text-white data-[state=active]:shadow-lg rounded-lg font-semibold text-[#1f254b] hover:bg-white/80 transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed"
+                className="cursor-pointer py-3 px-6 data-[state=active]:bg-[#1f66a0] data-[state=active]:text-white data-[state=active]:shadow-lg rounded-lg font-semibold text-[#1f254b] hover:bg-white/80 transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed"
               >
                 سجل التدقيق
               </TabsTrigger>

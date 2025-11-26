@@ -160,21 +160,29 @@ export default function QASummary({
   return (
     <div className="space-y-8">
       {qualityScore && (
-        <Card className={"border  bg-[#053964] via-[#0986ed]/20 to-[#0986ed] "}>
-          <CardContent className="pt-8 pb-8">
-            <div className="flex flex-col md:flex-row items-center justify-between gap-8">
-              <div className="text-center md:text-right flex-1">
-                <p className="text-xl text-blue-200 mb-2">
-                  درجة جودة البيانات الشاملة
-                </p>
-                <div className="flex items-center justify-center md:justify-start gap-4">
-                  <div className="text-7xl font-bold bg-linear-to-br from-white to-blue-200 bg-clip-text text-transparent">
+        <Card
+          className="border border-blue-700/40 rounded-2xl 
+  bg-linear-to-br from-[#053964] via-[#0986ed]/10 to-[#0b5fa8]/40 
+  shadow-lg shadow-blue-900/30 backdrop-blur-sm"
+        >
+          <CardContent className="pt-10 pb-10">
+            <p className="text-2xl text-blue-200 mb-3 text-center font-medium tracking-wide">
+              درجة جودة البيانات الشاملة
+            </p>
+
+            <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+              {/* Left Section */}
+              <div className="text-center md:text-right flex-1 pl-8">
+                <div className="flex items-center justify-center md:justify-start gap-5">
+                  <div className="text-7xl font-extrabold bg-gradient-to-br from-white to-blue-200 bg-clip-text text-transparent drop-shadow-sm">
                     {qualityScore.overall}
                   </div>
-                  <div className="text-right">
-                    <div className="text-sm text-blue-300">من 100</div>
+
+                  <div className="text-right leading-tight">
+                    <div className="text-sm text-blue-300 mb-1">من 100</div>
+
                     <div
-                      className={`text-2xl font-bold ${
+                      className={`text-2xl font-bold tracking-wide ${
                         getRatingConfig(qualityScore.rating).color
                       }`}
                     >
@@ -184,28 +192,31 @@ export default function QASummary({
                 </div>
               </div>
 
-              {/* Quality Gauge */}
-              <div className="relative w-48 h-48">
-                <svg className="transform -rotate-90 w-48 h-48">
+              {/* Gauge */}
+              <div className="relative w-52 h-52 pr-8">
+                <svg className="transform -rotate-90 w-52 h-52">
+                  {/* Background circle */}
                   <circle
-                    cx="96"
-                    cy="96"
-                    r="80"
+                    cx="104"
+                    cy="104"
+                    r="85"
                     stroke="currentColor"
-                    strokeWidth="16"
+                    strokeWidth="14"
                     fill="none"
-                    className="text-blue-900/50"
+                    className="text-blue-900/40"
                   />
+                  {/* Progress circle */}
                   <circle
-                    cx="96"
-                    cy="96"
-                    r="80"
+                    cx="104"
+                    cy="104"
+                    r="85"
                     stroke="currentColor"
-                    strokeWidth="16"
+                    strokeWidth="14"
                     fill="none"
                     strokeDasharray={`${
-                      (qualityScore.overall / 100) * 502.4
-                    } 502.4`}
+                      (qualityScore.overall / 100) * 534
+                    } 534`}
+                    strokeLinecap="round"
                     className={
                       qualityScore.rating === "excellent"
                         ? "text-green-400"
@@ -215,11 +226,12 @@ export default function QASummary({
                         ? "text-yellow-400"
                         : "text-red-400"
                     }
-                    strokeLinecap="round"
                   />
                 </svg>
+
+                {/* Emoji badge */}
                 <div className="absolute inset-0 flex items-center justify-center">
-                  <span className="text-4xl">
+                  <span className="text-5xl drop-shadow-sm">
                     {qualityScore.rating === "excellent"
                       ? "🏆"
                       : qualityScore.rating === "good"
@@ -232,31 +244,24 @@ export default function QASummary({
               </div>
             </div>
 
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8 pt-6 border-t border-white">
-              <div className="text-center">
-                <p className="text-xl text-white mb-1">الاكتمال</p>
-                <p className="text-xl font-bold text-blue-100">
-                  {qualityScore.breakdown.completeness}%
-                </p>
-              </div>
-              <div className="text-center">
-                <p className="text-xl text-white mb-1">الدقة</p>
-                <p className="text-xl font-bold text-blue-100">
-                  {qualityScore.breakdown.accuracy}%
-                </p>
-              </div>
-              <div className="text-center">
-                <p className="text-xl text-white mb-1">الاتساق</p>
-                <p className="text-xl font-bold text-blue-100">
-                  {qualityScore.breakdown.consistency}%
-                </p>
-              </div>
-              <div className="text-center">
-                <p className="text-xl text-white mb-1">الصحة</p>
-                <p className="text-xl font-bold text-blue-100">
-                  {qualityScore.breakdown.validity}%
-                </p>
-              </div>
+            {/* Breakdown Section */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-10 pt-6 border-t border-white/20">
+              {[
+                {
+                  label: "الاكتمال",
+                  value: qualityScore.breakdown.completeness,
+                },
+                { label: "الدقة", value: qualityScore.breakdown.accuracy },
+                { label: "الاتساق", value: qualityScore.breakdown.consistency },
+                { label: "الصحة", value: qualityScore.breakdown.validity },
+              ].map((item, idx) => (
+                <div key={idx} className="text-center">
+                  <p className="text-lg text-blue-100/80 mb-2">{item.label}</p>
+                  <p className="text-2xl font-bold text-blue-50 drop-shadow-sm">
+                    {item.value}%
+                  </p>
+                </div>
+              ))}
             </div>
           </CardContent>
         </Card>
@@ -288,7 +293,7 @@ export default function QASummary({
                   </p>
 
                   <p
-                    className={`text-sm pr-4 font-extrabold leading-tight ${stat.textColor}`}
+                    className={`text-[16px] pr-4 font-extrabold leading-tight ${stat.textColor}`}
                   >
                     {stat.value}
                   </p>

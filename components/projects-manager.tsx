@@ -205,7 +205,11 @@ export default function ProjectsManager({
   return (
     <div className="min-h-screen  from-[#0986ed] via-[#0986ed]/20 to-[#0986ed] p-6">
       <div className="container mx-auto max-w-6xl">
-        <Card className="border-blue-800/50 bg-[#053964] backdrop-blur mb-6">
+        <Card
+          className="border border-blue-700/40 rounded-2xl 
+  bg-linear-to-br from-[#053964] via-[#0986ed]/10 to-[#0b5fa8]/40 
+  shadow-lg shadow-blue-900/30 backdrop-blur-sm mb-6"
+        >
           <CardHeader>
             <CardTitle className="text-2xl text-white">
               إنشاء مشروع جديد
@@ -233,7 +237,18 @@ export default function ProjectsManager({
             ) : (
               <Button
                 onClick={() => setShowUploader(true)}
-                className="w-full gap-2 bg-amber-500 hover:bg-amber-600 text-white h-16 text-lg"
+                className=" w-full
+  px-6 py-3 rounded-xl font-semibold
+  bg-linear-to-br from-[#053964] via-[#0986ed]/20 to-[#0b5fa8]/50
+  text-blue-100
+  shadow-md shadow-blue-900/40
+  backdrop-blur-sm
+  border border-blue-700/30
+  hover:from-[#064478] hover:via-[#0a8cf2]/20 hover:to-[#0c6abf]/50
+  hover:shadow-blue-900/50
+  active:scale-95
+  transition-all duration-300
+"
                 disabled={isBackendProcessing}
               >
                 <UploadIcon className="w-6 h-6" />
@@ -246,7 +261,11 @@ export default function ProjectsManager({
           </CardContent>
         </Card>
 
-        <Card className="border-blue-800/50 bg-[#053964] backdrop-blur mb-6">
+        <Card
+          className="border border-blue-700/40 rounded-2xl 
+  bg-linear-to-br from-[#053964] via-[#0986ed]/10 to-[#0b5fa8]/40 
+  shadow-lg shadow-blue-900/30 backdrop-blur-sm mb-6"
+        >
           <CardHeader>
             <CardTitle className="text-2xl text-white">
               المشاريع المحفوظة
@@ -279,7 +298,11 @@ export default function ProjectsManager({
         </Card>
 
         {filteredProjects.length === 0 ? (
-          <Card className="border-blue-800/50 bg-[#0986ed] backdrop-blur">
+          <Card
+            className="border border-blue-700/40 rounded-2xl 
+  bg-linear-to-br from-[#053964] via-[#0986ed]/10 to-[#0b5fa8]/40 
+  shadow-lg shadow-blue-900/30 backdrop-blur-sm"
+          >
             <CardContent className="flex flex-col items-center justify-center py-16">
               <FolderOpen className="w-16 h-16 text-blue-400 mb-4" />
               <p className="text-xl text-white mb-2">
@@ -299,7 +322,9 @@ export default function ProjectsManager({
             {filteredProjects.map((project) => (
               <Card
                 key={project.id}
-                className="border-blue-800/50 bg-[#053964] backdrop-blur transition-all cursor-pointer group"
+                className="border border-blue-700/40 rounded-2xl 
+  bg-linear-to-br from-[#053964] via-[#0986ed]/10 to-[#0b5fa8]/40 
+  shadow-lg shadow-blue-900/30 backdrop-blur-sm cursor-pointer group"
               >
                 <CardContent className="p-6">
                   <div className="flex items-start justify-between mb-4">
