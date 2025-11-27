@@ -76,8 +76,7 @@ export function LoginForm({ onLogin }: LoginFormProps) {
 
           toast({
             title: "تم تسجيل الدخول بنجاح",
-            description: `أهلاً بك ${userData.name} - متصل بالخادم`,
-            variant: "default",
+            variant: "success",
           });
           return;
         } else {
@@ -139,9 +138,8 @@ export function LoginForm({ onLogin }: LoginFormProps) {
                 // placeholder="example@digitalhub.com.eg"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="bg-white border-[#0986ed]/30 text-[#1f254b] placeholder:text-[#1f254b]/50 focus:border-[#0986ed] focus:ring-[#0986ed]/20 h-12 text-lg rounded-lg transition-all duration-200"
+                className="bg-white border-[#0986ed]/30 text-[#1f254b]  focus:border-[#0986ed] focus:ring-[#0986ed]/20 h-12 text-lg rounded-lg transition-all duration-200"
                 required
-                autoFocus
               />
             </div>
 
@@ -166,7 +164,7 @@ export function LoginForm({ onLogin }: LoginFormProps) {
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#0986ed]/60 hover:text-[#0986ed] transition-colors"
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-[#0986ed]/60 hover:text-[#0986ed] transition-colors"
                 >
                   {showPassword ? (
                     <EyeOff className="w-5 h-5" />

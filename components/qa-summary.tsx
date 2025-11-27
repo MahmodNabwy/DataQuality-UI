@@ -174,7 +174,7 @@ export default function QASummary({
               {/* Left Section */}
               <div className="text-center md:text-right flex-1 pl-8">
                 <div className="flex items-center justify-center md:justify-start gap-5">
-                  <div className="text-7xl font-extrabold bg-gradient-to-br from-white to-blue-200 bg-clip-text text-transparent drop-shadow-sm">
+                  <div className="text-7xl font-extrabold bg-linear-to-br from-white to-blue-200 bg-clip-text text-transparent drop-shadow-sm">
                     {qualityScore.overall}
                   </div>
 

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Tajawal } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
+import { Toaster } from "@/components/ui/toaster";
 import "./globals.css";
 
 const tajawal = Tajawal({
@@ -43,6 +44,7 @@ export default function RootLayout({
     <html lang="ar" dir="rtl" className={tajawal.variable}>
       <body className={`font-tajawal antialiased`}>
         {children}
+        <Toaster />
         <Analytics />
       </body>
     </html>

@@ -39,6 +39,7 @@ import {
   type EditSession,
 } from "@/lib/edit-session";
 import * as XLSX from "xlsx";
+import { AuthService } from "@/lib/backend-service";
 
 import { IndicatorTimelineChart } from "./indicator-timeline-chart";
 import { DataEditor } from "./data-editor";
@@ -127,6 +128,30 @@ function detectStatisticalOutliers(
   });
 }
 
+interface AuditHistory {
+  id: string;
+  projectId: string;
+  indicatorName: string;
+  filterName: string;
+  year: number;
+  month: number | null;
+  quarter: number | null;
+  oldValue: number;
+  newValue: number;
+  changeType: string;
+  changedBy: string | null;
+  changedAt: string;
+  comment: string;
+  tableNumber: string;
+  isApproved: boolean;
+  approvedBy: string | null;
+  approvedAt: string | null;
+  isMigratedToProduction: boolean;
+  migratedAt: string | null;
+}
+
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
+
 interface IndicatorsListProps {
   data: any[];
   qaResults: QAResults;
@@ -176,6 +201,8 @@ export default function IndicatorsList({
     useState<QAResults>(qaResults);
   const [issueStatuses, setIssueStatuses] = useState<IssueStatus[]>([]);
   const [modifiedData, setModifiedData] = useState<any[]>(data);
+  const [auditHistory, setAuditHistory] = useState<AuditHistory[]>([]);
+  const [loadingAuditHistory, setLoadingAuditHistory] = useState(false);
 
   const applyEditsToData = useCallback(
     (originalData: any[], edits: DataEdit[]): any[] => {
@@ -216,6 +243,81 @@ export default function IndicatorsList({
       return dataArray;
     },
     []
+  );
+
+  const fetchAuditHistory = useCallback(async () => {
+    if (!projectId) return;
+
+    setLoadingAuditHistory(true);
+    try {
+      const token = AuthService.getTokenFromSession();
+      if (!token) return;
+
+      const response = await fetch(
+        `${API_BASE_URL}/Audit/projects/${projectId}/changes`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (response.ok) {
+        const history: AuditHistory[] = await response.json();
+        setAuditHistory(history);
+      }
+    } catch (error) {
+      console.error("Error fetching audit history:", error);
+    } finally {
+      setLoadingAuditHistory(false);
+    }
+  }, [projectId]);
+
+  // Helper function to check if indicator has audit history
+  const hasAuditHistory = useCallback(
+    (indicatorName: string) => {
+      return auditHistory.some((item) => item.indicatorName === indicatorName);
+    },
+    [auditHistory]
+  );
+
+  // Helper function to get audit history count for indicator
+  const getAuditHistoryCount = useCallback(
+    (indicatorName: string) => {
+      return auditHistory.filter((item) => item.indicatorName === indicatorName)
+        .length;
+    },
+    [auditHistory]
+  );
+
+  // Helper function to get the latest audit value for an indicator
+  const getLatestAuditValue = useCallback(
+    (indicatorName: string, filterName?: string, year?: number) => {
+      const indicatorHistory = auditHistory.filter(
+        (item) => item.indicatorName === indicatorName
+      );
+
+      if (indicatorHistory.length === 0) return null;
+
+      // If filter and year are specified, find exact match first
+      if (filterName && year) {
+        const exactMatch = indicatorHistory.find(
+          (item) => item.filterName === filterName && item.year === year
+        );
+        if (exactMatch) return exactMatch;
+      }
+
+      // Otherwise return the most recent change
+      const sorted = indicatorHistory.sort(
+        (a, b) =>
+          new Date(b.changedAt).getTime() - new Date(a.changedAt).getTime()
+      );
+
+      return sorted[0];
+    },
+    [auditHistory]
   );
 
   const modifiedDataMemo = useMemo(() => {
@@ -299,6 +401,11 @@ export default function IndicatorsList({
   useEffect(() => {
     setCurrentQAResults(qaResults);
   }, [qaResults]);
+
+  // Fetch audit history on component mount
+  useEffect(() => {
+    fetchAuditHistory();
+  }, [fetchAuditHistory]);
 
   useEffect(() => {
     if (fileName && editSession.dataEdits.length > 0 && projectId) {
@@ -646,6 +753,9 @@ export default function IndicatorsList({
 
         const reviewedInfo = reviewedIndicators.get(name);
         const isReviewed = !!reviewedInfo;
+        const indicatorHasAuditHistory = hasAuditHistory(name);
+        const auditHistoryCount = getAuditHistoryCount(name);
+        const latestAuditValue = getLatestAuditValue(name);
 
         return {
           name,
@@ -667,6 +777,9 @@ export default function IndicatorsList({
           isReviewed,
           reviewedNotes: reviewedInfo?.notes,
           years: Array.from(new Set(indicatorData.map((d) => d.year))),
+          hasAuditHistory: indicatorHasAuditHistory,
+          auditHistoryCount,
+          latestAuditValue,
         };
       })
       .filter((i) => {
@@ -701,6 +814,9 @@ export default function IndicatorsList({
     searchQualityFilter,
     statusFilter,
     reviewedIndicators,
+    hasAuditHistory,
+    getAuditHistoryCount,
+    getLatestAuditValue,
   ]);
 
   const toggleExpand = (name: string) => {
@@ -1113,6 +1229,7 @@ export default function IndicatorsList({
 
       {editMode ? (
         <DataEditor
+          key={"Data Editor-Indicator List"}
           indicatorName={editMode}
           data={modifiedDataMemo
             .filter((d) => d.indicatorName === editMode)
@@ -1124,6 +1241,7 @@ export default function IndicatorsList({
           onSaveEdits={(edits) => handleSaveEdits(editMode, edits)}
           onCancel={() => setEditMode(null)}
           existingEdits={getIndicatorEdits(editMode)}
+          projectId={projectId}
         />
       ) : (
         <div className="grid gap-4">
@@ -1150,6 +1268,14 @@ export default function IndicatorsList({
                           <Edit3 className="w-3 h-3 ml-1" />
                           تم التعديل
                         </Badge>
+                      )}
+                      {indicator.hasAuditHistory && (
+                        <div className="flex items-center gap-2">
+                          <Badge className="bg-purple-600/20 border-purple-500/50 text-purple-300 text-sm gap-2">
+                            <History className="w-3 h-3 ml-1" />
+                            تعديل {indicator.auditHistoryCount}
+                          </Badge>
+                        </div>
                       )}
                       {indicator.isReviewed ? (
                         <div className="flex gap-2">
@@ -1184,15 +1310,17 @@ export default function IndicatorsList({
                           تأكيد الفحص
                         </Button>
                       )}
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => setEditMode(indicator.name)}
-                        className="bg-yellow-600/20 border-yellow-500/50 text-yellow-300  hover:text-yellow  hover:bg-yellow-600/30"
-                      >
-                        <Edit3 className="w-4 h-4 ml-2" />
-                        تعديل البيانات
-                      </Button>
+                      {!indicator.isReviewed && (
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => setEditMode(indicator.name)}
+                          className="bg-yellow-600/20 border-yellow-500/50 text-yellow-300  hover:text-yellow  hover:bg-yellow-600/30"
+                        >
+                          <Edit3 className="w-4 h-4 ml-2" />
+                          تعديل البيانات
+                        </Button>
+                      )}
 
                       <Badge className={`${ratingConfig.color} border text-sm`}>
                         {ratingConfig.icon} {ratingConfig.label} -{" "}
@@ -1311,6 +1439,7 @@ export default function IndicatorsList({
                         data={indicator.timeSeriesData}
                         anomalies={indicator.outliers}
                         issues={indicator.issues}
+                        auditHistory={auditHistory}
                         onDataEdit={(edits) =>
                           handleChartDataEdit(indicator.name, edits)
                         }

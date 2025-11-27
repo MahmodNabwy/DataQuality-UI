@@ -40,6 +40,28 @@ import {
 } from "@/lib/format-utils";
 import type { DataEdit } from "@/lib/storage";
 
+interface AuditHistory {
+  id: string;
+  projectId: string;
+  indicatorName: string;
+  filterName: string;
+  year: number;
+  month: number | null;
+  quarter: number | null;
+  oldValue: number;
+  newValue: number;
+  changeType: string;
+  changedBy: string | null;
+  changedAt: string;
+  comment: string;
+  tableNumber: string;
+  isApproved: boolean;
+  approvedBy: string | null;
+  approvedAt: string | null;
+  isMigratedToProduction: boolean;
+  migratedAt: string | null;
+}
+
 interface TimelineChartProps {
   indicatorName: string;
   data: Array<{
@@ -58,8 +80,9 @@ interface TimelineChartProps {
     zScore: number;
   }>;
   issues: Array<any>;
+  auditHistory?: AuditHistory[]; // Add audit history prop
   onDataEdit?: (edits: DataEdit[]) => void;
-  onCollapse?: () => void; // ADDED
+  onCollapse?: () => void;
   onIssueStatusChange?: (
     issueId: string,
     status: "resolved" | "dismissed",
@@ -125,31 +148,83 @@ const getSeverityColor = (severity: string) => {
 };
 
 const CustomTooltip = ({ active, payload, label }: any) => {
-  if (active && payload && payload.length) {
-    const dataPoint = payload[0]?.payload;
-    const fullLabel = dataPoint
-      ? formatPeriodFullLabel(
-          dataPoint.year,
-          dataPoint.month,
-          dataPoint.quarter
-        )
-      : label;
+  if (!active || !payload || !payload.length) return null;
 
-    return (
-      <div
-        className="bg-slate-900 border border-slate-700 rounded-lg p-3 shadow-lg"
-        style={{ direction: "rtl" }}
-      >
-        <p className="text-slate-300 text-sm font-semibold mb-2">{fullLabel}</p>
-        {payload.map((entry: any, index: number) => (
-          <p key={index} style={{ color: entry.color }} className="text-sm">
-            {entry.name}: {formatNumberFull(entry.value)}
-          </p>
-        ))}
-      </div>
-    );
-  }
-  return null;
+  const dataPoint = payload[0]?.payload;
+  const fullLabel = dataPoint
+    ? formatPeriodFullLabel(dataPoint.year, dataPoint.month, dataPoint.quarter)
+    : label;
+
+  return (
+    <div
+      className="
+        bg-blue-950/95 
+        border border-blue-800/60 
+        rounded-xl 
+        p-4 
+        shadow-xl 
+        backdrop-blur 
+        z-50
+        overflow-x-auto
+      "
+      style={{ direction: "rtl" }}
+    >
+      {/* Title */}
+      <p className="text-blue-100 text-sm font-semibold mb-3">{fullLabel}</p>
+
+      {/* Data Items */}
+      {payload.map((entry: any, index: number) => {
+        const filterName = entry.dataKey;
+
+        const currentValue = entry.value;
+        const auditValue = dataPoint[`${filterName}_audit`];
+        const originalValue = dataPoint[`${filterName}_original`];
+        const hasAudit = dataPoint[`${filterName}_hasAudit`];
+
+        return (
+          <div
+            key={index}
+            className="mb-3 last:mb-0 pb-2 border-b border-blue-800/40 last:border-none "
+          >
+            {/* Filter name with colored bullet */}
+            <div className="flex items-center gap-2 mb-1">
+              <span style={{ color: entry.color }} className="text-lg">
+                ●
+              </span>
+              <span className="text-blue-200 font-medium">{filterName}</span>
+            </div>
+
+            {/* Values */}
+            <div className="mr-5 text-sm leading-relaxed">
+              {hasAudit ? (
+                <div className="space-y-1">
+                  <p className="text-purple-300">
+                    📜 آخر قيمة من السجل:{" "}
+                    <span className="font-bold">
+                      {formatNumberFull(auditValue)}
+                    </span>
+                  </p>
+
+                  {originalValue && originalValue !== auditValue && (
+                    <p className="text-blue-400 line-through">
+                      القيمة الأصلية: {formatNumberFull(originalValue)}
+                    </p>
+                  )}
+                </div>
+              ) : (
+                <p className="text-blue-200">
+                  القيمة الحالية:{" "}
+                  <span className="font-bold">
+                    {formatNumberFull(currentValue)}
+                  </span>
+                </p>
+              )}
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
 };
 
 const CustomYAxisTick = (props: any) => {
@@ -166,6 +241,7 @@ export function IndicatorTimelineChart({
   data,
   anomalies,
   issues,
+  auditHistory = [],
   onDataEdit,
   onCollapse,
   onIssueStatusChange,
@@ -199,6 +275,35 @@ export function IndicatorTimelineChart({
   const [dismissComment, setDismissComment] = useState("");
 
   const dataFrequency = detectDataFrequency(data);
+
+  // Helper function to get latest audit value for a specific filter/year combination
+  const getLatestAuditValue = (
+    filterName: string,
+    year: number,
+    month?: number,
+    quarter?: number
+  ): number | null => {
+    if (!auditHistory || auditHistory.length === 0) return null;
+
+    const matchingHistory = auditHistory.filter(
+      (item) =>
+        item.indicatorName === indicatorName &&
+        item.filterName === filterName &&
+        item.year === year &&
+        (month ? item.month === month : true) &&
+        (quarter ? item.quarter === quarter : true)
+    );
+
+    if (matchingHistory.length === 0) return null;
+
+    // Sort by changedAt timestamp and get the most recent
+    const sorted = matchingHistory.sort(
+      (a, b) =>
+        new Date(b.changedAt).getTime() - new Date(a.changedAt).getTime()
+    );
+
+    return sorted[0]?.newValue ?? null;
+  };
 
   const filters = Array.from(new Set(data.map((d) => d.filterName)));
 
@@ -249,6 +354,10 @@ export function IndicatorTimelineChart({
     const key = `${filterName}-${createPeriodKey(year, month, quarter)}`;
     const editedValue = editedValues.get(key);
     if (editedValue !== undefined) return editedValue;
+
+    // Check for audit history value first
+    const auditValue = getLatestAuditValue(filterName, year, month, quarter);
+    if (auditValue !== null) return auditValue;
 
     const original = data.find(
       (d) =>
@@ -335,7 +444,25 @@ export function IndicatorTimelineChart({
         periodInfo.month,
         periodInfo.quarter
       );
+      const auditValue = getLatestAuditValue(
+        filter,
+        periodInfo.year,
+        periodInfo.month,
+        periodInfo.quarter
+      );
+      const originalValue =
+        data.find(
+          (d) =>
+            d.filterName === filter &&
+            d.year === periodInfo.year &&
+            d.month === periodInfo.month &&
+            d.quarter === periodInfo.quarter
+        )?.value ?? null;
+
       dataPoint[filter] = value;
+      dataPoint[`${filter}_audit`] = auditValue;
+      dataPoint[`${filter}_original`] = originalValue;
+      dataPoint[`${filter}_hasAudit`] = auditValue !== null;
     });
     chartData.push(dataPoint);
   });
@@ -801,7 +928,15 @@ export function IndicatorTimelineChart({
                   tick={{ fontSize: 11 }}
                 />
                 <YAxis stroke="#94a3b8" tick={<CustomYAxisTick />} width={70} />
-                <Tooltip content={<CustomTooltip />} />
+                <Tooltip
+                  content={<CustomTooltip />}
+                  wrapperStyle={{
+                    zIndex: 9999999,
+                    pointerEvents: "auto",
+
+                    // position: "relative",
+                  }}
+                />
                 <ReferenceLine
                   y={average}
                   stroke="#94a3b8"
@@ -822,6 +957,7 @@ export function IndicatorTimelineChart({
                     strokeWidth={2}
                     dot={(props) => {
                       const { cx, cy, payload } = props;
+                      const hasAudit = payload[`${filter}_hasAudit`];
                       const periodData = data.find(
                         (d) =>
                           createPeriodKey(d.year, d.month, d.quarter) ===
@@ -834,6 +970,7 @@ export function IndicatorTimelineChart({
                           a.quarter === payload.quarter &&
                           a.value === periodData?.value
                       );
+
                       if (anomaly?.isOutlier) {
                         return (
                           <circle
@@ -850,6 +987,31 @@ export function IndicatorTimelineChart({
                           />
                         );
                       }
+
+                      if (hasAudit) {
+                        // Purple diamond for audit history values
+                        return (
+                          <g>
+                            <rect
+                              x={cx - 4}
+                              y={cy - 4}
+                              width={8}
+                              height={8}
+                              fill="#8b5cf6"
+                              stroke="white"
+                              strokeWidth={2}
+                              transform={`rotate(45 ${cx} ${cy})`}
+                            />
+                            <circle
+                              cx={cx + 8}
+                              cy={cy - 8}
+                              r={2}
+                              fill="#8b5cf6"
+                            />
+                          </g>
+                        );
+                      }
+
                       return (
                         <circle
                           cx={cx}
@@ -912,6 +1074,7 @@ export function IndicatorTimelineChart({
                 ● النقاط العادية | ● البرتقالية = تحذير (Z &gt; 2) | ● الحمراء =
                 شاذة جداً (Z &gt; 3)
               </p>
+              <p>◆ البنفسجية = قيم من سجل التعديلات | 📜 رمز السجل</p>
             </div>
           </CardContent>
         </Card>
@@ -1189,6 +1352,32 @@ export function IndicatorTimelineChart({
                               />
                             );
                           }
+
+                          const hasAudit = payload[`${filter}_hasAudit`];
+                          if (hasAudit) {
+                            // Purple diamond for audit history values
+                            return (
+                              <g>
+                                <rect
+                                  x={cx - 4}
+                                  y={cy - 4}
+                                  width={8}
+                                  height={8}
+                                  fill="#8b5cf6"
+                                  stroke="white"
+                                  strokeWidth={2}
+                                  transform={`rotate(45 ${cx} ${cy})`}
+                                />
+                                <circle
+                                  cx={cx + 8}
+                                  cy={cy - 8}
+                                  r={2}
+                                  fill="#8b5cf6"
+                                />
+                              </g>
+                            );
+                          }
+
                           return (
                             <circle
                               cx={cx}
