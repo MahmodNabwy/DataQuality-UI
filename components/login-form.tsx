@@ -24,6 +24,7 @@ import {
 import { saveAuthSession } from "@/lib/auth";
 import { AuthService } from "@/lib/backend-service";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/components/auth-wrapper";
 
 interface LoginFormProps {
   onLogin: (
@@ -42,6 +43,7 @@ export function LoginForm({ onLogin }: LoginFormProps) {
   const [useBackendAuth, setUseBackendAuth] = useState(true);
 
   const { toast } = useToast();
+  const { login: authLogin } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -70,9 +72,10 @@ export function LoginForm({ onLogin }: LoginFormProps) {
             name: userData.name,
             role: userData.role as "admin" | "user",
             loginTime: Date.now(),
+            token: backendResult.token,
           };
           saveAuthSession(session);
-          onLogin(userData.name, userData.role as "admin" | "user", true);
+          authLogin(session);
 
           toast({
             title: "تم تسجيل الدخول بنجاح",
@@ -103,20 +106,26 @@ export function LoginForm({ onLogin }: LoginFormProps) {
   };
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-[#1f254b] via-[#0986ed]/20 to-[#1f254b] flex items-center justify-center p-6">
-      <Card className="w-full max-w-lg border-[#0986ed]/30 bg-white/95 backdrop-blur-sm shadow-2xl">
+    <div className="min-h-screen bg-linear-to-br from-[#0a1736] via-[#0986ed]/15 to-[#0a1736] flex items-center justify-center p-6 relative overflow-hidden">
+      {/* Decorative Blur Lights */}
+      <div className="absolute w-96 h-96 bg-[#0986ed]/20 rounded-full blur-3xl top-10 left-10" />
+      <div className="absolute w-96 h-96 bg-blue-900/20 rounded-full blur-3xl bottom-10 right-10" />
+
+      <Card className="w-full max-w-lg border-[#0986ed]/30 bg-white/90 backdrop-blur-xl shadow-2xl shadow-blue-900/40 rounded-2xl animate-fade-in">
         <CardHeader className="text-center pb-8">
-          <CardTitle className="text-3xl font-bold text-[#1f254b] mb-2">
+          <CardTitle className="text-3xl font-bold text-[#1f254b] mb-2 drop-shadow-sm">
             نظام فحص جودة البيانات الإحصائية
           </CardTitle>
-          <CardDescription className="text-[#1f254b]/70 text-lg font-medium">
+          <CardDescription className="text-[#1f254b]/70 text-lg font-medium tracking-wide">
             Data Quality Control System
           </CardDescription>
         </CardHeader>
+
         <CardContent className="space-y-6">
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-6" autoComplete="on">
+            {/* Error Alert */}
             {error && (
-              <Alert className="bg-red-50 border-red-200 animate-fade-in-scale">
+              <Alert className="bg-red-50 border-red-200 animate-fade-in-scale shadow-sm">
                 <AlertCircle className="h-4 w-4 text-red-600" />
                 <AlertDescription className="text-red-800 font-medium">
                   {error}
@@ -124,6 +133,7 @@ export function LoginForm({ onLogin }: LoginFormProps) {
               </Alert>
             )}
 
+            {/* Email */}
             <div className="space-y-3">
               <Label
                 htmlFor="email"
@@ -132,17 +142,20 @@ export function LoginForm({ onLogin }: LoginFormProps) {
                 <Mail className="w-4 h-4 text-[#0986ed]" />
                 البريد الإلكتروني
               </Label>
+
               <Input
                 id="email"
+                name="email"
                 type="email"
-                // placeholder="example@digitalhub.com.eg"
+                autoComplete="email username"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="bg-white border-[#0986ed]/30 text-[#1f254b]  focus:border-[#0986ed] focus:ring-[#0986ed]/20 h-12 text-lg rounded-lg transition-all duration-200"
+                className="bg-white border-[#0986ed]/30 text-[#1f254b] focus:border-[#0986ed] focus:ring-2 focus:ring-[#0986ed]/30 h-12 text-lg rounded-lg transition-all duration-200 shadow-sm"
                 required
               />
             </div>
 
+            {/* Password */}
             <div className="space-y-3">
               <Label
                 htmlFor="password"
@@ -151,16 +164,19 @@ export function LoginForm({ onLogin }: LoginFormProps) {
                 <Lock className="w-4 h-4 text-[#0986ed]" />
                 كلمة المرور
               </Label>
+
               <div className="relative">
                 <Input
                   id="password"
+                  name="password"
                   type={showPassword ? "text" : "password"}
-                  // placeholder="••••••••"
+                  autoComplete="current-password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="bg-white border-[#0986ed]/30 text-[#1f254b] placeholder:text-[#1f254b]/50 focus:border-[#0986ed] focus:ring-[#0986ed]/20 h-12 text-lg rounded-lg pl-12 transition-all duration-200"
+                  className="bg-white border-[#0986ed]/30 text-[#1f254b] focus:border-[#0986ed] focus:ring-2 focus:ring-[#0986ed]/30 h-12 text-lg rounded-lg pl-12 transition-all duration-200 shadow-sm"
                   required
                 />
+
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
@@ -175,9 +191,10 @@ export function LoginForm({ onLogin }: LoginFormProps) {
               </div>
             </div>
 
+            {/* Submit Button */}
             <Button
               type="submit"
-              className="w-full bg-gradient-to-r from-[#0986ed] to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold py-3 h-12 text-lg rounded-lg shadow-lg hover:shadow-xl transition-all duration-200 btn-professional"
+              className="w-full bg-gradient-to-r from-[#0986ed] to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold py-3 h-12 text-lg rounded-lg shadow-lg hover:shadow-xl transition-all duration-200"
               disabled={isLoading}
             >
               {isLoading ? (

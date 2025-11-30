@@ -192,46 +192,67 @@ export default function QASummary({
                 </div>
               </div>
 
-              {/* Gauge */}
-              <div className="relative w-52 h-52 pr-8">
-                <svg className="transform -rotate-90 w-52 h-52">
-                  {/* Background circle */}
-                  <circle
-                    cx="104"
-                    cy="104"
-                    r="85"
-                    stroke="currentColor"
-                    strokeWidth="14"
-                    fill="none"
-                    className="text-blue-900/40"
-                  />
-                  {/* Progress circle */}
-                  <circle
-                    cx="104"
-                    cy="104"
-                    r="85"
-                    stroke="currentColor"
-                    strokeWidth="14"
-                    fill="none"
-                    strokeDasharray={`${
-                      (qualityScore.overall / 100) * 534
-                    } 534`}
-                    strokeLinecap="round"
-                    className={
-                      qualityScore.rating === "excellent"
-                        ? "text-green-400"
-                        : qualityScore.rating === "good"
-                        ? "text-blue-400"
-                        : qualityScore.rating === "fair"
-                        ? "text-yellow-400"
-                        : "text-red-400"
-                    }
-                  />
+              {/* Gauge - PRO VERSION */}
+              <div className="relative w-60 h-60 flex items-center justify-center pr-8">
+                {/* Outer Glow */}
+                <div className="absolute inset-0 blur-xl opacity-20 bg-blue-400 rounded-full"></div>
+
+                <svg
+                  className="absolute transform -rotate-90"
+                  width="240"
+                  height="240"
+                >
+                  {(() => {
+                    const radius = 95;
+                    const circumference = 2 * Math.PI * radius;
+                    const progress =
+                      (qualityScore.overall / 100) * circumference;
+
+                    return (
+                      <>
+                        {/* Background Circle */}
+                        <circle
+                          cx="120"
+                          cy="120"
+                          r={radius}
+                          strokeWidth="18"
+                          fill="none"
+                          className="text-blue-900/30"
+                          stroke="currentColor"
+                        />
+
+                        {/* Progress Circle */}
+                        <circle
+                          cx="120"
+                          cy="120"
+                          r={radius}
+                          strokeWidth="18"
+                          fill="none"
+                          strokeDasharray={circumference}
+                          strokeDashoffset={circumference - progress}
+                          strokeLinecap="round"
+                          className={`
+                  transition-all duration-1000 ease-out
+                  ${
+                    qualityScore.rating === "excellent"
+                      ? "text-green-400"
+                      : qualityScore.rating === "good"
+                      ? "text-blue-400"
+                      : qualityScore.rating === "fair"
+                      ? "text-yellow-300"
+                      : "text-red-400"
+                  }
+                `}
+                          stroke="currentColor"
+                        />
+                      </>
+                    );
+                  })()}
                 </svg>
 
-                {/* Emoji badge */}
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <span className="text-5xl drop-shadow-sm">
+                {/* Inner content */}
+                <div className="absolute flex flex-col items-center text-center">
+                  <span className="text-4xl   drop-shadow-sm">
                     {qualityScore.rating === "excellent"
                       ? "🏆"
                       : qualityScore.rating === "good"
@@ -240,6 +261,12 @@ export default function QASummary({
                       ? "⚡"
                       : "⚠️"}
                   </span>
+
+                  <span className="text-4xl font-extrabold text-white drop-shadow">
+                    {qualityScore.overall}
+                  </span>
+
+                  <span className="text-sm text-blue-200  ">من 100</span>
                 </div>
               </div>
             </div>

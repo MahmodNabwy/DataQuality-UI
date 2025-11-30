@@ -331,7 +331,7 @@ export default function ProjectsManager({
                 placeholder="ابحث عن مشروع..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pr-10 bg-white border-blue-700/50 text-blue-100 placeholder:text-gray-600"
+                className="pr-10 bg-white border-blue-700/50 text-black-100 placeholder:text-black"
               />
               {searchQuery && (
                 <Button
@@ -370,43 +370,33 @@ export default function ProjectsManager({
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {filteredProjects.map((project) => {
-              console.log("🚀 ~ ProjectsManager ~ project:", project);
               return (
                 <Card
                   key={project.id}
                   className="border border-blue-700/40 rounded-2xl 
   bg-linear-to-br from-[#053964] via-[#0986ed]/10 to-[#0b5fa8]/40 
-  shadow-lg shadow-blue-900/30 backdrop-blur-sm cursor-pointer group"
+  shadow-lg shadow-blue-900/30 backdrop-blur-sm  group"
                 >
-                  <CardContent className="p-6">
+                  <CardContent className="p-4">
                     <div className="flex items-start justify-between mb-4">
                       <div className="flex items-center gap-3 flex-1">
-                        <div className="p-3 bg-blue-600/20 rounded-lg">
-                          <FileSpreadsheet className="w-6 h-6 text-white" />
-                        </div>
+                        <Button
+                          variant="ghost"
+                          size="lg"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setProjectToDelete(project.id);
+                          }}
+                          className="text-red-400 hover:text-red-300 hover:bg-red-900/20"
+                        >
+                          <Trash2 className="w-5 h-5" />
+                        </Button>
                         <div className="flex-1 min-w-0">
                           <h3 className="text-lg font-semibold text-white truncate">
                             اسم النشرة : {project.publicationName}
                           </h3>
-                          <h3 className="text-lg font-semibold text-white truncate">
-                            اسم الملف : {project.fileName}
-                          </h3>
-                          <p className="text-sm text-white">
-                            {formatFileSize(project.fileSize)}
-                          </p>
                         </div>
                       </div>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setProjectToDelete(project.id);
-                        }}
-                        className="text-red-400 hover:text-red-300 hover:bg-red-900/20"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
                     </div>
 
                     <div className="space-y-2 mb-4 flex justify-around">

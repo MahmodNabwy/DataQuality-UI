@@ -227,3 +227,38 @@
   font-weight: 700;
   line-height: 1.4;
 }
+
+/* Text Selection Styling */
+::selection {
+  background-color: #3b82f6;
+  color: white;
+}
+
+::-moz-selection {
+  background-color: #3b82f6;
+  color: white;
+}
+
+/* Input and textarea selection styling */
+input::selection,
+textarea::selection {
+  background-color: #3b82f6;
+  color: white;
+}
+
+input::-moz-selection,
+textarea::-moz-selection {
+  background-color: #3b82f6;
+  color: white;
+}
+
+/* Button text selection */
+button::selection {
+  background-color: #3b82f6;
+  color: white;
+}
+
+button::-moz-selection {
+  background-color: #3b82f6;
+  color: white;
+}

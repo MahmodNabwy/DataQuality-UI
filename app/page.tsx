@@ -19,6 +19,7 @@ import QASummary from "@/components/qa-summary";
 import IndicatorsList from "@/components/indicators-list";
 import IssuesReport from "@/components/issues-report";
 import { AuditTrailViewer } from "@/components/audit-trail-viewer";
+import { Navigation } from "@/components/navigation";
 import { useQAProcessor } from "@/hooks/use-qa-processor";
 import { useBackendQAProcessor } from "@/hooks/use-backend-qa-processor";
 import { LoginForm } from "@/components/login-form";
@@ -131,6 +132,16 @@ function MainPageContent() {
     }
   };
 
+  const handleTabChange = (value: string) => {
+    if (value === "projects") {
+      // When clicking on projects tab, clear current project and go back to project list
+      setCurrentProject(null);
+      clearActiveProject();
+      setHasUnsavedChanges(false);
+    }
+    setActiveTab(value);
+  };
+
   const handleLogout = () => {
     clearActiveProject();
     setCurrentProject(null);
@@ -140,27 +151,14 @@ function MainPageContent() {
   };
 
   const handleOpenProject = (project: Project) => {
-    console.log("[v0] Opening project manually:", project.fileName);
-
     setCurrentProject(project);
     setActiveProject(project.id);
 
-    // if (setProcessedData && project.id) {
-    //   setProcessedData(
-
-    //     project.data.qaResults
-    //   );
-    // }
-
     setActiveTab("summary");
     setHasUnsavedChanges(false);
-
-    console.log("[v0] Project opened successfully");
   };
 
   const handleFileUpload = async (file: File) => {
-    console.log("[v0] Processing new file:", file.name);
-
     setLastProcessedFileName(file.name);
     setPendingProjectData(null);
     clearActiveProject();
@@ -186,7 +184,6 @@ function MainPageContent() {
     const fileName = lastProcessedFileName;
 
     if (lastCreatedProjectRef.current === fileName) {
-      console.log("[v0] Project already created for:", fileName);
       return;
     }
     setPendingProjectData({
@@ -194,7 +191,7 @@ function MainPageContent() {
       data: JSON.parse(JSON.stringify(data)),
       qaResults: JSON.parse(JSON.stringify(qaResults)),
     });
-  }, [data, qaResults, lastProcessedFileName]);
+  }, [data, qaResults, lastProcessedFileName, currentProject]);
 
   useEffect(() => {
     if (!pendingProjectData || currentProject || isCreatingProjectRef.current) {
@@ -208,31 +205,30 @@ function MainPageContent() {
     } = pendingProjectData;
 
     if (lastCreatedProjectRef.current === fileName) {
-      console.log("[v0] Project already created for:", fileName);
       return;
     }
 
     isCreatingProjectRef.current = true;
 
-    const projectId = saveProject({
-      fileName,
-      fileSize: 0,
-      uploadedBy: authSession?.name || "local",
-      status: "active",
-      issueCount: projectQAResults?.issues?.length || 0,
-      resolvedIssueCount: 0,
-      OriginalData: projectData,
-      ModifiedData: projectData,
-      qaResults: projectQAResults,
-    });
-
-    console.log("[v0] Project created successfully with ID:", projectId);
+    // const projectId = saveProject({
+    //   fileName,
+    //   fileSize: 0,
+    //   uploadedBy: authSession?.name || "local",
+    //   status: "active",
+    //   issueCount: projectQAResults?.issues?.length || 0,
+    //   resolvedIssueCount: 0,
+    //   OriginalData: projectData,
+    //   ModifiedData: projectData,
+    //   qaResults: projectQAResults,
+    // });
 
     lastCreatedProjectRef.current = fileName;
     setPendingProjectData(null);
     setLastProcessedFileName(null);
 
     setActiveTab("projects");
+    setCurrentProject(null);
+
     window.dispatchEvent(new Event("storage"));
 
     setTimeout(() => {
@@ -250,25 +246,9 @@ function MainPageContent() {
     [currentProject?.qaResults]
   );
 
-  // const currentAuditLogs = useMemo(
-  //   () => currentProject.auditTrail.logs || [],
-  //   [currentProject.auditTrail.logs]
-  // );
-
-  // const currentIssueStatuses = useMemo(
-  //   () => currentProject?.issueStatuses || [],
-  //   [currentProject?.data.issueStatuses]
-  // );
-
   const handleDataUpdate = useCallback(
     (newData: any[]) => {
       if (!currentProject) return;
-
-      console.log(
-        "[v0] Data updated. Original data:",
-        currentProject.OriginalData
-      );
-      console.log("[v0] New modified data:", newData);
 
       setCurrentProject({
         ...currentProject,
@@ -284,9 +264,6 @@ function MainPageContent() {
     (logs: any[]) => {
       if (!currentProject) return;
 
-      // Note: Audit trail is not part of the simplified Project interface
-      // This function may need to be updated based on how audit logs are stored
-      console.log("Audit logs update:", logs);
       setHasUnsavedChanges(true);
     },
     [currentProject]
@@ -294,14 +271,8 @@ function MainPageContent() {
 
   const handleSaveProject = () => {
     if (!currentProject) {
-      console.log("[v0] No project to save");
       return;
     }
-
-    console.log("[v0] Saving project updates:", currentProject.id);
-    console.log("[v0] Original data:", currentProject.OriginalData);
-    console.log("[v0] Modified data:", currentProject.ModifiedData);
-    console.log("[v0] QA Results:", currentProject.qaResults);
 
     updateProject(currentProject.id, {
       ModifiedData: currentProject.ModifiedData,
@@ -309,7 +280,6 @@ function MainPageContent() {
     });
 
     setHasUnsavedChanges(false);
-    console.log("[v0] Project saved successfully");
   };
 
   const handleIssueStatusChange = (
@@ -327,7 +297,6 @@ function MainPageContent() {
   const reviewedCount = 0; // Simplified for new structure
 
   const handleExportResults = () => {
-    // Simplified export for new structure
     console.log("Exporting results for:", currentProject?.fileName);
   };
 
@@ -341,57 +310,22 @@ function MainPageContent() {
         onExportResults={handleExportResults}
         onLogout={handleLogout}
       />
-
-      <nav className="sticky top-[72px] z-40 w-full border-b border-[#0986ed]/20 bg-[#fffffff2] backdrop-blur-sm leading-9 shadow-sm">
-        <div className="container mx-auto px-6">
-          <Tabs
-            value={activeTab}
-            onValueChange={setActiveTab}
-            className="w-full"
-          >
-            <TabsList className="grid w-full  grid-cols-5 bg-transparent border-0 p-0 h-auto gap-2">
-              <TabsTrigger
-                value="projects"
-                className="cursor-pointer py-3 px-6 data-[state=active]:bg-[#1f66a0] data-[state=active]:text-white data-[state=active]:shadow-lg rounded-lg font-semibold text-[#1f254b] hover:bg-white/80 transition-all duration-200"
-              >
-                <FolderOpen className="w-4 h-4 inline-block mr-2" />
-                المشاريع
-              </TabsTrigger>
-              <TabsTrigger
-                value="summary"
-                disabled={!currentProject}
-                className="cursor-pointer py-3 px-6 data-[state=active]:bg-[#1f66a0] data-[state=active]:text-white data-[state=active]:shadow-lg rounded-lg font-semibold text-[#1f254b] hover:bg-white/80 transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed"
-              >
-                ملخص النتائج
-              </TabsTrigger>
-              <TabsTrigger
-                value="indicators"
-                disabled={!currentProject}
-                className="cursor-pointer py-3 px-6 data-[state=active]:bg-[#1f66a0] data-[state=active]:text-white data-[state=active]:shadow-lg rounded-lg font-semibold text-[#1f254b] hover:bg-white/80 transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed"
-              >
-                المؤشرات
-              </TabsTrigger>
-              <TabsTrigger
-                value="issues"
-                disabled={!currentProject}
-                className="cursor-pointer py-3 px-6 data-[state=active]:bg-[#1f66a0] data-[state=active]:text-white data-[state=active]:shadow-lg rounded-lg font-semibold text-[#1f254b] hover:bg-white/80 transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed"
-              >
-                المشاكل
-              </TabsTrigger>
-              <TabsTrigger
-                value="audit"
-                disabled={!currentProject}
-                className="cursor-pointer py-3 px-6 data-[state=active]:bg-[#1f66a0] data-[state=active]:text-white data-[state=active]:shadow-lg rounded-lg font-semibold text-[#1f254b] hover:bg-white/80 transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed"
-              >
-                سجل التدقيق
-              </TabsTrigger>
-            </TabsList>
-          </Tabs>
-        </div>
-      </nav>
+      {currentProject && (
+        <>
+          <Navigation
+            activeTab={activeTab}
+            onTabChange={handleTabChange}
+            hasProject={!!currentProject}
+          />
+        </>
+      )}
 
       <main className="container mx-auto px-6 pt-6">
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+        <Tabs
+          value={activeTab}
+          onValueChange={handleTabChange}
+          className="w-full"
+        >
           <TabsContent value="projects" className="space-y-6 p-6">
             <ProjectsManager
               onProjectSelect={handleOpenProject}
@@ -421,7 +355,9 @@ function MainPageContent() {
                       الرجاء فتح مشروع من قائمة المشاريع
                     </p>
                     <Button
-                      onClick={() => setActiveTab("projects")}
+                      onClick={() => (
+                        setActiveTab("projects"), setCurrentProject(null)
+                      )}
                       className="gap-3 bg-linear-to-r from-[#0986ed] to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold py-3 px-8 rounded-lg shadow-lg hover:shadow-xl transition-all duration-200"
                     >
                       <FolderOpen className="w-5 h-5" />
@@ -455,7 +391,9 @@ function MainPageContent() {
                       الرجاء فتح مشروع من قائمة المشاريع
                     </p>
                     <Button
-                      onClick={() => setActiveTab("projects")}
+                      onClick={() => (
+                        setActiveTab("projects"), setCurrentProject(null)
+                      )}
                       className="gap-2 bg-blue-600 hover:bg-blue-700"
                     >
                       <FolderOpen className="w-4 h-4" />
@@ -487,7 +425,9 @@ function MainPageContent() {
                       الرجاء فتح مشروع من قائمة المشاريع
                     </p>
                     <Button
-                      onClick={() => setActiveTab("projects")}
+                      onClick={() => (
+                        setActiveTab("projects"), setCurrentProject(null)
+                      )}
                       className="gap-2 bg-blue-600 hover:bg-blue-700"
                     >
                       <FolderOpen className="w-4 h-4" />
@@ -518,7 +458,9 @@ function MainPageContent() {
                       الرجاء فتح مشروع من قائمة المشاريع
                     </p>
                     <Button
-                      onClick={() => setActiveTab("projects")}
+                      onClick={() => (
+                        setActiveTab("projects"), setCurrentProject(null)
+                      )}
                       className="gap-2 bg-blue-600 hover:bg-blue-700"
                     >
                       <FolderOpen className="w-4 h-4" />
