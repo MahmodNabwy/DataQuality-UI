@@ -142,10 +142,12 @@ export function clearEditSession(projectId?: string): void {
 
 export interface UserProfile {
   name: string
-  createdAt: number
+  email: string
+  role: string
+  loginTime: number
 }
 
-const USER_PROFILE_KEY = "qa_system_user_profile"
+const USER_PROFILE_KEY = "qa_system_auth_session"
 
 export function saveUserProfile(profile: UserProfile): void {
   try {
@@ -157,7 +159,7 @@ export function saveUserProfile(profile: UserProfile): void {
 
 export function loadUserProfile(): UserProfile | null {
   try {
-    const data = localStorage.getItem(getUserKey(USER_PROFILE_KEY))
+    const data = localStorage.getItem(USER_PROFILE_KEY)
     if (!data) return null
     return JSON.parse(data) as UserProfile
   } catch (error) {
@@ -263,6 +265,7 @@ export interface IssueStatus {
 
 export interface Project {
   id: string
+  publicationName: string
   fileName: string
   fileSize: number
   uploadedBy: string

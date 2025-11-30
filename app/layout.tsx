@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Tajawal } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { Toaster } from "@/components/ui/toaster";
+import { AuthProvider } from "@/components/auth-wrapper";
 import "./globals.css";
 
 const tajawal = Tajawal({
@@ -13,8 +14,7 @@ const tajawal = Tajawal({
 
 export const metadata: Metadata = {
   title: "نظام فحص جودة البيانات الإحصائية",
-  description:
-    "نظام شامل لفحص جودة البيانات الإحصائية مبني باستخدام Next.js و TypeScript",
+  description: "نظام شامل لفحص جودة البيانات الإحصائية",
   generator: "DataQuality-UI",
   icons: {
     icon: [
@@ -43,8 +43,10 @@ export default function RootLayout({
   return (
     <html lang="ar" dir="rtl" className={tajawal.variable}>
       <body className={`font-tajawal antialiased`}>
-        {children}
-        <Toaster />
+        <AuthProvider>
+          {children}
+          <Toaster />
+        </AuthProvider>
         <Analytics />
       </body>
     </html>

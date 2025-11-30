@@ -59,6 +59,7 @@ export default function ProjectsManager({
   const [projectToDelete, setProjectToDelete] = useState<string | null>(null);
   const [showUploader, setShowUploader] = useState(false);
   const [isBackendProcessing, setIsBackendProcessing] = useState(false);
+  const [publicationName, setPublicationName] = useState("");
 
   const { toast } = useToast();
 
@@ -70,11 +71,12 @@ export default function ProjectsManager({
     // Load projects from backend
     try {
       const backendProjects = await ProjectService.getProjects();
-      if (backendProjects) {
+      if (backendProjects && backendProjects.success && backendProjects.data) {
         // Convert backend projects to local project format
         const convertedProjects: Project[] = backendProjects.data.map(
           (result) => ({
             id: result.id,
+            publicationName: result.publicationName || "",
             fileName: result.fileName,
             fileSize: result.fileSize,
             OriginalData: result.originalData,
@@ -82,7 +84,20 @@ export default function ProjectsManager({
             uploadedBy: result.uploadedBy,
             uploadDate: new Date(result.uploadDate).getTime(),
             lastModified: new Date(result.lastModified).getTime(),
-            qaResults: result.qaResults,
+            status: result.status || "active",
+            qaResults: result.qaResults
+              ? {
+                  processedAt: new Date(result.qaResults.processedAt).getTime(),
+                  summary: result.qaResults.summary,
+                  issues: result.qaResults.issues || [],
+                  qualityScore: result.qaResults.qualityScore,
+                }
+              : {
+                  processedAt: Date.now(),
+                  summary: {},
+                  issues: [],
+                  qualityScore: null,
+                },
             issueCount: result.issueCount,
             resolvedIssueCount: result.resolvedIssueCount,
           })
@@ -97,7 +112,7 @@ export default function ProjectsManager({
         toast({
           title: "حدث خطا ما",
           description: "حدث خطأ ما اثناء جلب المشروعات",
-          variant: "default",
+          variant: "error",
         });
         setProjects([]);
       }
@@ -144,28 +159,46 @@ export default function ProjectsManager({
   };
 
   const handleFileUploadWrapper = async (file: File) => {
+    if (!publicationName.trim()) {
+      toast({
+        title: "خطأ في البيانات",
+        description: "يرجى إدخال اسم النشرة",
+        variant: "error",
+      });
+      return;
+    }
+
     setIsBackendProcessing(true);
     try {
-      console.log("Uploading file to backend:", file.name);
+      console.log(
+        "Uploading file to backend:",
+        file.name,
+        "with publication:",
+        publicationName
+      );
 
-      // Upload and analyze file via backend
-      const analysisResult = await FileAnalysisService.uploadAndAnalyze(file);
+      // Upload and analyze file via backend with publication name
+      const analysisResult = await FileAnalysisService.uploadAndAnalyze(
+        file,
+        publicationName.trim()
+      );
 
       if (analysisResult != null) {
         toast({
           title: "تم رفع الملف بنجاح",
           description: `تم تحليل الملف ${file.name} وإنشاء المشروع بنجاح`,
-          variant: "default",
+          variant: "success",
         });
 
         // Reload projects to show the new one
         loadProjects();
         setShowUploader(false);
+        setPublicationName(""); // Clear publication name after success
       } else {
         toast({
           title: "خطأ في إنشاء المشروع",
           description: "حدث خطأ أثناء إنشاء المشروع",
-          variant: "destructive",
+          variant: "error",
         });
       }
     } catch (error) {
@@ -173,7 +206,7 @@ export default function ProjectsManager({
       toast({
         title: "خطأ في رفع الملف",
         description: "حدث خطأ أثناء رفع الملف للخادم",
-        variant: "destructive",
+        variant: "error",
       });
     } finally {
       setIsBackendProcessing(false);
@@ -221,14 +254,31 @@ export default function ProjectsManager({
           <CardContent>
             {showUploader ? (
               <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-blue-200 mb-2">
+                    أسم النشرة <span className="text-red-400">*</span>
+                  </label>
+                  <Input
+                    type="text"
+                    placeholder="أدخل اسم النشرة..."
+                    value={publicationName}
+                    onChange={(e) => setPublicationName(e.target.value)}
+                    className="bg-white border-blue-700/50 text-black placeholder:text-black"
+                    required
+                    disabled={isProcessing || isBackendProcessing}
+                  />
+                </div>
                 <FileUploader
                   onFileUpload={handleFileUploadWrapper}
                   isProcessing={isProcessing || isBackendProcessing}
                 />
                 <Button
                   variant="outline"
-                  onClick={() => setShowUploader(false)}
-                  className="w-full   bg-[#F4F4F4]   text-blue-200"
+                  onClick={() => {
+                    setShowUploader(false);
+                    setPublicationName(""); // Clear publication name when canceling
+                  }}
+                  className="w-full bg-[#F4F4F4] text-black hover:text-white"
                   disabled={isProcessing || isBackendProcessing}
                 >
                   إلغاء
@@ -319,90 +369,83 @@ export default function ProjectsManager({
           </Card>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {filteredProjects.map((project) => (
-              <Card
-                key={project.id}
-                className="border border-blue-700/40 rounded-2xl 
+            {filteredProjects.map((project) => {
+              console.log("🚀 ~ ProjectsManager ~ project:", project);
+              return (
+                <Card
+                  key={project.id}
+                  className="border border-blue-700/40 rounded-2xl 
   bg-linear-to-br from-[#053964] via-[#0986ed]/10 to-[#0b5fa8]/40 
   shadow-lg shadow-blue-900/30 backdrop-blur-sm cursor-pointer group"
-              >
-                <CardContent className="p-6">
-                  <div className="flex items-start justify-between mb-4">
-                    <div className="flex items-center gap-3 flex-1">
-                      <div className="p-3 bg-blue-600/20 rounded-lg">
-                        <FileSpreadsheet className="w-6 h-6 text-white" />
+                >
+                  <CardContent className="p-6">
+                    <div className="flex items-start justify-between mb-4">
+                      <div className="flex items-center gap-3 flex-1">
+                        <div className="p-3 bg-blue-600/20 rounded-lg">
+                          <FileSpreadsheet className="w-6 h-6 text-white" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <h3 className="text-lg font-semibold text-white truncate">
+                            اسم النشرة : {project.publicationName}
+                          </h3>
+                          <h3 className="text-lg font-semibold text-white truncate">
+                            اسم الملف : {project.fileName}
+                          </h3>
+                          <p className="text-sm text-white">
+                            {formatFileSize(project.fileSize)}
+                          </p>
+                        </div>
                       </div>
-                      <div className="flex-1 min-w-0">
-                        <h3 className="text-lg font-semibold text-white truncate">
-                          {project.fileName}
-                        </h3>
-                        <p className="text-sm text-white">
-                          {formatFileSize(project.fileSize)}
-                        </p>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setProjectToDelete(project.id);
+                        }}
+                        className="text-red-400 hover:text-red-300 hover:bg-red-900/20"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </div>
+
+                    <div className="space-y-2 mb-4 flex justify-around">
+                      <div className="flex items-center gap-2 text-sm text-white">
+                        <Calendar className="w-4 h-4" />
+                        <span>
+                          تاريخ الرفع: {formatDate(project.uploadDate)}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2 text-sm text-white">
+                        <Clock className="w-4 h-4" />
+                        <span>
+                          آخر تعديل: {formatDate(project.lastModified)}
+                        </span>
                       </div>
                     </div>
+
+                    <div className="flex items-center gap-2 mb-4">
+                      {project.qaResults &&
+                        project.qaResults.issues &&
+                        project.qaResults.issues.length > 0 && (
+                          <Badge className="bg-amber-600 text-white">
+                            <AlertCircle className="w-3 h-3 mr-1" />
+                            {project.qaResults.issues.length} مشكلة
+                          </Badge>
+                        )}
+                    </div>
+
                     <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setProjectToDelete(project.id);
-                      }}
-                      className="text-red-400 hover:text-red-300 hover:bg-red-900/20"
+                      onClick={() => onProjectSelect(project)}
+                      className="w-full cursor-pointer bg-[#1f66a0] hover:bg-[#398cd0] text-white"
                     >
-                      <Trash2 className="w-4 h-4" />
+                      <FolderOpen className="w-4 h-4 mr-2" />
+                      فتح المشروع
                     </Button>
-                  </div>
-
-                  <div className="space-y-2 mb-4 flex justify-around">
-                    <div className="flex items-center gap-2 text-sm text-white">
-                      <Calendar className="w-4 h-4" />
-                      <span>تاريخ الرفع: {formatDate(project.uploadDate)}</span>
-                    </div>
-                    <div className="flex items-center gap-2 text-sm text-white">
-                      <Clock className="w-4 h-4" />
-                      <span>آخر تعديل: {formatDate(project.lastModified)}</span>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-2 mb-4">
-                    {/* {project.projectData?.auditTrail &&
-                      project.projectData.auditTrail.logs.length > 0 && (
-                        <Badge className="bg-blue-600 text-white">
-                          {project.projectData.auditTrail.logs.length} تعديل
-                        </Badge>
-                      )} */}
-                    {/* {project.projectData?.workSession &&
-                      project.projectData.workSession.reviewedIndicators
-                        .length > 0 && (
-                        <Badge className="bg-green-600 text-white">
-                          {
-                            project.workSession.reviewedIndicators
-                              .length
-                          }{" "}
-                          تم الفحص
-                        </Badge>
-                      )} */}
-                    {project.qaResults &&
-                      project.qaResults.issues &&
-                      project.qaResults.issues.length > 0 && (
-                        <Badge className="bg-amber-600 text-white">
-                          <AlertCircle className="w-3 h-3 mr-1" />
-                          {project.qaResults.issues.length} مشكلة
-                        </Badge>
-                      )}
-                  </div>
-
-                  <Button
-                    onClick={() => onProjectSelect(project)}
-                    className="w-full bg-blue-600 hover:bg-blue-700 text-white"
-                  >
-                    <FolderOpen className="w-4 h-4 mr-2" />
-                    فتح المشروع
-                  </Button>
-                </CardContent>
-              </Card>
-            ))}
+                  </CardContent>
+                </Card>
+              );
+            })}
           </div>
         )}
       </div>

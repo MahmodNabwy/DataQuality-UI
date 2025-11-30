@@ -194,6 +194,7 @@ export function DataEditor({
       setEditedValues(newEdits);
     } else {
       const newEdits = new Map(editedValues);
+      // Round to integer to match API expectations
       newEdits.set(key, newValue);
       setEditedValues(newEdits);
     }
@@ -262,7 +263,19 @@ export function DataEditor({
       throw new Error("غير مسجل دخول");
     }
 
-    const requestBody = edit;
+    // Ensure newValue is integer and format according to API schema
+    const requestBody = edit.map((item) => ({
+      projectId: item.projectId,
+      indicatorName: item.indicatorName,
+      filterName: item.filterName,
+      year: item.year,
+      month: item.month || 0,
+      quarter: item.quarter || 0,
+      oldValue: item.oldValue,
+      newValue: item.newValue,
+      comment: item.comment || "",
+      tableNumber: item.tableNumber || "",
+    }));
 
     const response = await fetch(`${API_BASE_URL}/Audit/data-changes`, {
       method: "POST",
@@ -399,7 +412,7 @@ export function DataEditor({
       toast({
         title: "حدث خطأ في النظام",
         description: "يرجى الاتصال بمسؤولي النظام",
-        variant: "destructive",
+        variant: "error",
       });
     } finally {
       setIsSubmitting(false);

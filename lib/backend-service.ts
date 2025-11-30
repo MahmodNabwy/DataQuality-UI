@@ -40,6 +40,7 @@ export interface IssueStatus {
 
 export interface ProjectDto {
   id: string
+  publicationName: string
   fileName: string
   fileSize: number
   uploadedBy: string
@@ -56,6 +57,7 @@ export interface ProjectDto {
 
 export interface CreateProjectRequest {
   fileName: string
+  publicationName: string
   fileSize: number
   data: OriginalData[]
 //   metadata: Dictionary<string, any>
@@ -388,7 +390,7 @@ export class ProjectService {
 
 // File Analysis Service
 export class FileAnalysisService {
-  static async uploadAndAnalyze(file: File): Promise<ApiResponse<any>> {
+  static async uploadAndAnalyze(file: File, publicationName?: string): Promise<ApiResponse<any>> {
     try {
       const token = AuthService.getTokenFromSession()
       if (!token) {
@@ -397,6 +399,9 @@ export class FileAnalysisService {
 
       const formData = new FormData()
       formData.append('file', file)
+      if (publicationName) {
+        formData.append('publicationName', publicationName)
+      }
 
       const response = await fetch(`${API_BASE_URL}/file/upload`, {
         method: 'POST',

@@ -24,6 +24,8 @@ import { useBackendQAProcessor } from "@/hooks/use-backend-qa-processor";
 import { LoginForm } from "@/components/login-form";
 import BackendLoginForm from "@/components/backend-login-form";
 import BackendProjectsManager from "@/components/backend-projects-manager";
+import { AuthGuard, useAuth } from "@/components/auth-wrapper";
+import { Header } from "@/components/header";
 import {
   saveUserProfile,
   saveProject,
@@ -51,12 +53,20 @@ import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
 
 export default function Page() {
+  return (
+    <AuthGuard fallback={<LoginForm onLogin={() => {}} />}>
+      <MainPageContent />
+    </AuthGuard>
+  );
+}
+
+function MainPageContent() {
+  const { authSession, isBackendAuthenticated, logout } = useAuth();
   const [activeTab, setActiveTab] = useState("projects");
 
   // Backend Integration States
   const [isBackendMode, setIsBackendMode] = useState(false);
   const [showBackendLogin, setShowBackendLogin] = useState(false);
-  const [isBackendAuthenticated, setIsBackendAuthenticated] = useState(false);
 
   // Use both processors - local and backend
   const localProcessor = useQAProcessor();
@@ -73,9 +83,6 @@ export default function Page() {
     processingDuration,
     setProcessedData,
   } = currentProcessor;
-
-  const [authSession, setAuthSession] = useState<AuthSession | null>(null);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   const [currentProject, setCurrentProject] = useState<Project | null>(null);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
@@ -96,14 +103,10 @@ export default function Page() {
 
   // Check backend status and authentication
   useEffect(() => {
-    const session = loadAuthSession();
-    if (session) {
-      setAuthSession(session);
-      setIsAuthenticated(true);
-
-      // Check if backend is available and try to authenticate
+    if (authSession && authSession.token) {
+      checkBackendAuth(authSession);
     }
-  }, []);
+  }, [authSession]);
 
   const checkBackendAuth = async (session: AuthSession) => {
     try {
@@ -112,7 +115,6 @@ export default function Page() {
         // Try to get current user to verify token
         const user = await AuthService.getCurrentUser();
         if (user) {
-          setIsBackendAuthenticated(true);
           setIsBackendMode(true);
           toast({
             title: "متصل بالخادم",
@@ -129,44 +131,12 @@ export default function Page() {
     }
   };
 
-  const handleLogin = (
-    name: string,
-    role: "admin" | "user",
-    isBackendAuth?: boolean
-  ) => {
-    const profile: UserProfile = {
-      name,
-      createdAt: Date.now(),
-    };
-    saveUserProfile(profile);
-
-    const session = loadAuthSession();
-    if (session) {
-      setAuthSession(session);
-      setIsAuthenticated(true);
-
-      // Set backend mode if authenticated via backend
-      if (isBackendAuth) {
-        setIsBackendAuthenticated(true);
-        setIsBackendMode(true);
-      }
-
-      console.log(
-        `[Auth] User logged in: ${name} (${role}) - Backend: ${
-          isBackendAuth ? "Yes" : "No"
-        }`
-      );
-    }
-  };
-
   const handleLogout = () => {
     clearActiveProject();
-    clearAuthSession();
-    setAuthSession(null);
-    setIsAuthenticated(false);
     setCurrentProject(null);
     setHasUnsavedChanges(false);
     setActiveTab("projects");
+    logout();
   };
 
   const handleOpenProject = (project: Project) => {
@@ -356,86 +326,21 @@ export default function Page() {
 
   const reviewedCount = 0; // Simplified for new structure
 
-  if (!isAuthenticated || !authSession) {
-    return <LoginForm onLogin={handleLogin} />;
-  }
+  const handleExportResults = () => {
+    // Simplified export for new structure
+    console.log("Exporting results for:", currentProject?.fileName);
+  };
 
   return (
     <div className="min-h-screen bg-[#1D546C]  from-[#0986ed] via-[#0986ed]/20 to-[#0986ed]">
-      <header className="sticky top-0 z-50 border-b border-[#0986ed]/30 bg-[#1a4e67f2]/95 backdrop-blur-md shadow-lg">
-        <div className="container mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl font-bold text-[#F4F4F4] drop-shadow-sm">
-                {currentProject?.fileName || "نظام فحص جودة البيانات الإحصائية"}
-              </h1>
-              <p className="text-sm mt-1 text-[#F4F4F4]/80 font-medium">
-                {currentProject
-                  ? "Data Quality Control System"
-                  : "الرجاء اختيار أو إنشاء مشروع"}
-              </p>
-            </div>
-            <div className="flex gap-3 items-center">
-              {currentProject && (
-                <Button
-                  onClick={handleSaveProject}
-                  className={`gap-2 text-sm py-2.5 px-6 font-semibold rounded-lg transition-all duration-200 shadow-md hover:shadow-lg ${
-                    hasUnsavedChanges
-                      ? "bg-linear-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white border-none"
-                      : "bg-linear-to-r from-emerald-500 to-green-500 hover:from-emerald-600 hover:to-green-600 text-white border-none"
-                  }`}
-                >
-                  {hasUnsavedChanges ? "حفظ التغييرات" : "تم الحفظ"}
-                  <Save className="w-4 h-4" />
-                </Button>
-              )}
-
-              {currentProject && (
-                <Button
-                  onClick={() => {
-                    // Simplified export for new structure
-                    console.log(
-                      "Exporting results for:",
-                      currentProject.fileName
-                    );
-                  }}
-                  className="gap-2 bg-linear-to-r from-[#0986ed] to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white shadow-lg text-sm py-2.5 px-6 font-semibold rounded-lg transition-all duration-200 hover:shadow-xl border-none"
-                >
-                  تحميل النتائج
-                  <Download className="w-4 h-4" />
-                </Button>
-              )}
-
-              <div
-                className="flex flex-row-reverse items-center gap-3 px-4 py-3 
-                bg-[#F1F3E0]/10 hover:bg-[#F1F3E0]/20 
-                rounded-xl border border-[#F1F3E0]/30
-                backdrop-blur-md transition-all duration-300"
-              >
-                <div className="p-2 rounded-full bg-[#FFE08F]/20 shadow-sm">
-                  <UserIcon className="w-5 h-5 text-[#FFE08F]" />
-                </div>
-                <div className="text-left leading-tight">
-                  <div className="text-sm font-semibold text-[#F1F3E0] tracking-wide">
-                    {authSession.name}
-                  </div>
-                  <div className="text-sm text-[#F1F3E0]/60 font-medium">
-                    {authSession.role === "admin" ? "مدير" : "مستخدم"}
-                  </div>
-                </div>
-              </div>
-
-              <Button
-                onClick={handleLogout}
-                className="gap-2 bg-linear-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white text-sm py-2.5 px-6 font-semibold rounded-lg transition-all duration-200 shadow-md hover:shadow-lg border-none"
-              >
-                تسجيل الخروج
-                <LogOut className="w-4 h-4" />
-              </Button>
-            </div>
-          </div>
-        </div>
-      </header>
+      <Header
+        currentProject={currentProject}
+        authSession={authSession}
+        hasUnsavedChanges={hasUnsavedChanges}
+        onSaveProject={handleSaveProject}
+        onExportResults={handleExportResults}
+        onLogout={handleLogout}
+      />
 
       <nav className="sticky top-[72px] z-40 w-full border-b border-[#0986ed]/20 bg-[#fffffff2] backdrop-blur-sm leading-9 shadow-sm">
         <div className="container mx-auto px-6">
@@ -517,7 +422,7 @@ export default function Page() {
                     </p>
                     <Button
                       onClick={() => setActiveTab("projects")}
-                      className="gap-3 bg-gradient-to-r from-[#0986ed] to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold py-3 px-8 rounded-lg shadow-lg hover:shadow-xl transition-all duration-200"
+                      className="gap-3 bg-linear-to-r from-[#0986ed] to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold py-3 px-8 rounded-lg shadow-lg hover:shadow-xl transition-all duration-200"
                     >
                       <FolderOpen className="w-5 h-5" />
                       الذهاب إلى المشاريع
@@ -568,7 +473,7 @@ export default function Page() {
                 results={currentQAResults}
                 issueStatuses={[]}
                 onIssueStatusChange={handleIssueStatusChange}
-                userName={authSession.name}
+                userName={authSession?.name || "مستخدم"}
               />
             ) : (
               <Card className="border-blue-800/50 bg-blue-900/20">
