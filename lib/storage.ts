@@ -58,6 +58,7 @@ export function clearWorkSession(projectId?: string): void {
 
 export interface DataEdit {
   projectId:string
+
   indicatorName: string
   filterName: string
   year: number

@@ -139,17 +139,16 @@ export function useBackendQAProcessor() {
           toast({
             title: "تم التحليل بنجاح",
             description: "تم تحليل الملف باستخدام محرك الجودة المحسن",
-            variant: "default"
+            variant: "success"
           })
         } catch (backendError) {
-          console.warn('[QA] Backend processing failed, falling back to local:', backendError)
-          processedData = await processFileLocally(file)
+           processedData = await processFileLocally(file)
           setIsBackendMode(false)
           
           toast({
             title: "تحذير",
             description: "تم استخدام المحرك المحلي بدلاً من الخادم",
-            variant: "destructive"
+            variant: "error"
           })
         }
       } else {

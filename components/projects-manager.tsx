@@ -170,14 +170,6 @@ export default function ProjectsManager({
 
     setIsBackendProcessing(true);
     try {
-      console.log(
-        "Uploading file to backend:",
-        file.name,
-        "with publication:",
-        publicationName
-      );
-
-      // Upload and analyze file via backend with publication name
       const analysisResult = await FileAnalysisService.uploadAndAnalyze(
         file,
         publicationName.trim()
@@ -221,14 +213,6 @@ export default function ProjectsManager({
       hour: "2-digit",
       minute: "2-digit",
     });
-  };
-
-  const formatFileSize = (bytes: number) => {
-    if (bytes === 0) return "0 Bytes";
-    const k = 1024;
-    const sizes = ["Bytes", "KB", "MB", "GB"];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return Math.round((bytes / Math.pow(k, i)) * 100) / 100 + " " + sizes[i];
   };
 
   const filteredProjects = projects.filter((project) =>

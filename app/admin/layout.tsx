@@ -6,9 +6,31 @@ import { loadUserProfile } from "@/lib/storage";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Shield, Users, FileText, Activity, LogOut, Home } from "lucide-react";
+import {
+  loadAuthSession,
+  clearAuthSession,
+  type AuthSession,
+} from "@/lib/auth";
+import {
+  Shield,
+  Users,
+  FileText,
+  Activity,
+  LogOut,
+  Home,
+  User,
+  Settings,
+  UserIcon,
+} from "lucide-react";
 import Link from "next/link";
-
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 interface AdminLayoutProps {
   children: React.ReactNode;
 }
@@ -17,6 +39,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(true);
   const [userProfile, setUserProfile] = useState<any>(null);
+  const authSession = loadAuthSession();
 
   useEffect(() => {
     const checkAdminAccess = async () => {
@@ -31,8 +54,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
         setUserProfile(profile);
 
         // Check if user has admin role (you can customize this logic)
-        const hasAdminAccess =
-          profile?.role === "admin" || profile?.permissions?.includes("admin");
+        const hasAdminAccess = profile?.role === "admin";
         setIsAdmin(hasAdminAccess);
       } catch (error) {
         console.error("Error checking admin access:", error);
@@ -45,9 +67,14 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   }, []);
 
   const handleLogout = () => {
-    AuthService.logout();
-    window.location.href = "/login";
+    clearAuthSession();
+    window.location.href = "/";
   };
+
+  // const handleLogout = () => {
+  //   AuthService.logout();
+  //   window.location.href = "/login";
+  // };
 
   if (loading) {
     return (
@@ -66,7 +93,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
         <Card className="w-full max-w-md border-red-800/50 bg-red-950/50">
           <CardHeader className="text-center">
             <Shield className="w-16 h-16 text-red-400 mx-auto mb-4" />
-            <CardTitle className="text-red-200">غير مخول للوصول</CardTitle>
+            <CardTitle className="text-red-200">غير مصرح للوصول</CardTitle>
           </CardHeader>
           <CardContent className="text-center space-y-4">
             <p className="text-red-300">هذه الصفحة مخصصة للمديرين فقط</p>
@@ -98,42 +125,81 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
             </div>
           </div>
 
-          {/* User Profile & Actions */}
-          <div className="flex items-center gap-4">
-            {userProfile && (
-              <div className="text-right">
-                <p className="text-[#C1E1FF] font-medium">{userProfile.name}</p>
-                <Badge className="bg-purple-600/20 border-purple-500/50 text-purple-300 flex items-center">
-                  <Shield className="w-3 h-3 ml-1" />
-                  مدير
-                </Badge>
-              </div>
-            )}
-            <Link href="/">
-              <Button
-                variant="outline"
-                size="sm"
-                className="border-blue-500/50 text-[#B0D6E8] hover:bg-blue-700/20 hover:text-white"
-              >
-                <Home className="w-4 h-4 ml-2" />
-                الصفحة الرئيسية
-              </Button>
-            </Link>
-            <Button
-              onClick={handleLogout}
-              variant="outline"
-              size="sm"
-              className="border-red-600/50 text-red-300 hover:bg-red-600/20"
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button className="flex flex-row-reverse items-center gap-3 px-2 py-2 bg-white/10 hover:bg-white/20 rounded-2xl border border-white/20 shadow-md backdrop-blur-xl transition-all duration-300 hover:shadow-xl hover:-translate-y-0.5 cursor-pointer focus:outline-none focus:ring-2 focus:ring-white/30">
+                <div className="p-2 rounded-full bg-[#FFE08F]/30 shadow-sm">
+                  <UserIcon className="w-5 h-5 text-[#FFE08F]" />
+                </div>
+                <div className="text-left leading-tight">
+                  <div className="text-sm font-semibold text-[#F4F4F4] drop-shadow-sm">
+                    {authSession?.name || "مستخدم"}
+                  </div>
+                  <div className="text-sm text-white/60 font-medium">
+                    {authSession?.role === "admin" ? "مدير" : "مستخدم"}
+                  </div>
+                </div>
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent
+              align="end"
+              className="w-64 mt-2 bg-white/95 backdrop-blur-xl border border-gray-200/50 shadow-2xl rounded-2xl p-2"
+              sideOffset={8}
             >
-              <LogOut className="w-4 h-4 ml-2" />
-              تسجيل الخروج
-            </Button>
-          </div>
+              <DropdownMenuLabel className="px-4 py-3 ">
+                <div className="flex flex-row-reverse items-center gap-3">
+                  <div className="p-2 rounded-full bg-blue-100">
+                    <UserIcon className="w-5 h-5 text-blue-600" />
+                  </div>
+                  <div className="text-right">
+                    <div className="font-semibold text-gray-900 text-">
+                      {authSession?.name || "مستخدم"}
+                    </div>
+                    <div className="text-sm text-left text-gray-500 font-medium">
+                      {authSession?.role === "admin"
+                        ? "مدير النظام"
+                        : "مستخدم عادي"}
+                    </div>
+                  </div>
+                </div>
+              </DropdownMenuLabel>
+
+              <DropdownMenuSeparator className="my-2 bg-gray-200/50" />
+
+              <DropdownMenuItem className="px-4 py-3 text-right hover:bg-blue-50/80 rounded-xl cursor-pointer transition-colors duration-200 focus:bg-blue-50/80">
+                <div className="flex flex-row-reverse items-center gap-3 w-full">
+                  <User className="w-4 h-4 text-gray-600" />
+                  <span className="font-medium text-gray-700">
+                    الملف الشخصي
+                  </span>
+                </div>
+              </DropdownMenuItem>
+
+              <DropdownMenuItem className="px-4 py-3 text-right hover:bg-blue-50/80 rounded-xl cursor-pointer transition-colors duration-200 focus:bg-blue-50/80">
+                <div className="flex flex-row-reverse items-center gap-3 w-full">
+                  <Settings className="w-4 h-4 text-gray-600" />
+                  <span className="font-medium text-gray-700">الإعدادات</span>
+                </div>
+              </DropdownMenuItem>
+
+              <DropdownMenuSeparator className="my-2 bg-gray-200/50" />
+
+              <DropdownMenuItem
+                onClick={handleLogout}
+                className="px-4 py-3 text-right hover:bg-red-50/80 rounded-xl cursor-pointer transition-colors duration-200 focus:bg-red-50/80"
+              >
+                <div className="flex flex-row-reverse items-center gap-3 w-full">
+                  <LogOut className="w-4 h-4 text-red-500" />
+                  <span className="font-medium text-red-600">تسجيل الخروج</span>
+                </div>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </header>
 
       {/* Admin Navigation */}
-      <nav className="bg-[#123A4CF2] backdrop-blur-md border-b border-blue-800/30 shadow-sm">
+      {/* <nav className="bg-[#123A4CF2] backdrop-blur-md border-b border-blue-800/30 shadow-sm">
         <div className="container mx-auto px-4 py-3 flex gap-2">
           <Link href="/admin">
             <Button
@@ -166,7 +232,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
             </Button>
           </Link>
         </div>
-      </nav>
+      </nav> */}
 
       {/* Main Content */}
       <main className="container mx-auto px-4 py-6">{children}</main>

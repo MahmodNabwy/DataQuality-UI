@@ -13,6 +13,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { useToast } from "@/hooks/use-toast";
 import {
   Activity,
   CheckCircle2,
@@ -67,7 +68,7 @@ function UserProfile() {
       </div>
       <Button
         onClick={handleLogout}
-        className="gap-2 bg-linear-to-r cursor-pointer from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white text-sm py-2.5 px-6 font-semibold rounded-xl transition-all duration-300 shadow-md hover:shadow-xl transform hover:-translate-y-0.5"
+        className="gap-2 bg-linear-to-r cursor-pointer from-red-500 to-red-600 hover:from-red-600 hover:to-red-700  text-white text-sm py-2.5 px-6 font-semibold rounded-xl transition-all duration-300 shadow-md hover:shadow-xl transform hover:-translate-y-0.5"
       >
         <XCircle className="w-4 h-4" />
         تسجيل الخروج
@@ -77,6 +78,7 @@ function UserProfile() {
 }
 
 interface AuditChange {
+  id: string;
   indicatorName: string;
   filterName: string;
   year: number;
@@ -105,6 +107,7 @@ interface PublicationGroup {
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export default function AdminAuditPage() {
+  const { toast } = useToast();
   const [publications, setPublications] = useState<PublicationGroup[]>([]);
   const [selectedPublication, setSelectedPublication] =
     useState<PublicationGroup | null>(null);
@@ -181,8 +184,39 @@ export default function AdminAuditPage() {
       const token = AuthService.getTokenFromSession();
       if (!token) return;
 
-      // Here you would make the API call to approve/reject
-      console.log(`${approved ? "Approving" : "Rejecting"} change:`, change);
+      const authSession = loadAuthSession();
+
+      const requestBody = {
+        ChangeId: change.id,
+        Approve: approved,
+        Comment: approvalComment || null,
+        UserId: authSession?.email || null,
+      };
+
+      const response = await fetch(`${API_BASE_URL}/Audit/changes/approve`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(requestBody),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
+      }
+
+      // Show success toast
+      toast({
+        title: approved ? "تم اعتماد التعديل" : "تم رفض التعديل",
+        description: approved
+          ? "تم اعتماد التعديل بنجاح وسيتم تطبيقه في النظام"
+          : "تم رفض التعديل ولن يتم تطبيقه في النظام",
+        variant: "success",
+      });
+      change.isApproved = approved;
+      change.approvedBy = authSession?.email || "غير محدد";
+      change.approvedAt = new Date().toISOString();
 
       // Refresh data after action
       await fetchAuditChanges();
@@ -191,6 +225,13 @@ export default function AdminAuditPage() {
       setApprovalComment("");
     } catch (error) {
       console.error("Error approving change:", error);
+
+      // Show error toast
+      toast({
+        title: "حدث خطأ في النظام",
+        description: "لم يتم حفظ قرار الاعتماد. يرجى المحاولة مرة أخرى",
+        variant: "error",
+      });
     }
   };
 
@@ -284,7 +325,7 @@ export default function AdminAuditPage() {
               bg: "from-[#0F3D52] to-[#0A80D0]",
             },
             {
-              title: "عدد الفلاتر",
+              title: "عدد المؤشرات الفرعية",
               value: stats.totalFilters,
               icon: <Filter className="h-8 w-8 text-white" />,
               bg: "from-[#1D546C] to-[#0A80D0]",
@@ -467,23 +508,38 @@ export default function AdminAuditPage() {
                           </div>
 
                           <div className="flex flex-col gap-2">
-                            <Button
-                              size="sm"
-                              className="bg-green-600 hover:bg-green-700 text-white"
-                              onClick={() => handleApproveChange(change, true)}
-                            >
-                              <CheckCircle className="w-3 h-3 mr-1" />
-                              موافق
-                            </Button>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              className="border-red-500 text-red-300 hover:bg-red-500/10 hover:text-white"
-                              onClick={() => handleApproveChange(change, false)}
-                            >
-                              <XCircle className="w-3 h-3 mr-1" />
-                              رفض
-                            </Button>
+                            {change.isApproved ? (
+                              <div className="flex items-center justify-center p-2 bg-green-600/20 border border-green-500/40 rounded-lg">
+                                <CheckCircle className="w-4 h-4 text-green-400 ml-2" />
+                                <span className="text-green-300 text-sm font-medium">
+                                  تم الاعتماد
+                                </span>
+                              </div>
+                            ) : (
+                              <>
+                                <Button
+                                  size="sm"
+                                  className="bg-green-600 hover:bg-green-700 text-white"
+                                  onClick={() =>
+                                    handleApproveChange(change, true)
+                                  }
+                                >
+                                  <CheckCircle className="w-3 h-3 mr-1" />
+                                  موافق
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  className="border-red-500 text-red-300 hover:bg-red-500/10 hover:text-white"
+                                  onClick={() =>
+                                    handleApproveChange(change, false)
+                                  }
+                                >
+                                  <XCircle className="w-3 h-3 mr-1" />
+                                  رفض
+                                </Button>
+                              </>
+                            )}
                           </div>
                         </div>
                       </CardContent>
@@ -552,7 +608,7 @@ export default function AdminAuditPage() {
                   </Button>
                   <Button
                     onClick={() => handleApproveChange(selectedChange, false)}
-                    className="bg-red-600 hover:bg-red-700 text-white"
+                    className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
                   >
                     <XCircle className="w-4 h-4 mr-2" />
                     رفض

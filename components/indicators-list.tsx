@@ -473,11 +473,6 @@ export default function IndicatorsList({
         issueStatuses
       );
 
-      console.log(
-        "[v0] Revalidated issues after edit. Auto-resolved:",
-        autoResolvedCount
-      );
-
       const updatedQAResults = {
         ...currentQAResults,
         issues: updatedIssues,
@@ -489,12 +484,6 @@ export default function IndicatorsList({
         if (project) {
           const existingLogs = project.projectData?.auditTrail?.logs || [];
           const updatedLogs = [...existingLogs, ...auditLogs];
-
-          console.log(
-            "[v0] Updating project with",
-            updatedLogs.length,
-            "total audit logs"
-          );
 
           if (onAuditLogUpdate) {
             onAuditLogUpdate(updatedLogs);
@@ -705,10 +694,6 @@ export default function IndicatorsList({
           },
         },
       });
-
-      console.log(
-        "[v0] Issue status updated successfully. Quality recalculated."
-      );
     },
     [
       projectId,
@@ -721,13 +706,13 @@ export default function IndicatorsList({
   );
 
   const indicators = useMemo(() => {
-    console.log("🚀 ~ IndicatorsList ~ currentQAResults:", currentQAResults);
-    console.log("🚀 ~ IndicatorsList ~ modifiedDataMemo:", modifiedDataMemo);
     return Array.from(new Set(modifiedDataMemo.map((d) => d.indicatorName)))
       .map((name) => {
         const indicatorData = modifiedDataMemo.filter(
           (d) => d.indicatorName === name
         );
+        // Get the indicator ID from any data entry for this indicator
+        const indicatorId = indicatorData[0]?.id || null;
         const indicatorIssues = getFilteredIssuesForIndicator(name);
 
         const filteredIssues =
@@ -758,6 +743,7 @@ export default function IndicatorsList({
         const latestAuditValue = getLatestAuditValue(name);
 
         return {
+          id: indicatorId,
           name,
           rowCount: indicatorData.length,
           issueCount: filteredIssues.length,
@@ -828,19 +814,6 @@ export default function IndicatorsList({
       setLastOpenedIndicator(name); // Only update when opening a new indicator
     }
     setExpandedIndicators(newExpanded);
-  };
-
-  const getSeverityColor = (severity: string) => {
-    switch (severity) {
-      case "critical":
-        return "bg-red-500/10 border-red-500/30 text-red-300";
-      case "warning":
-        return "bg-yellow-500/10 border-yellow-500/30 text-yellow-300";
-      case "info":
-        return "bg-blue-500/10 border-blue-500/30 text-blue-300";
-      default:
-        return "bg-slate-500/10 border-slate-500/30 text-slate-300";
-    }
   };
 
   const markAsReviewed = (name: string) => {
@@ -1218,13 +1191,6 @@ export default function IndicatorsList({
             </TabsTrigger>
           </TabsList>
         </Tabs>
-
-        {/* <div className="flex items-center gap-2 text-xl text-white">
-          <Search className="w-4 h-4" />
-          <span>
-            عرض {indicators.length} من {totalIndicators} مؤشر
-          </span>
-        </div> */}
       </div>
 
       {editMode ? (
@@ -1237,11 +1203,17 @@ export default function IndicatorsList({
               year: d.year,
               value: Number(d.value),
               filterName: d.filterName,
+              id: d.id, // Include the ID for each data entry
             }))}
           onSaveEdits={(edits) => handleSaveEdits(editMode, edits)}
           onCancel={() => setEditMode(null)}
           existingEdits={getIndicatorEdits(editMode)}
           projectId={projectId}
+          indicatorId={
+            // Find the first data entry for this indicator to get its ID
+            modifiedDataMemo.find((d) => d.indicatorName === editMode)?.id ||
+            editMode
+          }
         />
       ) : (
         <div className="grid gap-4">

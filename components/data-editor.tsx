@@ -1,5 +1,4 @@
 "use client";
-
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -13,19 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+
 import {
   Edit2,
   Save,
@@ -38,6 +25,7 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { AuthService } from "@/lib/backend-service";
 import type { DataEdit } from "@/lib/storage";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
 interface AuditHistory {
   id: string;
@@ -61,10 +49,10 @@ interface AuditHistory {
   migratedAt: string | null;
 }
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 interface DataEditorProps {
+  indicatorId: string;
   indicatorName: string;
-  data: Array<{ year: number; value: number; filterName: string }>;
+  data: Array<{ year: number; value: number; filterName: string; id?: string }>;
   onSaveEdits: (edits: DataEdit[]) => void;
   onCancel: () => void;
   existingEdits: DataEdit[];
@@ -72,6 +60,7 @@ interface DataEditorProps {
 }
 
 export function DataEditor({
+  indicatorId,
   indicatorName,
   data,
   onSaveEdits,
@@ -115,6 +104,28 @@ export function DataEditor({
     acc[item.filterName].push(item);
     return acc;
   }, {} as Record<string, typeof data>);
+
+  // Debug: Check for duplicate IDs
+  console.log("🚀 ~ DataEditor ~ data:", data);
+  console.log("🔍 ~ DataEditor ~ Checking for duplicate IDs:");
+  const idCounts = data.reduce((acc, item) => {
+    const id = item.id || "undefined";
+    acc[id] = (acc[id] || 0) + 1;
+    return acc;
+  }, {} as Record<string, number>);
+  console.log("📊 ~ DataEditor ~ ID frequency:", idCounts);
+
+  // Show entries with duplicate IDs
+  const duplicateIds = Object.entries(idCounts).filter(
+    ([id, count]) => count > 1
+  );
+  if (duplicateIds.length > 0) {
+    console.warn("⚠️ ~ DataEditor ~ Found duplicate IDs:", duplicateIds);
+    duplicateIds.forEach(([duplicateId]) => {
+      const entriesWithSameId = data.filter((d) => d.id === duplicateId);
+      console.warn(`🔄 Entries with ID ${duplicateId}:`, entriesWithSameId);
+    });
+  }
 
   const allYears = (() => {
     if (data.length === 0) return [];
@@ -175,13 +186,13 @@ export function DataEditor({
   };
 
   const saveEdit = (
+    item: any,
     filterName: string,
     year: number,
     originalValue: number
   ) => {
     const key = `${filterName}-${year}`;
     const newValue = Number.parseFloat(tempValue);
-
     if (isNaN(newValue)) {
       alert("يرجى إدخال قيمة رقمية صحيحة");
       return;
@@ -255,27 +266,48 @@ export function DataEditor({
   };
 
   const submitDataChange = async (edit: DataEdit[]) => {
-    console.log("🚀 ~ submitDataChange ~ edit:", edit);
-
-    console.log("🚀 ~ submitDataChange ~ project id:", projectId);
     const token = AuthService.getTokenFromSession();
     if (!token) {
       throw new Error("غير مسجل دخول");
     }
 
     // Ensure newValue is integer and format according to API schema
-    const requestBody = edit.map((item) => ({
-      projectId: item.projectId,
-      indicatorName: item.indicatorName,
-      filterName: item.filterName,
-      year: item.year,
-      month: item.month || 0,
-      quarter: item.quarter || 0,
-      oldValue: item.oldValue,
-      newValue: item.newValue,
-      comment: item.comment || "",
-      tableNumber: item.tableNumber || "",
-    }));
+    const requestBody = edit.map((item) => {
+      // Find the specific data entry to get its ID
+      const dataEntry = data.find(
+        (d) => d.year === item.year && d.filterName === item.filterName
+      );
+
+      // Debug logging for ID verification
+      console.log(`🔍 Looking for: ${item.filterName} - ${item.year}`);
+      console.log(`🎯 Found dataEntry:`, dataEntry);
+
+      // Check for potential duplicate IDs
+      const allMatchingEntries = data.filter(
+        (d) => d.filterName === item.filterName
+      );
+      console.log(
+        `📊 All entries for filter "${item.filterName}":`,
+        allMatchingEntries
+      );
+
+      return {
+        id: dataEntry?.id, // Include the specific data entry ID
+        projectId: item.projectId,
+        indicatorId: indicatorId, // Use the actual indicatorId prop
+        indicatorName: item.indicatorName,
+        filterName: item.filterName,
+        year: item.year,
+        month: item.month || 0,
+        quarter: item.quarter || 0,
+        oldValue: item.oldValue,
+        newValue: item.newValue,
+        comment: item.comment || "",
+        tableNumber: item.tableNumber || "",
+      };
+    });
+
+    console.log("🚀 ~ submitDataChange ~ requestBody:", requestBody);
 
     const response = await fetch(`${API_BASE_URL}/Audit/data-changes`, {
       method: "POST",
@@ -295,7 +327,7 @@ export function DataEditor({
 
   const fetchAuditHistory = async () => {
     if (!projectId) return;
-
+    console.log("Data:", data);
     setLoadingAuditHistory(true);
     try {
       const token = AuthService.getTokenFromSession();
@@ -492,7 +524,7 @@ export function DataEditor({
               <Button
                 onClick={onCancel}
                 variant="outline"
-                className="border-blue-700/50 text-blue-300 bg-transparent"
+                className="border-blue-700/50 text-blue-300 hover:text-white bg-transparent"
               >
                 <X className="w-4 h-4 ml-2" />
                 إلغاء
@@ -782,6 +814,7 @@ export function DataEditor({
                                       onKeyDown={(e) => {
                                         if (e.key === "Enter") {
                                           saveEdit(
+                                            item,
                                             filterName,
                                             item.year,
                                             item.value
@@ -796,6 +829,7 @@ export function DataEditor({
                                         size="sm"
                                         onClick={() =>
                                           saveEdit(
+                                            item,
                                             filterName,
                                             item.year,
                                             item.value
@@ -1189,7 +1223,7 @@ export function DataEditor({
                     setComment("");
                     setPendingEdits([]);
                   }}
-                  className="border-blue-700/50 text-blue-300 disabled:opacity-50"
+                  className="border-blue-700/50 text-blue-300 hover:text-white disabled:opacity-50"
                 >
                   إلغاء
                 </Button>
