@@ -278,17 +278,10 @@ export function DataEditor({
         (d) => d.year === item.year && d.filterName === item.filterName
       );
 
-      // Debug logging for ID verification
-      console.log(`🔍 Looking for: ${item.filterName} - ${item.year}`);
-      console.log(`🎯 Found dataEntry:`, dataEntry);
-
+      
       // Check for potential duplicate IDs
       const allMatchingEntries = data.filter(
         (d) => d.filterName === item.filterName
-      );
-      console.log(
-        `📊 All entries for filter "${item.filterName}":`,
-        allMatchingEntries
       );
 
       return {
@@ -524,7 +517,7 @@ export function DataEditor({
               <Button
                 onClick={onCancel}
                 variant="outline"
-                className="border-blue-700/50 text-blue-300 hover:text-white bg-transparent"
+                className="border-blue-700/50 text-blue-300 hover:text-white hover:bg-blue-700/20 hover:border-blue-600/70 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-md hover:shadow-lg active:scale-95"
               >
                 <X className="w-4 h-4 ml-2" />
                 إلغاء
@@ -637,11 +630,11 @@ export function DataEditor({
                                     e.target.value
                                   )
                                 }
-                                className={`h-8 text-sm bg-green-950/40 border-green-800/50 text-green-100 ${
+                                className={`h-8 text-sm bg-green-950/40 border-green-800/50 text-green-100 placeholder:text-green-300/70 focus:border-green-400 focus:ring-2 focus:ring-green-400/30 focus:outline-none transition-all duration-200 ${
                                   isAlreadyEdited
-                                    ? "border-yellow-500/50"
+                                    ? "border-yellow-500/50 focus:border-yellow-400 focus:ring-yellow-400/30"
                                     : isMissing
-                                    ? "border-red-500/50"
+                                    ? "border-red-500/50 focus:border-red-400 focus:ring-red-400/30"
                                     : ""
                                 }`}
                               />
@@ -809,7 +802,7 @@ export function DataEditor({
                                       onChange={(e) =>
                                         setTempValue(e.target.value)
                                       }
-                                      className="h-8 text-sm bg-blue-950/60 border-blue-700/50 text-blue-100"
+                                      className="h-8 text-sm bg-blue-950/60 border-blue-700/50 text-blue-100 placeholder:text-blue-300/70 focus:border-[#0986ED] focus:ring-2 focus:ring-[#0986ED]/30 focus:outline-none transition-all duration-200"
                                       autoFocus
                                       onKeyDown={(e) => {
                                         if (e.key === "Enter") {
@@ -1182,10 +1175,34 @@ export function DataEditor({
       )}
 
       {showMetadataDialog && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
-          <Card className="w-full max-w-md border-blue-800/50 bg-blue-950 shadow-2xl">
+        <div
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+          onClick={(e) => {
+            // Only close if clicking on the backdrop, not the modal content
+            if (e.target === e.currentTarget) {
+              setShowMetadataDialog(false);
+              setTableNumber("");
+              setComment("");
+              setPendingEdits([]);
+            }
+          }}
+        >
+          <Card
+            className="w-full max-w-5xl max-h-[90vh] overflow-hidden border-[#0986ed]/30 bg-[#1a4e67f2]/95 backdrop-blur shadow-2xl"
+            onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside the modal
+          >
             <CardHeader>
-              <CardTitle className="text-blue-100">معلومات التعديل</CardTitle>
+              <CardTitle className="flex items-center justify-between text-[#F4F4F4]">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setShowMetadataDialog(false)}
+                  className="text-white/70 hover:text-white hover:bg-white/10"
+                >
+                  <X className="w-4 h-4" />
+                </Button>
+                معلومات التعديل
+              </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
@@ -1196,7 +1213,7 @@ export function DataEditor({
                   placeholder="مثال: جدول 3.2"
                   value={tableNumber}
                   onChange={(e) => setTableNumber(e.target.value)}
-                  className="bg-blue-950/40 border-blue-800/50 text-blue-100"
+                  className="bg-[#053964]/50 border-blue-700/40 text-white placeholder:text-white/70 focus:border-[#0986ED] focus:ring-2 focus:ring-[#0986ED]/30 focus:outline-none transition-all duration-200 backdrop-blur-sm"
                   required
                 />
               </div>
@@ -1208,25 +1225,12 @@ export function DataEditor({
                   placeholder="اكتب سبب التعديل أو أي ملاحظات..."
                   value={comment}
                   onChange={(e) => setComment(e.target.value)}
-                  className="bg-blue-950/40 border-blue-800/50 text-blue-100 min-h-[100px]"
+                  className="bg-[#053964]/50 border-blue-700/40 text-white min-h-[100px] placeholder:text-white/70 focus:border-[#0986ED] focus:ring-2 focus:ring-[#0986ED]/30 focus:outline-none transition-all duration-200 backdrop-blur-sm"
                   required
                 />
               </div>
 
-              <div className="flex gap-2 justify-end pt-4">
-                <Button
-                  variant="outline"
-                  disabled={isSubmitting}
-                  onClick={() => {
-                    setShowMetadataDialog(false);
-                    setTableNumber("");
-                    setComment("");
-                    setPendingEdits([]);
-                  }}
-                  className="border-blue-700/50 text-blue-300 hover:text-white disabled:opacity-50"
-                >
-                  إلغاء
-                </Button>
+              <div className="flex gap-2 justify-start pt-4">
                 <Button
                   onClick={handleSaveWithMetadata}
                   disabled={isSubmitting}
@@ -1243,6 +1247,20 @@ export function DataEditor({
                       حفظ التعديلات
                     </>
                   )}
+                </Button>
+                <Button
+                  variant="outline"
+                  disabled={isSubmitting}
+                  onClick={() => {
+                    setShowMetadataDialog(false);
+                    setTableNumber("");
+                    setComment("");
+                    setPendingEdits([]);
+                  }}
+                  className="border-blue-700/50 text-blue-300 hover:text-white hover:bg-blue-700/20 hover:border-blue-600/70 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-md hover:shadow-lg active:scale-95"
+                >
+                  <X className="w-4 h-4 ml-2" />
+                  إلغاء
                 </Button>
               </div>
             </CardContent>

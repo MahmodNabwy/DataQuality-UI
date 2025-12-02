@@ -48,7 +48,7 @@ export function Navigation({
                   value="issues"
                   className="cursor-pointer py-3 px-6 data-[state=active]:bg-[#1f66a0] data-[state=active]:text-white data-[state=active]:shadow-lg rounded-lg font-semibold text-[#1f254b] hover:bg-white/80 transition-all duration-200"
                 >
-                  المشاكل
+                  التغييرات المرفوضة
                 </TabsTrigger>
                 <TabsTrigger
                   value="audit"

@@ -790,7 +790,7 @@ export function IndicatorTimelineChart({
                 onClick={() => handleFilterClick(filter)}
                 className={`cursor-pointer text-xs font-medium transition-all ${
                   activeFilters.has(filter)
-                    ? "bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white border-0"
+                    ? "bg-linear-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white border-0"
                     : "bg-slate-700/50 hover:bg-slate-600/50 text-slate-200 border border-slate-600"
                 }`}
               >

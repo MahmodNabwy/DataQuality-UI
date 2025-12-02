@@ -96,6 +96,7 @@ interface AuditChange {
   approvedAt?: string | null;
   isMigratedToProduction?: boolean;
   migratedAt?: string | null;
+  isRejected?: boolean;
 }
 
 interface PublicationGroup {
@@ -118,6 +119,8 @@ export default function AdminAuditPage() {
   const [showApprovalDialog, setShowApprovalDialog] = useState(false);
   const [approvalComment, setApprovalComment] = useState("");
   const [showChangesDialog, setShowChangesDialog] = useState(false);
+  const [showRejectionDialog, setShowRejectionDialog] = useState(false);
+  const [rejectionComment, setRejectionComment] = useState("");
 
   // Statistics
   const [stats, setStats] = useState({
@@ -230,6 +233,58 @@ export default function AdminAuditPage() {
       toast({
         title: "حدث خطأ في النظام",
         description: "لم يتم حفظ قرار الاعتماد. يرجى المحاولة مرة أخرى",
+        variant: "error",
+      });
+    }
+  };
+
+  const handleRejectChange = async (change: AuditChange) => {
+    try {
+      const token = AuthService.getTokenFromSession();
+      if (!token) return;
+
+      const requestBody = {
+        ChangeId: change.id,
+        approve: false,
+        comment: rejectionComment,
+      };
+
+      const response = await fetch(`${API_BASE_URL}/Audit/changes/reject`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(requestBody),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
+      }
+
+      // Show success toast
+      toast({
+        title: "تم رفض التعديل",
+        description: "تم رفض التعديل وإرساله للمراجعة مرة أخرى",
+        variant: "success",
+      });
+
+      // Update the change status locally
+      change.isApproved = false;
+      change.isRejected = true;
+
+      // Refresh data after action
+      await fetchAuditChanges();
+      setShowRejectionDialog(false);
+      setSelectedChange(null);
+      setRejectionComment("");
+    } catch (error) {
+      console.error("Error rejecting change:", error);
+
+      // Show error toast
+      toast({
+        title: "حدث خطأ في النظام",
+        description: "لم يتم حفظ قرار الرفض. يرجى المحاولة مرة أخرى",
         variant: "error",
       });
     }
@@ -387,7 +442,8 @@ export default function AdminAuditPage() {
                           hover:shadow-lg 
                           transition-all 
                           duration-200 
-                          rounded-lg"
+                          rounded-lg
+                          cursor-pointer"
                     onClick={() => finishAudit(pub)}
                   >
                     <CheckCircle className="w-4 h-4 ml-1" />
@@ -396,7 +452,7 @@ export default function AdminAuditPage() {
 
                   <Button
                     variant="outline"
-                    className="text-white border-blue-400 hover:bg-blue-900/20 hover:text-white text-sm shadow-md hover:shadow-lg transition-all duration-200 rounded-lg"
+                    className="text-white cursor-pointer border-blue-400 hover:bg-blue-900/20 hover:text-white text-sm shadow-md hover:shadow-lg transition-all duration-200 rounded-lg"
                     onClick={() => exportPublicationToExcel(pub)}
                   >
                     <Download className="w-4 h-4 ml-1" /> تحميل Excel
@@ -405,7 +461,7 @@ export default function AdminAuditPage() {
 
                 <Button
                   variant="outline"
-                  className="w-full text-white border-blue-400 hover:bg-blue-900/20 hover:text-white text-sm shadow-md hover:shadow-lg transition-all duration-200 rounded-lg"
+                  className="w-full cursor-pointer text-white border-blue-400 hover:bg-blue-900/20 hover:text-white text-sm shadow-md hover:shadow-lg transition-all duration-200 rounded-lg"
                   onClick={() => setSelectedPublication(pub)}
                 >
                   <Eye className="w-4 h-4 ml-2" />
@@ -467,7 +523,7 @@ export default function AdminAuditPage() {
                             </div>
                             <div className="flex items-center gap-2">
                               <Calendar className="w-4 h-4 text-blue-300" />
-                              <span className="text-xs text-blue-200">
+                              <span className="text-sm text-blue-200">
                                 {new Date(change.changedAt).toLocaleString(
                                   "ar-EG"
                                 )}
@@ -476,13 +532,13 @@ export default function AdminAuditPage() {
                           </div>
 
                           <div className="space-y-1">
-                            <p className="text-sm font-medium text-white">
+                            <p className="text-lg font-medium text-white">
                               {change.indicatorName}
                             </p>
-                            <p className="text-xs text-blue-200">
+                            <p className="text-sm text-blue-200">
                               {change.filterName}
                             </p>
-                            <p className="text-xs text-blue-300">
+                            <p className="text-sm text-blue-300">
                               السنة: {change.year}
                             </p>
                           </div>
@@ -497,11 +553,11 @@ export default function AdminAuditPage() {
                                 {change.newValue}
                               </span>
                             </div>
-                            <p className="text-xs text-blue-200">
+                            <p className="text-sm text-blue-200">
                               جدول: {change.tableNumber}
                             </p>
                             {change.comment && (
-                              <p className="text-xs bg-blue-950/50 p-2 rounded mt-1 text-blue-100 border border-blue-800/30">
+                              <p className="text-sm bg-blue-950/50 p-2 rounded mt-1 text-blue-100 border border-blue-800/30">
                                 {change.comment}
                               </p>
                             )}
@@ -509,11 +565,19 @@ export default function AdminAuditPage() {
 
                           <div className="flex flex-col gap-2">
                             {change.isApproved ? (
-                              <div className="flex items-center justify-center p-2 bg-green-600/20 border border-green-500/40 rounded-lg">
-                                <CheckCircle className="w-4 h-4 text-green-400 ml-2" />
+                              <div className="flex items-center justify-center gap-1 p-2 bg-green-600/20 border border-green-500/40 rounded-lg">
                                 <span className="text-green-300 text-sm font-medium">
                                   تم الاعتماد
                                 </span>
+                                <CheckCircle className="w-4 h-4 text-green-400 ml-2" />
+                              </div>
+                            ) : change.isRejected ||
+                              change.isApproved == false ? (
+                              <div className="flex items-center justify-center gap-1 p-2 bg-orange-600/20 border border-orange-500/40 rounded-lg">
+                                <span className="text-orange-300 text-sm font-medium">
+                                  تم الارسال للمراجعة مرة اخري
+                                </span>
+                                <AlertTriangle className="w-4 h-4 text-orange-400 ml-2" />
                               </div>
                             ) : (
                               <>
@@ -531,9 +595,10 @@ export default function AdminAuditPage() {
                                   size="sm"
                                   variant="outline"
                                   className="border-red-500 text-red-300 hover:bg-red-500/10 hover:text-white"
-                                  onClick={() =>
-                                    handleApproveChange(change, false)
-                                  }
+                                  onClick={() => {
+                                    setSelectedChange(change);
+                                    setShowRejectionDialog(true);
+                                  }}
                                 >
                                   <XCircle className="w-3 h-3 mr-1" />
                                   رفض
@@ -545,6 +610,85 @@ export default function AdminAuditPage() {
                       </CardContent>
                     </Card>
                   ))}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        )}
+
+        {/* Rejection Dialog */}
+        {showRejectionDialog && selectedChange && (
+          <div
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50"
+            onClick={() => {
+              setShowRejectionDialog(false);
+              setSelectedChange(null);
+              setRejectionComment("");
+            }}
+          >
+            <Card
+              className="w-full max-w-md border-[#0986ed]/30 bg-[#1a4e67f2]/95 backdrop-blur shadow-2xl"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <CardHeader>
+                <CardTitle className="text-[#F4F4F4]">رفض التعديل</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <p className="text-sm text-blue-100">
+                    <strong>المؤشر:</strong> {selectedChange.indicatorName}
+                  </p>
+                  <p className="text-sm text-blue-100">
+                    <strong>الفلتر:</strong> {selectedChange.filterName}
+                  </p>
+                  <p className="text-sm text-blue-100">
+                    <strong>التغيير:</strong> {selectedChange.oldValue} ←{" "}
+                    {selectedChange.newValue}
+                  </p>
+                </div>
+
+                <div>
+                  <label className="text-sm mb-2 block text-blue-100">
+                    سبب الرفض <span className="text-red-400">*</span>
+                  </label>
+                  <Textarea
+                    placeholder="اكتب سبب رفض التعديل..."
+                    value={rejectionComment}
+                    onChange={(e) => setRejectionComment(e.target.value)}
+                    className="bg-blue-950/40 border-blue-800/50 text-blue-100 placeholder:text-blue-300/50"
+                    required
+                  />
+                </div>
+
+                <div className="flex gap-2 justify-end pt-4">
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      setShowRejectionDialog(false);
+                      setSelectedChange(null);
+                      setRejectionComment("");
+                    }}
+                    className="border-blue-700/50 text-blue-300 hover:bg-blue-800/20"
+                  >
+                    إلغاء
+                  </Button>
+                  <Button
+                    onClick={() => {
+                      if (!rejectionComment.trim()) {
+                        toast({
+                          title: "خطأ",
+                          description: "يرجى إدخال سبب الرفض",
+                          variant: "error",
+                        });
+                        return;
+                      }
+                      handleRejectChange(selectedChange);
+                    }}
+                    className="bg-red-500 hover:bg-red-700 text-white"
+                  >
+                    <XCircle className="w-4 h-4 mr-2" />
+                    رفض التعديل
+                  </Button>
                 </div>
               </CardContent>
             </Card>
