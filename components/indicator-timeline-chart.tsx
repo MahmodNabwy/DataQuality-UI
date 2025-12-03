@@ -766,40 +766,40 @@ export function IndicatorTimelineChart({
 
   return (
     <div className="space-y-4 mt-4">
-      <Card className="border-slate-700 bg-slate-800">
-        <CardHeader>
+      <Card className="bg-linear-to-br from-white to-gray-50 border border-gray-200 shadow-lg hover:shadow-xl transition-all duration-300">
+        <CardHeader className="bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-gray-100">
           <div className="flex items-center justify-between">
             <Badge
               variant="outline"
-              className="text-sm bg-blue-600/20 border-blue-500/50 text-blue-300"
+              className="text-sm bg-gradient-to-r from-blue-500 to-blue-600 text-white border-0 shadow-md hover:shadow-lg transition-all duration-200"
             >
               نمط البيانات: {frequencyLabel}
             </Badge>
-            <CardTitle className="text-base text-chart-4">
+            <CardTitle className="text-lg font-bold bg-gradient-to-r from-gray-700 to-gray-900 bg-clip-text text-transparent">
               اختر المؤشرات الفرعية للتحليل
             </CardTitle>
           </div>
         </CardHeader>
-        <CardContent>
-          <div className="flex flex-row-reverse gap-2">
+        <CardContent className="p-6">
+          <div className="flex flex-row-reverse gap-3">
             {filters.map((filter) => (
               <Button
                 key={filter}
                 variant={activeFilters.has(filter) ? "default" : "outline"}
                 size="sm"
                 onClick={() => handleFilterClick(filter)}
-                className={`cursor-pointer text-xs font-medium transition-all ${
+                className={`cursor-pointer text-sm font-semibold transition-all duration-200 shadow-md hover:shadow-lg hover:-translate-y-0.5 ${
                   activeFilters.has(filter)
-                    ? "bg-linear-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white border-0"
-                    : "bg-slate-700/50 hover:bg-slate-600/50 text-slate-200 border border-slate-600"
+                    ? "bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white border-0"
+                    : "bg-gradient-to-r from-gray-50 to-white hover:from-gray-100 hover:to-gray-50 text-gray-700 border border-gray-300 hover:border-gray-400"
                 }`}
               >
                 {filter}
               </Button>
             ))}
           </div>
-          <div className="mt-3 flex items-center gap-4 flex-row-reverse">
-            <label className="flex items-center gap-2 cursor-pointer">
+          <div className="mt-6 flex items-center gap-6 flex-row-reverse">
+            <label className="flex items-center gap-3 cursor-pointer group">
               <input
                 type="checkbox"
                 checked={showIndividual}
@@ -810,18 +810,20 @@ export function IndicatorTimelineChart({
                     setSelectedFilters(new Set());
                   }
                 }}
-                className="w-4 h-4 cursor-pointer"
+                className="w-5 h-5 cursor-pointer rounded border-2 border-gray-300 text-blue-600 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
               />
-              <span className="text-sm text-slate-300 font-semibold">
-                عرض منفصل لكل مؤشر فرعي{" "}
+              <span className="text-base text-gray-700 font-semibold group-hover:text-gray-900 transition-colors">
+                عرض منفصل لكل مؤشر فرعي
               </span>
             </label>
 
             {!showIndividual && (
               <>
-                <div className="flex items-center flex-row-reverse gap-2 border-r border-slate-600 pr-4">
-                  <span className="text-sm text-slate-400">: وضع الأختيار</span>
-                  <div className="flex gap-1 bg-slate-700/50 rounded-lg p-1">
+                <div className="flex items-center flex-row-reverse gap-4 border-r-2 border-gray-200 pr-6">
+                  <span className="text-sm text-gray-600 font-medium">
+                    وضع الاختيار:
+                  </span>
+                  <div className="flex gap-2 bg-gradient-to-r from-gray-100 to-gray-200 rounded-xl p-1.5 shadow-inner">
                     <button
                       onClick={() => {
                         setSelectionMode("single");
@@ -831,20 +833,20 @@ export function IndicatorTimelineChart({
                           setSelectedFilters(new Set([first]));
                         }
                       }}
-                      className={`px-3 cursor-pointer py-1 rounded text-xs font-medium transition-all ${
+                      className={`px-4 cursor-pointer py-2 rounded-lg text-sm font-semibold transition-all duration-200 ${
                         selectionMode === "single"
-                          ? "bg-blue-600 text-white"
-                          : "text-slate-300 hover:text-white"
+                          ? "bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-md"
+                          : "text-gray-600 hover:text-gray-800 hover:bg-white/70"
                       }`}
                     >
                       اختيار واحد
                     </button>
                     <button
                       onClick={() => setSelectionMode("multi")}
-                      className={`px-3 py-1 cursor-pointer rounded text-xs font-medium transition-all ${
+                      className={`px-4 py-2 cursor-pointer rounded-lg text-sm font-semibold transition-all duration-200 ${
                         selectionMode === "multi"
-                          ? "bg-blue-600 text-white"
-                          : "text-slate-300 hover:text-white"
+                          ? "bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-md"
+                          : "text-gray-600 hover:text-gray-800 hover:bg-white/70"
                       }`}
                     >
                       اختيار متعدد
@@ -853,12 +855,12 @@ export function IndicatorTimelineChart({
                 </div>
 
                 {selectionMode === "multi" && (
-                  <div className="flex gap-2 border-r border-slate-600 pr-4">
+                  <div className="flex gap-3 border-r-2 border-gray-200 pr-6">
                     <Button
                       size="sm"
                       variant="outline"
                       onClick={selectAllFilters}
-                      className="h-8 text-xs bg-green-600/20 border-green-500/50 text-green-300 hover:bg-green-600/30"
+                      className="h-10 text-sm font-semibold bg-gradient-to-r from-green-50 to-emerald-50 border-green-300 text-green-700 hover:from-green-100 hover:to-emerald-100 hover:border-green-400 hover:text-green-800 shadow-md hover:shadow-lg transition-all duration-200"
                     >
                       تحديد الكل
                     </Button>
@@ -866,7 +868,7 @@ export function IndicatorTimelineChart({
                       size="sm"
                       variant="outline"
                       onClick={deselectAllFilters}
-                      className="h-8 text-xs bg-red-600/20 border-red-500/50 text-red-300 hover:bg-red-600/30"
+                      className="h-10 text-sm font-semibold bg-gradient-to-r from-red-50 to-rose-50 border-red-300 text-red-700 hover:from-red-100 hover:to-rose-100 hover:border-red-400 hover:text-red-800 shadow-md hover:shadow-lg transition-all duration-200"
                     >
                       إلغاء التحديد
                     </Button>

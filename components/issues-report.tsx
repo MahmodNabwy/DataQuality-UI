@@ -467,460 +467,642 @@ export default function IssuesReport({}: IssuesReportProps) {
   };
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <Card className="border-[#0986ed]/30 bg-[#1a4e67f2]/95 backdrop-blur">
-        <CardHeader>
-          <CardTitle className="text-white flex items-center justify-between">
-            <Badge className="bg-blue-600/20 text-blue-300 border border-blue-500/40">
-              {totalRecords} تغيير مرفوض
-            </Badge>
-            <span>التغييرات المرفوضة</span>
-          </CardTitle>
-        </CardHeader>
-      </Card>
+    <div className="min-h-screen bg-linear-to-br from-blue-50 via-indigo-50 to-purple-50 p-6">
+      <div className="container mx-auto max-w-7xl space-y-6">
+        {/* Header */}
+        <Card className="bg-linear-to-br from-white to-blue-50 border border-blue-200 shadow-xl hover:shadow-2xl  transition-all duration-300 rounded-2xl">
+          <CardHeader className="bg-linear-to-r from-blue-50 to-indigo-50 border-b border-blue-100 rounded-t-2xl py-4">
+            <CardTitle className="flex items-center justify-between">
+              <Badge className="bg-linear-to-r from-blue-500 to-indigo-600 text-white shadow-md px-4 py-2 text-lg">
+                {totalRecords} تغيير مرفوض
+              </Badge>
+              <span className="text-2xl font-bold bg-linear-to-r from-blue-600 to-indigo-700 bg-clip-text text-transparent">
+                التغييرات المرفوضة
+              </span>
+            </CardTitle>
+          </CardHeader>
+        </Card>
 
-      {/* Filters */}
-      <Card className="border-[#0986ed]/30 bg-[#053964]/95 backdrop-blur">
-        <CardHeader>
-          <CardTitle className="text-white text-lg">الفلاتر</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div>
-              <Label className="text-blue-300 mb-2 block">المؤشر الفرعي</Label>
-              <Select
-                value={filterNameFilter}
-                onValueChange={setFilterNameFilter}
-              >
-                <SelectTrigger
-                  className="bg-[#053964]/50 border-blue-700/40 text-white"
-                  dir="rtl"
+        {/* Filters */}
+        <Card className="bg-linear-to-br from-white to-blue-50 border border-blue-200 shadow-xl hover:shadow-2xl transition-all duration-300 rounded-2xl overflow-hidden">
+          <CardHeader className="bg-linear-to-r from-blue-50 to-indigo-50 border-b border-blue-100">
+            <CardTitle className="text-2xl font-bold bg-linear-to-r from-blue-600 to-indigo-700 bg-clip-text text-transparent flex justify-between py-4 items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-linear-to-r from-blue-500 to-indigo-600 flex items-center justify-center shadow-lg">
+                <svg
+                  className="w-4 h-4 text-white"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
                 >
-                  <SelectValue placeholder="اختر الفلتر..." />
-                </SelectTrigger>
-                <SelectContent dir="rtl">
-                  <SelectItem value="all-filters">
-                    جميع المؤشرات الفرعية
-                  </SelectItem>
-                  {uniqueFilterNames.map((filter) => (
-                    <SelectItem key={filter} value={filter}>
-                      {filter}
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.414A1 1 0 013 6.707V4z"
+                  />
+                </svg>
+              </div>
+              فلاتر البحث والتصفية
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="p-8">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="space-y-3">
+                <Label className="text-lg font-semibold text-blue-700 flex items-center gap-2">
+                  <div className="w-2 h-2 rounded-full bg-blue-500"></div>
+                  المؤشر الفرعي
+                </Label>
+                <Select
+                  value={filterNameFilter}
+                  onValueChange={setFilterNameFilter}
+                >
+                  <SelectTrigger
+                    className="bg-linear-to-r from-white to-blue-50 border-2 border-blue-300 hover:border-blue-500 text-gray-800 h-12 rounded-xl shadow-md hover:shadow-lg transition-all duration-200 focus:ring-4 focus:ring-blue-200"
+                    dir="rtl"
+                  >
+                    <SelectValue
+                      placeholder="اختر المؤشر الفرعي..."
+                      className="font-medium"
+                    />
+                  </SelectTrigger>
+                  <SelectContent
+                    dir="rtl"
+                    className="rounded-xl shadow-xl border-2 border-blue-200"
+                  >
+                    <SelectItem
+                      value="all-filters"
+                      className="py-3 px-4 text-blue-600 font-medium"
+                    >
+                      جميع المؤشرات الفرعية
                     </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+                    {uniqueFilterNames.map((filter) => (
+                      <SelectItem
+                        key={filter}
+                        value={filter}
+                        className="py-3 px-4 hover:bg-blue-50"
+                      >
+                        {filter}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-3">
+                <Label className="text-lg font-semibold text-blue-700 flex items-center gap-2">
+                  <div className="w-2 h-2 rounded-full bg-indigo-500"></div>
+                  المؤشر الرئيسي
+                </Label>
+                <Select
+                  value={indicatorFilter}
+                  onValueChange={setIndicatorFilter}
+                >
+                  <SelectTrigger
+                    className="bg-linear-to-r from-white to-blue-50 border-2 border-blue-300 hover:border-blue-500 text-gray-800 h-12 rounded-xl shadow-md hover:shadow-lg transition-all duration-200 focus:ring-4 focus:ring-blue-200"
+                    dir="rtl"
+                  >
+                    <SelectValue
+                      placeholder="اختر المؤشر الرئيسي..."
+                      className="font-medium"
+                    />
+                  </SelectTrigger>
+                  <SelectContent
+                    dir="rtl"
+                    className="rounded-xl shadow-xl border-2 border-blue-200"
+                  >
+                    <SelectItem
+                      value="all-indicators"
+                      className="py-3 px-4 text-blue-600 font-medium"
+                    >
+                      جميع المؤشرات الرئيسية
+                    </SelectItem>
+                    {uniqueIndicators.map((ind) => (
+                      <SelectItem
+                        key={ind}
+                        value={ind}
+                        className="py-3 px-4 hover:bg-blue-50"
+                      >
+                        {ind}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-3">
+                <Label className="text-lg font-semibold text-blue-700 flex items-center gap-2">
+                  <div className="w-2 h-2 rounded-full bg-purple-500"></div>
+                  اسم النشرة
+                </Label>
+                <Select
+                  value={publicationFilter}
+                  onValueChange={setPublicationFilter}
+                >
+                  <SelectTrigger
+                    className="bg-linear-to-r from-white to-blue-50 border-2 border-blue-300 hover:border-blue-500 text-gray-800 h-12 rounded-xl shadow-md hover:shadow-lg transition-all duration-200 focus:ring-4 focus:ring-blue-200"
+                    dir="rtl"
+                  >
+                    <SelectValue
+                      placeholder="اختر النشرة..."
+                      className="font-medium"
+                    />
+                  </SelectTrigger>
+                  <SelectContent
+                    dir="rtl"
+                    className="rounded-xl shadow-xl border-2 border-blue-200"
+                  >
+                    <SelectItem
+                      value="all-publications"
+                      className="py-3 px-4 text-blue-600 font-medium"
+                    >
+                      جميع النشرات
+                    </SelectItem>
+                    {uniquePublications.map((pub) => (
+                      <SelectItem
+                        key={pub}
+                        value={pub}
+                        className="py-3 px-4 hover:bg-blue-50"
+                      >
+                        {pub}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
 
-            <div>
-              <Label className="text-blue-300 mb-2 block">المؤشر الرئيسي</Label>
-              <Select
-                value={indicatorFilter}
-                onValueChange={setIndicatorFilter}
-              >
-                <SelectTrigger
-                  className="bg-[#053964]/50 border-blue-700/40 text-white"
-                  dir="rtl"
-                >
-                  <SelectValue placeholder="اختر المؤشر..." />
-                </SelectTrigger>
-                <SelectContent dir="rtl">
-                  <SelectItem value="all-indicators">
-                    جميع المؤشرات الرئيسية
-                  </SelectItem>
-                  {uniqueIndicators.map((ind) => (
-                    <SelectItem key={ind} value={ind}>
-                      {ind}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div>
-              <Label className="text-blue-300 mb-2 block">اسم النشرة</Label>
-              <Select
-                value={publicationFilter}
-                onValueChange={setPublicationFilter}
-              >
-                <SelectTrigger
-                  className="bg-[#053964]/50 border-blue-700/40 text-white"
-                  dir="rtl"
-                >
-                  <SelectValue placeholder="اختر النشر..." />
-                </SelectTrigger>
-                <SelectContent dir="rtl">
-                  <SelectItem value="all-publications">جميع النشرات</SelectItem>
-                  {uniquePublications.map((pub) => (
-                    <SelectItem key={pub} value={pub}>
-                      {pub}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-
-          <div className="flex gap-2 mt-4">
-            <Button
-              onClick={resetFilters}
-              variant="outline"
-              className="border-blue-700/50 text-blue-300 hover:text-white hover:bg-blue-700/20"
-            >
-              مسح الفلاتر
-            </Button>
-
-            {Object.keys(savedChanges).length > 0 && (
+            <div className="flex flex-wrap gap-4 mt-8 pt-6 border-t border-blue-200">
               <Button
-                onClick={handleApplyChanges}
+                onClick={resetFilters}
+                variant="outline"
+                className="bg-linear-to-r from-gray-50 to-white hover:from-gray-100 hover:to-gray-50 text-gray-700 border-2 border-gray-300 hover:border-gray-400 rounded-xl px-6 py-3 font-semibold shadow-md hover:shadow-lg transition-all duration-200"
+              >
+                <svg
+                  className="w-5 h-5 ml-2"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                  />
+                </svg>
+                مسح الفلاتر
+              </Button>
+
+              {Object.keys(savedChanges).length > 0 && (
+                <Button
+                  onClick={handleApplyChanges}
+                  disabled={isSubmitting}
+                  className="bg-linear-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white border-0 rounded-xl px-6 py-3 font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
+                >
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 className="w-5 h-5 ml-2 animate-spin" />
+                      جاري التطبيق...
+                    </>
+                  ) : (
+                    <>
+                      <Save className="w-5 h-5 ml-2" />
+                      تطبيق التغييرات ({Object.keys(savedChanges).length})
+                    </>
+                  )}
+                </Button>
+              )}
+
+              {(Object.keys(editValues).length > 0 ||
+                Object.keys(savedChanges).length > 0) && (
+                <Button
+                  onClick={() => {
+                    setEditValues({});
+                    setEditingRow(null);
+                    setSavedChanges({});
+                  }}
+                  variant="outline"
+                  className="bg-linear-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white border-0 rounded-xl px-6 py-3 font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
+                >
+                  <X className="w-5 h-5 ml-2" />
+                  مسح جميع التعديلات والمحفوظات
+                </Button>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Data Table */}
+        <Card className="bg-linear-to-br from-white to-blue-50 border border-blue-200 shadow-xl hover:shadow-2xl transition-all duration-300 rounded-2xl overflow-hidden">
+          <CardContent className="p-0">
+            {loading ? (
+              <div className="flex flex-col items-center justify-center p-12 space-y-4">
+                <div className="relative">
+                  <div className="w-16 h-16 rounded-full bg-linear-to-r from-blue-500 to-indigo-600 flex items-center justify-center shadow-lg">
+                    <Loader2 className="w-8 h-8 animate-spin text-white" />
+                  </div>
+                  <div className="absolute inset-0 rounded-full bg-linear-to-r from-blue-400 to-indigo-500 opacity-75 animate-ping"></div>
+                </div>
+                <div className="text-center space-y-2">
+                  <h3 className="text-xl font-bold text-blue-700">
+                    جاري تحميل البيانات
+                  </h3>
+                  <p className="text-blue-500">يرجى الانتظار...</p>
+                </div>
+              </div>
+            ) : rejectedChanges.length === 0 ? (
+              <div className="text-center py-16 space-y-6">
+                <div className="w-24 h-24 mx-auto rounded-full bg-linear-to-r from-blue-100 to-indigo-100 flex items-center justify-center">
+                  <svg
+                    className="w-12 h-12 text-blue-400"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                    />
+                  </svg>
+                </div>
+                <div className="space-y-3">
+                  <h3 className="text-2xl font-bold text-blue-700">
+                    لا توجد تغييرات مرفوضة
+                  </h3>
+                  <p className="text-blue-500 text-lg">
+                    لم يتم العثور على أي تغييرات مرفوضة تطابق معايير البحث
+                    الحالية
+                  </p>
+                </div>
+              </div>
+            ) : (
+              <div className="overflow-hidden">
+                <Table>
+                  <TableHeader>
+                    <TableRow className="bg-linear-to-r from-blue-50 to-indigo-50 border-b-2 border-blue-200">
+                      <TableHead className="text-blue-700 font-bold text-lg py-6 px-6 text-center">
+                        اسم النشرة
+                      </TableHead>
+                      <TableHead className="text-blue-700 font-bold text-lg py-6 px-6 text-center">
+                        المؤشر الرئيسي
+                      </TableHead>
+                      <TableHead className="text-blue-700 font-bold text-lg py-6 px-6 text-center">
+                        المؤشر الفرعي
+                      </TableHead>
+                      <TableHead className="text-blue-700 font-bold text-lg py-6 px-6 text-center">
+                        السنة
+                      </TableHead>
+                      <TableHead className="text-blue-700 font-bold text-lg py-6 px-6 text-center">
+                        الشهر
+                      </TableHead>
+                      <TableHead className="text-blue-700 font-bold text-lg py-6 px-6 text-center">
+                        الربع
+                      </TableHead>
+                      <TableHead className="text-blue-700 font-bold text-lg py-6 px-6 text-center">
+                        القيمة القديمة
+                      </TableHead>
+                      <TableHead className="text-blue-700 font-bold text-lg py-6 px-6 text-center">
+                        القيمة المرفوضة
+                      </TableHead>
+                      <TableHead className="text-blue-700 font-bold text-lg py-6 px-6 text-center">
+                        التعليق
+                      </TableHead>
+                      <TableHead className="text-blue-700 font-bold text-lg py-6 px-6 text-center">
+                        رفض بواسطة
+                      </TableHead>
+                      <TableHead className="text-blue-700 font-bold text-lg py-6 px-6 text-center">
+                        الإجراءات
+                      </TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {rejectedChanges.map((change, index) => {
+                      const key = `${change.indicatorId}-${change.year}-${change.filterName}`;
+                      const isEditing = editingRow === key;
+                      const editData = editValues[key];
+                      const isSaved = savedChanges[key];
+
+                      return (
+                        <TableRow
+                          key={index}
+                          className={`border-b-2 border-blue-100 hover:bg-linear-to-r hover:from-blue-50 hover:to-indigo-50 transition-all duration-300 hover:shadow-md ${
+                            isSaved
+                              ? "bg-linear-to-r from-green-50 to-emerald-50 border-green-200"
+                              : "bg-white"
+                          }`}
+                        >
+                          <TableCell className="text-gray-800 py-6 px-6 font-semibold text-center border-r border-blue-100">
+                            <div className="flex items-center justify-center">
+                              <span className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm font-medium">
+                                {change.publicationName}
+                              </span>
+                            </div>
+                          </TableCell>
+                          <TableCell className="text-gray-800 py-6 px-6 font-semibold text-center border-r border-blue-100">
+                            <div className="text-blue-600 font-bold">
+                              {change.indicatorName}
+                            </div>
+                          </TableCell>
+                          <TableCell className="text-gray-800 py-6 px-6 font-semibold text-center border-r border-blue-100">
+                            <div className="text-indigo-600 font-bold">
+                              {change.filterName}
+                            </div>
+                          </TableCell>
+                          <TableCell className="text-gray-800 py-6 px-6 font-semibold text-center border-r border-blue-100">
+                            <div className="flex items-center justify-center">
+                              <span className="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm font-bold">
+                                {change.year}
+                              </span>
+                            </div>
+                          </TableCell>
+                          <TableCell className="text-gray-800 py-6 px-6 font-semibold text-center border-r border-blue-100">
+                            <div className="flex items-center justify-center">
+                              <span className="px-2 py-1 bg-gray-100 text-gray-700 rounded text-sm">
+                                {change.month}
+                              </span>
+                            </div>
+                          </TableCell>
+                          <TableCell className="text-gray-800 py-6 px-6 font-semibold text-center border-r border-blue-100">
+                            <div className="flex items-center justify-center">
+                              <span className="px-2 py-1 bg-gray-100 text-gray-700 rounded text-sm">
+                                {change.quarter}
+                              </span>
+                            </div>
+                          </TableCell>
+                          <TableCell className="text-gray-800 py-6 px-6 font-semibold text-center border-r border-blue-100">
+                            <div className="flex items-center justify-center">
+                              <span className="px-3 py-2 bg-blue-50 text-blue-800 rounded-lg text-lg font-bold border border-blue-200">
+                                {change.oldValue.toLocaleString()}
+                              </span>
+                            </div>
+                          </TableCell>
+                          <TableCell className="py-6 px-6 text-center border-r border-blue-100">
+                            <div className="flex items-center justify-center">
+                              {isEditing ? (
+                                <Input
+                                  type="number"
+                                  value={
+                                    editData?.newValue || change.rejectedValue
+                                  }
+                                  onChange={(e) =>
+                                    handleInputChange(
+                                      key,
+                                      "newValue",
+                                      Number(e.target.value)
+                                    )
+                                  }
+                                  className="w-40 bg-linear-to-r from-white to-blue-50 border-2 border-blue-400 text-gray-900 focus:border-blue-600 focus:ring-4 focus:ring-blue-200 shadow-lg transition-all duration-200 rounded-lg text-center font-bold"
+                                />
+                              ) : isSaved ? (
+                                <span className="px-4 py-2 bg-green-100 text-green-700 rounded-lg text-lg font-bold border-2 border-green-200 shadow-md">
+                                  {savedChanges[key].newValue.toLocaleString()}
+                                </span>
+                              ) : (
+                                <span className="px-4 py-2 bg-amber-100 text-amber-700 rounded-lg text-lg font-bold border-2 border-amber-200 shadow-md">
+                                  {change.rejectedValue.toLocaleString()}
+                                </span>
+                              )}
+                            </div>
+                          </TableCell>
+                          <TableCell
+                            className="text-gray-800 py-6 px-6 max-w-[200px] truncate font-semibold text-center border-r border-blue-100"
+                            title={
+                              isSaved
+                                ? savedChanges[key].comment
+                                : change.comment
+                            }
+                          >
+                            <div className="flex items-center justify-center">
+                              {isSaved ? (
+                                <span className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm font-semibold max-w-[150px] truncate">
+                                  {savedChanges[key].comment}
+                                </span>
+                              ) : (
+                                <span className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm max-w-[150px] truncate">
+                                  {change.comment}
+                                </span>
+                              )}
+                            </div>
+                          </TableCell>
+                          <TableCell className="text-gray-800 py-6 px-6 font-semibold text-center border-r border-blue-100">
+                            <div className="flex items-center justify-center">
+                              <span className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm">
+                                {change.rejectedByName || "غير محدد"}
+                              </span>
+                            </div>
+                          </TableCell>
+                          <TableCell className="py-6 px-6">
+                            <div className="flex gap-3 justify-center items-center">
+                              {isSaved ? (
+                                <Badge className="bg-linear-to-r from-green-500 to-emerald-600 text-white px-4 py-2 shadow-lg rounded-full text-sm font-bold">
+                                  ✓ تم التعديل
+                                </Badge>
+                              ) : isEditing ? (
+                                <>
+                                  <Button
+                                    size="sm"
+                                    onClick={() => handleSaveClick(change)}
+                                    className="bg-linear-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 rounded-xl px-4 py-2"
+                                    title="حفظ"
+                                  >
+                                    <Save className="w-4 h-4" />
+                                  </Button>
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    onClick={cancelEdit}
+                                    className="bg-linear-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-300 rounded-xl px-4 py-2"
+                                    title="إلغاء"
+                                  >
+                                    <X className="w-4 h-4" />
+                                  </Button>
+                                </>
+                              ) : (
+                                <Button
+                                  size="sm"
+                                  onClick={() => startEdit(change)}
+                                  className="bg-linear-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 rounded-xl px-4 py-2"
+                                  title="تعديل"
+                                >
+                                  <Edit2 className="w-4 h-4" />
+                                </Button>
+                              )}
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })}
+                  </TableBody>
+                </Table>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <Card className="bg-linear-to-br from-white to-blue-50 border border-blue-200 shadow-xl hover:shadow-2xl transition-all duration-300 rounded-2xl">
+            <CardContent className="flex items-center justify-between p-6">
+              <div className="text-blue-600 font-medium text-lg">
+                صفحة {page} من {totalPages} ({totalRecords} سجل)
+              </div>
+              <div className="flex gap-3">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setPage(page - 1)}
+                  disabled={page === 1}
+                  className="bg-linear-to-r from-gray-50 to-white hover:from-gray-100 hover:to-gray-50 text-gray-700 border border-gray-300 hover:border-gray-400 disabled:opacity-50 shadow-md hover:shadow-lg transition-all duration-200"
+                >
+                  <ChevronRight className="w-4 h-4" />
+                  السابق
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setPage(page + 1)}
+                  disabled={page === totalPages}
+                  className="bg-linear-to-r from-gray-50 to-white hover:from-gray-100 hover:to-gray-50 text-gray-700 border border-gray-300 hover:border-gray-400 disabled:opacity-50 shadow-md hover:shadow-lg transition-all duration-200"
+                >
+                  التالي
+                  <ChevronLeft className="w-4 h-4" />
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Save Modal */}
+        <Dialog open={showSaveModal} onOpenChange={setShowSaveModal}>
+          <DialogContent
+            className="bg-linear-to-br from-white to-blue-50 border border-blue-200 shadow-2xl rounded-2xl max-w-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <DialogHeader>
+              <DialogTitle className="text-2xl font-bold bg-linear-to-r from-blue-600 to-indigo-700 bg-clip-text text-transparent flex items-center gap-3">
+                <div className="w-8 h-8 rounded-full bg-linear-to-r from-blue-500 to-indigo-600 flex items-center justify-center shadow-md">
+                  <Save className="w-5 h-5 text-white" />
+                </div>
+                {selectedChange
+                  ? "حفظ التعديل"
+                  : `حفظ جميع التعديلات (${Object.keys(savedChanges).length})`}
+              </DialogTitle>
+            </DialogHeader>
+
+            <div className="space-y-6">
+              {selectedChange ? (
+                // Single change mode - show details of the specific row being saved
+                <div className="bg-linear-to-r from-blue-50 to-indigo-50 p-6 rounded-xl border border-blue-200 shadow-sm">
+                  <p className="text-blue-700 text-lg font-bold mb-4">
+                    تفاصيل التعديل:
+                  </p>
+                  <div className="text-gray-700 space-y-3">
+                    <div className="flex justify-between items-center p-3 bg-white rounded-lg shadow-sm">
+                      <span className="font-medium">المؤشر الرئيسي:</span>
+                      <span className="font-bold text-blue-600">
+                        {selectedChange.indicatorName}
+                      </span>
+                    </div>
+                    <div className="flex justify-between items-center p-3 bg-white rounded-lg shadow-sm">
+                      <span className="font-medium">المؤشر الفرعي:</span>
+                      <span className="font-bold text-blue-600">
+                        {selectedChange.filterName}
+                      </span>
+                    </div>
+                    <div className="flex justify-between items-center p-3 bg-white rounded-lg shadow-sm">
+                      <span className="font-medium">السنة:</span>
+                      <span className="font-bold text-blue-600">
+                        {selectedChange.year}
+                      </span>
+                    </div>
+                    <div className="flex justify-between items-center p-3 bg-white rounded-lg shadow-sm">
+                      <span className="font-medium">القيمة الحالية:</span>
+                      <span className="font-bold text-red-600">
+                        {selectedChange.rejectedValue.toLocaleString()}
+                      </span>
+                    </div>
+                    <div className="flex justify-between items-center p-3 bg-white rounded-lg shadow-sm">
+                      <span className="font-medium">القيمة الجديدة:</span>
+                      <span className="font-bold text-green-600">
+                        {editValues[
+                          `${selectedChange.indicatorId}-${selectedChange.year}-${selectedChange.filterName}`
+                        ]?.newValue?.toLocaleString()}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                // Batch mode for all saved changes
+                <div className="bg-linear-to-r from-green-50 to-emerald-50 p-6 rounded-xl border border-green-200 shadow-sm">
+                  <p className="text-green-700 text-lg font-bold mb-4">
+                    سيتم تحديث التعليق لجميع التعديلات التالية:
+                  </p>
+                  <div className="max-h-40 overflow-y-auto space-y-2">
+                    {Object.values(savedChanges).map((savedChange, index) => (
+                      <div
+                        key={index}
+                        className="flex justify-between items-center p-3 bg-white rounded-lg shadow-sm"
+                      >
+                        <span className="font-medium text-gray-700">
+                          {savedChange.change.indicatorName} -{" "}
+                          {savedChange.change.filterName} (
+                          {savedChange.change.year})
+                        </span>
+                        <span className="font-bold text-green-600">
+                          {savedChange.newValue.toLocaleString()}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              <div>
+                <Label className="text-blue-700 text-lg font-bold mb-3 block">
+                  تعليق جديد <span className="text-red-500">*</span>
+                </Label>
+                <Textarea
+                  placeholder="أدخل تعليق على التعديل الجديد..."
+                  value={newComment}
+                  onChange={(e) => setNewComment(e.target.value)}
+                  className="bg-linear-to-r from-white to-blue-50 border-blue-300 text-gray-900 min-h-[120px] placeholder:text-blue-500 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 shadow-sm transition-all duration-200"
+                  required
+                />
+              </div>
+            </div>
+
+            <DialogFooter className="gap-3 mt-6">
+              <Button
+                variant="outline"
                 disabled={isSubmitting}
-                className="bg-blue-600 hover:bg-blue-700 text-white"
+                onClick={() => setShowSaveModal(false)}
+                className="bg-linear-to-r from-gray-50 to-white hover:from-gray-100 hover:to-gray-50 text-gray-700 border border-gray-300 hover:border-gray-400 disabled:opacity-50 shadow-md hover:shadow-lg transition-all duration-200"
+              >
+                <X className="w-4 h-4 ml-2" />
+                إلغاء
+              </Button>
+              <Button
+                onClick={handleModalSubmit}
+                disabled={isSubmitting || !newComment.trim()}
+                className="bg-linear-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white disabled:opacity-50 shadow-lg hover:shadow-xl transition-all duration-300"
               >
                 {isSubmitting ? (
                   <>
                     <Loader2 className="w-4 h-4 ml-2 animate-spin" />
-                    جاري التطبيق...
+                    جاري الحفظ...
                   </>
                 ) : (
                   <>
                     <Save className="w-4 h-4 ml-2" />
-                    تطبيق التغييرات ({Object.keys(savedChanges).length})
+                    حفظ التعديل
                   </>
                 )}
               </Button>
-            )}
-
-            {(Object.keys(editValues).length > 0 ||
-              Object.keys(savedChanges).length > 0) && (
-              <Button
-                onClick={() => {
-                  setEditValues({});
-                  setEditingRow(null);
-                  setSavedChanges({});
-                }}
-                variant="outline"
-                className="text-white border-none bg-red-600 hover:bg-red-700 hover:text-white"
-              >
-                <X className="w-4 h-4 ml-2" />
-                مسح جميع التعديلات والمحفوظات
-              </Button>
-            )}
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Data Table */}
-      <Card className="border-[#0986ed]/30 bg-[#053964]/95 backdrop-blur">
-        <CardContent className="p-0">
-          {loading ? (
-            <div className="flex items-center justify-center p-8">
-              <Loader2 className="w-8 h-8 animate-spin text-blue-400" />
-              <span className="mr-2 text-blue-300">جاري تحميل البيانات...</span>
-            </div>
-          ) : rejectedChanges.length === 0 ? (
-            <div className="text-center py-8">
-              <p className="text-blue-300 text-lg">لا توجد تغييرات مرفوضة</p>
-            </div>
-          ) : (
-            <Table>
-              <TableHeader>
-                <TableRow className="border-blue-800/40">
-                  <TableHead className="text-blue-300">اسم النشرة</TableHead>
-                  <TableHead className="text-blue-300">
-                    المؤشر الرئيسي
-                  </TableHead>
-                  <TableHead className="text-blue-300">المؤشر الفرعي</TableHead>
-                  <TableHead className="text-blue-300">السنة</TableHead>
-                  <TableHead className="text-blue-300">الشهر</TableHead>
-                  <TableHead className="text-blue-300">الربع</TableHead>
-                  <TableHead className="text-blue-300">
-                    القيمة القديمة
-                  </TableHead>
-                  <TableHead className="text-blue-300">
-                    القيمة المرفوضة
-                  </TableHead>
-                  <TableHead className="text-blue-300">التعليق</TableHead>
-                  <TableHead className="text-blue-300">رفض بواسطة</TableHead>
-                  <TableHead className="text-blue-300 text-center">
-                    الإجراءات
-                  </TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {rejectedChanges.map((change, index) => {
-                  const key = `${change.indicatorId}-${change.year}-${change.filterName}`;
-                  const isEditing = editingRow === key;
-                  const editData = editValues[key];
-                  const isSaved = savedChanges[key];
-
-                  return (
-                    <TableRow
-                      key={index}
-                      className={`border-blue-800/30 hover:bg-blue-900/20 ${
-                        isSaved ? "bg-green-900/20" : ""
-                      }`}
-                    >
-                      <TableCell className="text-white">
-                        {change.publicationName}
-                      </TableCell>
-                      <TableCell className="text-white">
-                        {change.indicatorName}
-                      </TableCell>
-                      <TableCell className="text-white">
-                        {change.filterName}
-                      </TableCell>
-                      <TableCell className="text-white">
-                        {change.year}
-                      </TableCell>
-                      <TableCell className="text-white">
-                        {change.month}
-                      </TableCell>
-                      <TableCell className="text-white">
-                        {change.quarter}
-                      </TableCell>
-                      <TableCell className="text-white">
-                        {change.oldValue.toLocaleString()}
-                      </TableCell>
-                      <TableCell>
-                        {isEditing ? (
-                          <Input
-                            type="number"
-                            value={editData?.newValue || change.rejectedValue}
-                            onChange={(e) =>
-                              handleInputChange(
-                                key,
-                                "newValue",
-                                Number(e.target.value)
-                              )
-                            }
-                            className="w-24 h-8 bg-[#053964]/50 border-blue-700/40 text-white focus:border-[#0986ED] focus:ring-2 focus:ring-[#0986ED]/30 focus:outline-none"
-                          />
-                        ) : isSaved ? (
-                          <span className="text-green-300 font-semibold">
-                            {savedChanges[key].newValue.toLocaleString()}
-                          </span>
-                        ) : (
-                          <span className="text-yellow-300">
-                            {change.rejectedValue.toLocaleString()}
-                          </span>
-                        )}
-                      </TableCell>
-                      <TableCell
-                        className="text-white max-w-[200px] truncate"
-                        title={
-                          isSaved ? savedChanges[key].comment : change.comment
-                        }
-                      >
-                        {isSaved ? (
-                          <span className="text-green-300">
-                            {savedChanges[key].comment}
-                          </span>
-                        ) : (
-                          change.comment
-                        )}
-                      </TableCell>
-                      <TableCell className="text-white">
-                        {change.rejectedByName || "غير محدد"}
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex gap-2 justify-center">
-                          {isSaved ? (
-                            <span className="text-green-300 text-xs px-2 py-1 bg-green-900/20 rounded">
-                              تم التعديل
-                            </span>
-                          ) : isEditing ? (
-                            <>
-                              <Button
-                                size="sm"
-                                onClick={() => handleSaveClick(change)}
-                                className="h-8 w-8 p-0 bg-green-600 hover:bg-green-700 text-white"
-                                title="حفظ"
-                              >
-                                <Save className="w-4 h-4" />
-                              </Button>
-                              <Button
-                                size="sm"
-                                variant="outline"
-                                onClick={cancelEdit}
-                                className="h-8 w-8 p-0 text-white border-none bg-red-600 hover:bg-red-700 hover:text-white"
-                                title="إلغاء"
-                              >
-                                <X className="w-4 h-4" />
-                              </Button>
-                            </>
-                          ) : (
-                            <Button
-                              size="sm"
-                              onClick={() => startEdit(change)}
-                              className="h-8 w-8 p-0 bg-blue-600 hover:bg-blue-700 text-white"
-                              title="تعديل"
-                            >
-                              <Edit2 className="w-4 h-4" />
-                            </Button>
-                          )}
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  );
-                })}
-              </TableBody>
-            </Table>
-          )}
-        </CardContent>
-      </Card>
-
-      {/* Pagination */}
-      {totalPages > 1 && (
-        <Card className="border-[#0986ed]/30 bg-[#053964]/95 backdrop-blur">
-          <CardContent className="flex items-center justify-between p-4">
-            <div className="text-blue-300">
-              صفحة {page} من {totalPages} ({totalRecords} سجل)
-            </div>
-            <div className="flex gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setPage(page - 1)}
-                disabled={page === 1}
-                className="border-blue-700/50 text-blue-300 hover:text-white disabled:opacity-50"
-              >
-                <ChevronRight className="w-4 h-4" />
-                السابق
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setPage(page + 1)}
-                disabled={page === totalPages}
-                className="border-blue-700/50 text-blue-300 hover:text-white disabled:opacity-50"
-              >
-                التالي
-                <ChevronLeft className="w-4 h-4" />
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
-      {/* Save Modal */}
-      <Dialog open={showSaveModal} onOpenChange={setShowSaveModal}>
-        <DialogContent
-          className="border-[#0986ed]/30 bg-[#1a4e67f2]/95 backdrop-blur shadow-2xl"
-          onClick={(e) => e.stopPropagation()}
-        >
-          <DialogHeader>
-            <DialogTitle className="text-white flex items-center gap-2">
-              <Save className="w-5 h-5 text-blue-300" />
-              {selectedChange
-                ? "حفظ التعديل"
-                : `حفظ جميع التعديلات (${Object.keys(savedChanges).length})`}
-            </DialogTitle>
-          </DialogHeader>
-
-          <div className="space-y-4">
-            {selectedChange ? (
-              // Single change mode - show details of the specific row being saved
-              <div className="bg-blue-900/20 p-3 rounded border border-blue-700/40">
-                <p className="text-blue-300 text-sm mb-2">تفاصيل التعديل:</p>
-                <div className="text-blue-200 text-sm space-y-1">
-                  <div className="flex justify-between">
-                    <span>المؤشر الرئيسي:</span>
-                    <span className="font-semibold">
-                      {selectedChange.indicatorName}
-                    </span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>المؤشر الفرعي:</span>
-                    <span className="font-semibold">
-                      {selectedChange.filterName}
-                    </span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>السنة:</span>
-                    <span className="font-semibold">{selectedChange.year}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>القيمة الحالية:</span>
-                    <span className="font-semibold text-red-300">
-                      {selectedChange.rejectedValue.toLocaleString()}
-                    </span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>القيمة الجديدة:</span>
-                    <span className="font-semibold text-green-300">
-                      {editValues[
-                        `${selectedChange.indicatorId}-${selectedChange.year}-${selectedChange.filterName}`
-                      ]?.newValue?.toLocaleString()}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            ) : (
-              // Batch mode for all saved changes
-              <div className="bg-blue-900/20 p-3 rounded border border-blue-700/40">
-                <p className="text-blue-300 text-sm mb-2">
-                  سيتم تحديث التعليق لجميع التعديلات التالية:
-                </p>
-                <ul className="text-blue-200 text-sm space-y-1 max-h-32 overflow-y-auto">
-                  {Object.values(savedChanges).map((savedChange, index) => (
-                    <li key={index} className="flex justify-between">
-                      <span>
-                        {savedChange.change.indicatorName} -{" "}
-                        {savedChange.change.filterName} (
-                        {savedChange.change.year})
-                      </span>
-                      <span className="font-semibold text-green-300">
-                        {savedChange.newValue.toLocaleString()}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-
-            <div>
-              <Label className="text-blue-300 mb-2 block">
-                تعليق جديد <span className="text-red-400">*</span>
-              </Label>
-              <Textarea
-                placeholder="أدخل تعليق على التعديل الجديد..."
-                value={newComment}
-                onChange={(e) => setNewComment(e.target.value)}
-                className="bg-[#053964]/50 border-blue-700/40 text-white min-h-[100px] placeholder:text-white/70 focus:border-[#0986ED] focus:ring-2 focus:ring-[#0986ED]/30 focus:outline-none transition-all duration-200 backdrop-blur-sm"
-                required
-              />
-            </div>
-          </div>
-
-          <DialogFooter className="gap-2">
-            <Button
-              variant="outline"
-              disabled={isSubmitting}
-              onClick={() => setShowSaveModal(false)}
-              className="border-blue-700/50 text-blue-300 hover:text-white hover:bg-blue-700/20 disabled:opacity-50"
-            >
-              <X className="w-4 h-4 ml-2" />
-              إلغاء
-            </Button>
-            <Button
-              onClick={handleModalSubmit}
-              disabled={isSubmitting || !newComment.trim()}
-              className="bg-green-600 hover:bg-green-700 text-white disabled:opacity-50"
-            >
-              {isSubmitting ? (
-                <>
-                  <Loader2 className="w-4 h-4 ml-2 animate-spin" />
-                  جاري الحفظ...
-                </>
-              ) : (
-                <>
-                  <Save className="w-4 h-4 ml-2" />
-                  حفظ التعديل
-                </>
-              )}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      </div>
     </div>
   );
 }

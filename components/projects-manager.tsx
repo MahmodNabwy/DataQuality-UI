@@ -220,18 +220,14 @@ export default function ProjectsManager({
   );
 
   return (
-    <div className="min-h-screen  from-[#0986ed] via-[#0986ed]/20 to-[#0986ed] p-6">
+    <div className="min-h-screen bg-linear-to-br from-blue-50 via-indigo-50 to-purple-50 p-6">
       <div className="container mx-auto max-w-6xl">
-        <Card
-          className="border border-blue-700/40 rounded-2xl 
-  bg-linear-to-br from-[#053964] via-[#0986ed]/10 to-[#0b5fa8]/40 
-  shadow-lg shadow-blue-900/30 backdrop-blur-sm mb-6"
-        >
-          <CardHeader>
-            <CardTitle className="text-2xl text-white">
+        <Card className="bg-linear-to-br from-white to-blue-50 px-4 py-4  border border-blue-200 shadow-xl hover:shadow-2xl transition-all duration-300 rounded-2xl mb-6">
+          <CardHeader className="bg-linear-to-r from-blue-50 to-indigo-50 border-b border-blue-100 rounded-t-2xl">
+            <CardTitle className="text-2xl font-bold bg-linear-to-r from-blue-600 to-indigo-700 bg-clip-text text-transparent">
               إنشاء مشروع جديد
             </CardTitle>
-            <CardDescription className="text-blue-300">
+            <CardDescription className="text-blue-600 text-lg">
               ارفع ملف Excel جديد لبدء فحص جودة البيانات
             </CardDescription>
           </CardHeader>
@@ -239,15 +235,15 @@ export default function ProjectsManager({
             {showUploader ? (
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-blue-200 mb-2">
-                    أسم النشرة <span className="text-red-400">*</span>
+                  <label className="block text-sm font-bold text-blue-700 mb-2">
+                    أسم النشرة <span className="text-red-500">*</span>
                   </label>
                   <Input
                     type="text"
                     placeholder="أدخل اسم النشرة..."
                     value={publicationName}
                     onChange={(e) => setPublicationName(e.target.value)}
-                    className="bg-white border-blue-700/50 text-black placeholder:text-black"
+                    className="bg-white border-blue-300 text-gray-900 placeholder:text-blue-500 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 shadow-sm transition-all duration-200"
                     required
                     disabled={isProcessing || isBackendProcessing}
                   />
@@ -262,7 +258,7 @@ export default function ProjectsManager({
                     setShowUploader(false);
                     setPublicationName(""); // Clear publication name when canceling
                   }}
-                  className="w-full bg-[#F4F4F4] text-black hover:text-white"
+                  className="w-full bg-linear-to-r from-gray-50 to-white hover:from-gray-100 hover:to-gray-50 text-gray-700 border border-gray-300 hover:border-gray-400 shadow-md hover:shadow-lg transition-all duration-200"
                   disabled={isProcessing || isBackendProcessing}
                 >
                   إلغاء
@@ -271,18 +267,7 @@ export default function ProjectsManager({
             ) : (
               <Button
                 onClick={() => setShowUploader(true)}
-                className=" w-full
-  px-6 py-3 rounded-xl font-semibold
-  bg-linear-to-br from-[#053964] via-[#0986ed]/20 to-[#0b5fa8]/50
-  text-blue-100
-  shadow-md shadow-blue-900/40
-  backdrop-blur-sm
-  border border-blue-700/30
-  hover:from-[#064478] hover:via-[#0a8cf2]/20 hover:to-[#0c6abf]/50
-  hover:shadow-blue-900/50
-  active:scale-95
-  transition-all duration-300
-"
+                className="w-full bg-linear-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white font-semibold py-4 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 active:scale-95"
                 disabled={isBackendProcessing}
               >
                 <UploadIcon className="w-6 h-6" />
@@ -295,27 +280,23 @@ export default function ProjectsManager({
           </CardContent>
         </Card>
 
-        <Card
-          className="border border-blue-700/40 rounded-2xl 
-  bg-linear-to-br from-[#053964] via-[#0986ed]/10 to-[#0b5fa8]/40 
-  shadow-lg shadow-blue-900/30 backdrop-blur-sm mb-6"
-        >
-          <CardHeader>
-            <CardTitle className="text-2xl text-white">
+        <Card className="bg-linear-to-br  from-white to-blue-50 px-4 py-4 border border-blue-200 shadow-xl hover:shadow-2xl transition-all duration-300 rounded-2xl mb-6">
+          <CardHeader className="bg-linear-to-r from-blue-50 to-indigo-50  border-b border-blue-100 rounded-t-2xl">
+            <CardTitle className="text-2xl font-bold bg-linear-to-r from-blue-600 to-indigo-700 bg-clip-text text-transparent">
               المشاريع المحفوظة
             </CardTitle>
-            <CardDescription className="text-blue-300">
+            <CardDescription className="text-blue-600 text-lg font-medium">
               ({projects.length}) مشروع
             </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="relative">
-              <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 text-blue-400 w-4 h-4" />
+              <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 text-blue-500 w-5 h-5" />
               <Input
                 placeholder="ابحث عن مشروع..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pr-10 bg-white border-blue-700/50 text-black-100 placeholder:text-black"
+                className="pr-12 bg-linear-to-r from-white to-blue-50 border-blue-300 text-gray-900 placeholder:text-blue-500 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 shadow-sm transition-all duration-200 text-lg py-3"
               />
               {searchQuery && (
                 <Button
@@ -332,19 +313,17 @@ export default function ProjectsManager({
         </Card>
 
         {filteredProjects.length === 0 ? (
-          <Card
-            className="border border-blue-700/40 rounded-2xl 
-  bg-linear-to-br from-[#053964] via-[#0986ed]/10 to-[#0b5fa8]/40 
-  shadow-lg shadow-blue-900/30 backdrop-blur-sm"
-          >
-            <CardContent className="flex flex-col items-center justify-center py-16">
-              <FolderOpen className="w-16 h-16 text-blue-400 mb-4" />
-              <p className="text-xl text-white mb-2">
+          <Card className="bg-linear-to-br from-white to-blue-50 border border-blue-200 shadow-xl rounded-2xl">
+            <CardContent className="flex flex-col items-center justify-center py-20">
+              <div className="w-20 h-20 rounded-full bg-linear-to-r from-blue-100 to-indigo-100 flex items-center justify-center mb-6 shadow-lg">
+                <FolderOpen className="w-10 h-10 text-blue-500" />
+              </div>
+              <p className="text-2xl font-bold text-gray-800 mb-3">
                 {searchQuery
                   ? "لا توجد مشاريع مطابقة للبحث"
                   : "لا توجد مشاريع محفوظة"}
               </p>
-              <p className="text-white">
+              <p className="text-blue-600 text-lg">
                 {searchQuery
                   ? "جرب كلمات بحث أخرى"
                   : "ابدأ بإنشاء مشروع جديد من الأعلى"}
@@ -357,13 +336,11 @@ export default function ProjectsManager({
               return (
                 <Card
                   key={project.id}
-                  className="border border-blue-700/40 rounded-2xl 
-  bg-linear-to-br from-[#053964] via-[#0986ed]/10 to-[#0b5fa8]/40 
-  shadow-lg shadow-blue-900/30 backdrop-blur-sm  group"
+                  className="bg-linear-to-br from-white to-blue-50 border border-blue-200 shadow-xl hover:shadow-2xl transition-all duration-300 rounded-2xl group hover:scale-105"
                 >
-                  <CardContent className="p-4">
-                    <div className="flex items-start justify-between mb-4">
-                      <div className="flex items-center gap-3 flex-1">
+                  <CardContent className="p-6">
+                    <div className="flex items-start justify-between mb-6">
+                      <div className="flex items-center gap-4 flex-1">
                         <Button
                           variant="ghost"
                           size="lg"
@@ -371,39 +348,53 @@ export default function ProjectsManager({
                             e.stopPropagation();
                             setProjectToDelete(project.id);
                           }}
-                          className="text-red-400 hover:text-red-300 hover:bg-red-900/20"
+                          className="text-red-500 hover:text-red-600 hover:bg-red-50 rounded-full p-2 transition-all duration-200"
                         >
                           <Trash2 className="w-5 h-5" />
                         </Button>
                         <div className="flex-1 min-w-0">
-                          <h3 className="text-lg font-semibold text-white truncate">
+                          <h3 className="text-xl font-bold bg-linear-to-r from-blue-600 to-indigo-700 bg-clip-text text-transparent truncate">
                             اسم النشرة : {project.publicationName}
                           </h3>
                         </div>
                       </div>
                     </div>
 
-                    <div className="space-y-2 mb-4 flex justify-around">
-                      <div className="flex items-center gap-2 text-sm text-white">
-                        <Calendar className="w-4 h-4" />
-                        <span>
-                          تاريخ الرفع: {formatDate(project.uploadDate)}
-                        </span>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                      <div className="flex items-center gap-3 p-3 bg-linear-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-200">
+                        <div className="w-8 h-8 rounded-full bg-linear-to-r from-blue-500 to-indigo-600 flex items-center justify-center shadow-md">
+                          <Calendar className="w-4 h-4 text-white" />
+                        </div>
+                        <div>
+                          <p className="text-sm text-blue-600 font-medium">
+                            تاريخ الرفع
+                          </p>
+                          <p className="text-gray-800 font-semibold">
+                            {formatDate(project.uploadDate)}
+                          </p>
+                        </div>
                       </div>
-                      <div className="flex items-center gap-2 text-sm text-white">
-                        <Clock className="w-4 h-4" />
-                        <span>
-                          آخر تعديل: {formatDate(project.lastModified)}
-                        </span>
+                      <div className="flex items-center gap-3 p-3 bg-linear-to-r from-purple-50 to-pink-50 rounded-lg border border-purple-200">
+                        <div className="w-8 h-8 rounded-full bg-linear-to-r from-purple-500 to-pink-600 flex items-center justify-center shadow-md">
+                          <Clock className="w-4 h-4 text-white" />
+                        </div>
+                        <div>
+                          <p className="text-sm text-purple-600 font-medium">
+                            آخر تعديل
+                          </p>
+                          <p className="text-gray-800 font-semibold">
+                            {formatDate(project.lastModified)}
+                          </p>
+                        </div>
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-2 mb-4">
+                    <div className="flex items-center gap-2 mb-6">
                       {project.qaResults &&
                         project.qaResults.issues &&
                         project.qaResults.issues.length > 0 && (
-                          <Badge className="bg-amber-600 text-white">
-                            <AlertCircle className="w-3 h-3 mr-1" />
+                          <Badge className="bg-linear-to-r from-amber-500 to-orange-500 text-white shadow-md px-3 py-1">
+                            <AlertCircle className="w-4 h-4 mr-2" />
                             {project.qaResults.issues.length} مشكلة
                           </Badge>
                         )}
@@ -411,9 +402,9 @@ export default function ProjectsManager({
 
                     <Button
                       onClick={() => onProjectSelect(project)}
-                      className="w-full cursor-pointer bg-[#1f66a0] hover:bg-[#398cd0] text-white"
+                      className="w-full bg-linear-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white font-semibold py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 active:scale-95"
                     >
-                      <FolderOpen className="w-4 h-4 mr-2" />
+                      <FolderOpen className="w-5 h-5 mr-2" />
                       فتح المشروع
                     </Button>
                   </CardContent>
@@ -428,25 +419,25 @@ export default function ProjectsManager({
         open={projectToDelete !== null}
         onOpenChange={() => setProjectToDelete(null)}
       >
-        <AlertDialogContent className="bg-slate-900 border-red-800/50">
+        <AlertDialogContent className="bg-linear-to-br from-white to-red-50 border-red-300 shadow-2xl">
           <AlertDialogHeader>
-            <AlertDialogTitle className="text-red-100">
+            <AlertDialogTitle className="text-2xl font-bold bg-linear-to-r from-red-600 to-red-700 bg-clip-text text-transparent">
               تأكيد الحذف
             </AlertDialogTitle>
-            <AlertDialogDescription className="text-red-300">
+            <AlertDialogDescription className="text-gray-700 text-lg leading-relaxed">
               هل أنت متأكد من حذف هذا المشروع؟ سيتم حذف جميع البيانات والتعديلات
               وسجل التدقيق المرتبط به. هذا الإجراء لا يمكن التراجع عنه.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel className="bg-slate-800 text-slate-100 hover:bg-slate-700">
+            <AlertDialogCancel className="bg-linear-to-r from-gray-50 to-white hover:from-gray-100 hover:to-gray-50 text-gray-700 border border-gray-300 hover:border-gray-400 shadow-md hover:shadow-lg transition-all duration-200">
               إلغاء
             </AlertDialogCancel>
             <AlertDialogAction
               onClick={() =>
                 projectToDelete && handleDeleteProject(projectToDelete)
               }
-              className="bg-red-600 hover:bg-red-700 text-white"
+              className="bg-linear-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white shadow-lg hover:shadow-xl transition-all duration-300"
             >
               حذف
             </AlertDialogAction>

@@ -278,7 +278,6 @@ export function DataEditor({
         (d) => d.year === item.year && d.filterName === item.filterName
       );
 
-      
       // Check for potential duplicate IDs
       const allMatchingEntries = data.filter(
         (d) => d.filterName === item.filterName
@@ -502,14 +501,14 @@ export function DataEditor({
 
   return (
     <>
-      <Card className="border-blue-800/50 bg-blue-950/40 backdrop-blur">
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <div className="flex gap-2">
+      <Card className="bg-linear-to-br from-white to-gray-50 border border-gray-200 shadow-xl hover:shadow-2xl transition-all duration-300">
+        <CardHeader className="bg-linear-to-r from-blue-50 to-indigo-50 border-b border-gray-100 pb-6">
+          <div className="flex items-center pt-8 justify-between">
+            <div className="flex gap-3">
               <Button
                 onClick={handleSave}
                 disabled={totalEdits === 0}
-                className="bg-green-600 hover:bg-green-700 text-white"
+                className="bg-linear-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white border-0 shadow-md hover:shadow-lg transition-all duration-200 disabled:opacity-50"
               >
                 <Save className="w-4 h-4 ml-2" />
                 حفظ التعديلات
@@ -517,38 +516,38 @@ export function DataEditor({
               <Button
                 onClick={onCancel}
                 variant="outline"
-                className="border-blue-700/50 text-blue-300 hover:text-white hover:bg-blue-700/20 hover:border-blue-600/70 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-md hover:shadow-lg active:scale-95"
+                className="bg-linear-to-r from-gray-50 to-white hover:from-gray-100 hover:to-gray-50 text-gray-700 border border-gray-300 hover:border-gray-400 shadow-md hover:shadow-lg transition-all duration-200"
               >
                 <X className="w-4 h-4 ml-2" />
                 إلغاء
               </Button>
             </div>
 
-            <div>
-              <CardTitle className="text-blue-100">
+            <div className="text-right">
+              <CardTitle className="text-xl font-bold bg-linear-to-r from-blue-600 to-indigo-700 bg-clip-text text-transparent">
                 تعديل البيانات: {indicatorName}
               </CardTitle>
               {totalEdits > 0 && (
-                <Badge className="mt-2 bg-yellow-500/20 border-yellow-500/50 text-yellow-300">
+                <Badge className="mt-2 bg-linear-to-r from-yellow-500 to-amber-500 text-white border-0 shadow-md">
                   {totalEdits} تعديل معلق
                 </Badge>
               )}
             </div>
           </div>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-6">
           <div className="flex gap-6">
             {/* Quick Year Input Panel - Takes 1/4 of space */}
             <div className="w-1/4 shrink-0">
-              <Card className="border-green-800/50 bg-green-950/20 sticky top-4">
-                <CardHeader className="">
-                  <CardTitle className="text-green-100 text-base">
+              <Card className="bg-linear-to-br from-blue-50 to-purple-50 border border-blue-200 shadow-lg sticky top-4">
+                <CardHeader className="pb-4">
+                  <CardTitle className="text-lg font-bold bg-linear-to-r from-blue-600 to-purple-700 bg-clip-text text-transparent">
                     إدخال سريع حسب السنة
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div>
-                    <label className="text-green-300 text-sm mb-2 block">
+                    <label className="text-blue-700 text-sm mb-2 block font-medium">
                       اختر السنة
                     </label>
                     <Select
@@ -558,7 +557,7 @@ export function DataEditor({
                         setYearInputs(new Map());
                       }}
                     >
-                      <SelectTrigger className="bg-green-950/40 border-green-800/50 text-green-100">
+                      <SelectTrigger className="bg-white border-blue-300 text-blue-900 hover:border-blue-400 focus:ring-2 focus:ring-blue-200 shadow-sm">
                         <SelectValue placeholder="اختر سنة..." />
                       </SelectTrigger>
                       <SelectContent>
@@ -587,26 +586,26 @@ export function DataEditor({
                             currentValue === 0 || currentValue === null;
 
                           return (
-                            <div key={filterName} className="space-y-1">
+                            <div key={filterName} className="space-y-2">
                               <label
-                                className="text-green-200 text-xs truncate flex items-center gap-1"
+                                className="text-emerald-700 text-sm truncate flex items-center gap-2 font-medium"
                                 title={filterName}
                               >
-                                {filterName}
+                                <span className="truncate">{filterName}</span>
                                 {isMissing && !isAlreadyEdited && (
-                                  <span className="text-red-400 text-xs">
-                                    (ناقص)
-                                  </span>
+                                  <Badge className="text-xs bg-red-100 border-red-300 text-red-700">
+                                    ناقص
+                                  </Badge>
                                 )}
                                 {hasAuditHistory(filterName, selectedYear) && (
                                   <button
                                     onClick={() =>
                                       openAuditModal(filterName, selectedYear)
                                     }
-                                    className="text-blue-400 hover:text-blue-300 transition-colors"
+                                    className="text-blue-500 hover:text-blue-600 transition-colors"
                                     title="عرض تاريخ التعديلات"
                                   >
-                                    <History className="w-3 h-3" />
+                                    <History className="w-4 h-4" />
                                   </button>
                                 )}
                               </label>
@@ -630,29 +629,29 @@ export function DataEditor({
                                     e.target.value
                                   )
                                 }
-                                className={`h-8 text-sm bg-green-950/40 border-green-800/50 text-green-100 placeholder:text-green-300/70 focus:border-green-400 focus:ring-2 focus:ring-green-400/30 focus:outline-none transition-all duration-200 ${
+                                className={`h-9 text-sm bg-white border-emerald-300 text-emerald-900 placeholder:text-emerald-500 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 transition-all duration-200 shadow-sm ${
                                   isAlreadyEdited
-                                    ? "border-yellow-500/50 focus:border-yellow-400 focus:ring-yellow-400/30"
+                                    ? "border-yellow-400 focus:border-yellow-500 focus:ring-yellow-200"
                                     : isMissing
-                                    ? "border-red-500/50 focus:border-red-400 focus:ring-red-400/30"
+                                    ? "border-red-400 focus:border-red-500 focus:ring-red-200"
                                     : ""
                                 }`}
                               />
                               {isAlreadyEdited && (
-                                <span className="text-yellow-400 text-xs">
+                                <Badge className="text-xs bg-yellow-100 border-yellow-300 text-yellow-700">
                                   معدّل مسبقاً
-                                </span>
+                                </Badge>
                               )}
                             </div>
                           );
                         })}
                       </div>
 
-                      <div className="flex gap-2 pt-2 border-t border-green-800/30">
+                      <div className="flex gap-2 pt-4 border-t border-emerald-200">
                         <Button
                           onClick={applyYearInputs}
                           size="sm"
-                          className="flex-1 bg-green-600 hover:bg-green-700 text-white"
+                          className="flex-1 bg-linear-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white shadow-md hover:shadow-lg transition-all duration-200"
                         >
                           تطبيق
                         </Button>
@@ -660,7 +659,7 @@ export function DataEditor({
                           onClick={clearYearInputs}
                           size="sm"
                           variant="outline"
-                          className="flex-1 border-green-700/50 text-green-300 bg-transparent"
+                          className="flex-1 border-emerald-300 text-emerald-700 hover:bg-emerald-50 shadow-sm hover:shadow-md transition-all duration-200"
                         >
                           مسح
                         </Button>
@@ -681,11 +680,14 @@ export function DataEditor({
                     );
 
                     return (
-                      <div key={filterName} className="space-y-2">
-                        <h4 className="text-blue-200 font-semibold text-xl mb-2">
-                          {filterName}
-                        </h4>
-                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+                      <div key={filterName} className="space-y-3">
+                        <div className="flex justify-end text-right items-center gap-3">
+                          <h4 className="text-xl font-bold bg-linear-to-r from-gray-700 to-gray-900 bg-clip-text text-transparent">
+                            {filterName}
+                          </h4>
+                          <div className="w-1 h-6 bg-linear-to-b from-blue-500 to-blue-600 rounded-full"></div>
+                        </div>
+                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                           {sortedItems.map((item) => {
                             const key = `${filterName}-${item.year}`;
                             const currentValue = getValue(
@@ -701,47 +703,47 @@ export function DataEditor({
                             return (
                               <div
                                 key={key}
-                                className={`p-3 rounded-lg border transition-all ${
+                                className={`p-4 rounded-xl border transition-all duration-200 shadow-md hover:shadow-lg ${
                                   edited
-                                    ? "bg-[#e3a301] border-[#e3a301]" //بيانات معدلة
+                                    ? "bg-gradient-to-br from-yellow-50 to-amber-50 border-yellow-300 shadow-yellow-200/50" //بيانات معدلة
                                     : isMissingYear &&
                                       hasAuditHistory(filterName, item.year) //بيانات في إنتظار الفحص
-                                    ? "bg-[#e3a301] border-[#e3a301]"
+                                    ? "bg-gradient-to-br from-orange-50 to-orange-100 border-orange-300 shadow-orange-200/50"
                                     : !isMissingYear &&
                                       !hasAuditHistory(filterName, item.year) //بيانات صحيحة
-                                    ? "bg-blue-900/30 border-blue-800/40 hover:border-blue-700/60"
+                                    ? "bg-gradient-to-br from-blue-50 to-blue-100 border-blue-300 hover:border-blue-400 shadow-blue-200/50"
                                     : isMissingYear &&
                                       !hasAuditHistory(filterName, item.year) //بيانات ناقصة
-                                    ? "bg-red-900/30 border-red-800/40 hover:border-red-700/60"
-                                    : "bg-blue-500"
+                                    ? "bg-gradient-to-br from-red-50 to-red-100 border-red-300 shadow-red-200/50"
+                                    : "bg-gradient-to-br from-blue-50 to-blue-100 border-blue-300"
                                 }`}
                               >
-                                <div className="flex items-center justify-between mb-1">
-                                  <div className="flex items-center gap-1">
+                                <div className="flex items-center justify-between mb-3">
+                                  <div className="flex items-center gap-2">
                                     <span
-                                      className={`text-[16px] font-semibold
+                                      className={`text-lg font-bold
                                       ${
                                         edited
-                                          ? "text-white" //بيانات معدلة
+                                          ? "text-yellow-800" //بيانات معدلة
                                           : isMissingYear &&
                                             hasAuditHistory(
                                               filterName,
                                               item.year
                                             ) //بيانات في إنتظار الفحص
-                                          ? "text-white"
+                                          ? "text-orange-800"
                                           : !isMissingYear &&
                                             !hasAuditHistory(
                                               filterName,
                                               item.year
                                             ) //بيانات صحيحة
-                                          ? "text-blue-100"
+                                          ? "text-blue-800"
                                           : isMissingYear &&
                                             !hasAuditHistory(
                                               filterName,
                                               item.year
                                             ) //بيانات ناقصة
-                                          ? "text-white"
-                                          : "text-white"
+                                          ? "text-red-800"
+                                          : "text-blue-800"
                                       }`}
                                     >
                                       {item.year}
@@ -751,30 +753,7 @@ export function DataEditor({
                                         onClick={() =>
                                           openAuditModal(filterName, item.year)
                                         }
-                                        className={`text-[16px] font-semibold
-                                      ${
-                                        edited
-                                          ? "text-white" //بيانات معدلة
-                                          : isMissingYear &&
-                                            hasAuditHistory(
-                                              filterName,
-                                              item.year
-                                            ) //بيانات في إنتظار الفحص
-                                          ? "text-white"
-                                          : !isMissingYear &&
-                                            !hasAuditHistory(
-                                              filterName,
-                                              item.year
-                                            ) //بيانات صحيحة
-                                          ? "text-blue-100"
-                                          : isMissingYear &&
-                                            !hasAuditHistory(
-                                              filterName,
-                                              item.year
-                                            ) //بيانات ناقصة
-                                          ? "text-white"
-                                          : "text-white"
-                                      }`}
+                                        className="text-blue-600 hover:text-blue-700 p-1 rounded-full hover:bg-blue-100 transition-all duration-200"
                                         title="عرض تاريخ التعديلات"
                                       >
                                         <History className="w-4 h-4" />
@@ -786,23 +765,23 @@ export function DataEditor({
                                       onClick={() =>
                                         resetValue(filterName, item.year)
                                       }
-                                      className="text-blue-400 hover:text-blue-300"
+                                      className="text-blue-600 hover:text-blue-700 p-1 rounded-full hover:bg-blue-100 transition-all duration-200"
                                       title="إعادة تعيين"
                                     >
-                                      <RotateCcw className="w-3 h-3" />
+                                      <RotateCcw className="w-4 h-4" />
                                     </button>
                                   )}
                                 </div>
 
                                 {isEditing ? (
-                                  <div className="space-y-2">
+                                  <div className="space-y-3">
                                     <Input
                                       type="number"
                                       value={tempValue}
                                       onChange={(e) =>
                                         setTempValue(e.target.value)
                                       }
-                                      className="h-8 text-sm bg-blue-950/60 border-blue-700/50 text-blue-100 placeholder:text-blue-300/70 focus:border-[#0986ED] focus:ring-2 focus:ring-[#0986ED]/30 focus:outline-none transition-all duration-200"
+                                      className="h-9 text-sm bg-white border-gray-300 text-gray-900 placeholder:text-gray-500 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200 shadow-sm"
                                       autoFocus
                                       onKeyDown={(e) => {
                                         if (e.key === "Enter") {
@@ -817,7 +796,7 @@ export function DataEditor({
                                         }
                                       }}
                                     />
-                                    <div className="flex gap-1">
+                                    <div className="flex gap-2">
                                       <Button
                                         size="sm"
                                         onClick={() =>
@@ -828,7 +807,7 @@ export function DataEditor({
                                             item.value
                                           )
                                         }
-                                        className="h-6 text-sm text-white border-none hover:text-white bg-green-600 hover:bg-green-700 flex-1"
+                                        className="h-8 text-sm bg-linear-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white border-0 flex-1 shadow-md"
                                       >
                                         <Save className="w-3 h-3" />
                                       </Button>
@@ -836,14 +815,14 @@ export function DataEditor({
                                         size="sm"
                                         onClick={cancelEdit}
                                         variant="outline"
-                                        className="h-6 text-white border-none bg-red-600 hover:bg-red-700 hover:text-white flex-1 "
+                                        className="h-8 text-sm bg-linear-to-r from-gray-100 to-gray-200 hover:from-gray-200 hover:to-gray-300 text-gray-700 border border-gray-300 flex-1 shadow-sm"
                                       >
-                                        <X className="w-3 h-3 " />
+                                        <X className="w-3 h-3" />
                                       </Button>
                                     </div>
                                   </div>
                                 ) : (
-                                  <div className="flex items-center justify-between gap-2">
+                                  <div className="flex items-center justify-between gap-3">
                                     <div className="flex-1 min-w-0">
                                       {isMissingYear &&
                                       !edited &&
@@ -851,35 +830,35 @@ export function DataEditor({
                                         filterName,
                                         item.year
                                       ) ? (
-                                        <p className="text-sm text-red-400 italic">
+                                        <p className="text-sm text-red-600 italic font-medium">
                                           بيانات ناقصة
                                         </p>
                                       ) : (
                                         <>
                                           <p
-                                            className={`text-[16px] font-semibold
+                                            className={`text-lg font-bold
                                       ${
                                         edited
-                                          ? "text-white" //بيانات معدلة
+                                          ? "text-yellow-800" //بيانات معدلة
                                           : isMissingYear &&
                                             hasAuditHistory(
                                               filterName,
                                               item.year
                                             ) //بيانات في إنتظار الفحص
-                                          ? "text-white"
+                                          ? "text-orange-800"
                                           : !isMissingYear &&
                                             !hasAuditHistory(
                                               filterName,
                                               item.year
                                             ) //بيانات صحيحة
-                                          ? "text-blue-100"
+                                          ? "text-blue-800"
                                           : isMissingYear &&
                                             !hasAuditHistory(
                                               filterName,
                                               item.year
                                             ) //بيانات ناقصة
-                                          ? "text-white"
-                                          : "text-white"
+                                          ? "text-red-800"
+                                          : "text-blue-800"
                                       }`}
                                           >
                                             {edited
@@ -899,7 +878,7 @@ export function DataEditor({
                                                 )}
                                           </p>
                                           {edited && (
-                                            <p className="text-sm text-blue-400 line-through">
+                                            <p className="text-sm text-gray-500 line-through">
                                               {hasAuditHistory(
                                                 filterName,
                                                 item.year
@@ -919,34 +898,9 @@ export function DataEditor({
                                           ) &&
                                             isMissingYear &&
                                             !edited && (
-                                              <p
-                                                className={`text-[16px] font-semibold
-                                      ${
-                                        edited
-                                          ? "text-white" //بيانات معدلة
-                                          : isMissingYear &&
-                                            hasAuditHistory(
-                                              filterName,
-                                              item.year
-                                            ) //بيانات في إنتظار الفحص
-                                          ? "text-white"
-                                          : !isMissingYear &&
-                                            !hasAuditHistory(
-                                              filterName,
-                                              item.year
-                                            ) //بيانات صحيحة
-                                          ? "text-blue-100"
-                                          : isMissingYear &&
-                                            !hasAuditHistory(
-                                              filterName,
-                                              item.year
-                                            ) //بيانات ناقصة
-                                          ? "text-white"
-                                          : "text-white"
-                                      }`}
-                                              >
+                                              <Badge className="mt-1 bg-orange-100 border-orange-300 text-orange-700">
                                                 في إنتظار الفحص
-                                              </p>
+                                              </Badge>
                                             )}
                                         </>
                                       )}
@@ -959,7 +913,7 @@ export function DataEditor({
                                           item.value
                                         )
                                       }
-                                      className="text-blue-400 hover:text-blue-300 shrink-0"
+                                      className="text-blue-600 hover:text-blue-700 p-2 rounded-full hover:bg-blue-100 transition-all duration-200 shrink-0"
                                     >
                                       <Edit2 className="w-4 h-4" />
                                     </button>
@@ -976,14 +930,16 @@ export function DataEditor({
               </div>
 
               {totalEdits > 0 && (
-                <div className="mt-6 p-4 bg-yellow-500/10 border border-yellow-500/30 rounded-lg">
-                  <div className="flex items-start gap-2">
-                    <AlertTriangle className="w-5 h-5 text-yellow-400 shrink-0 mt-0.5" />
+                <div className="mt-6 p-5 bg-linear-to-r from-yellow-50 to-amber-50 border border-yellow-300 rounded-xl shadow-lg">
+                  <div className="flex items-start gap-3">
+                    <div className="w-10 h-10 rounded-full bg-linear-to-r from-yellow-500 to-amber-500 flex items-center justify-center shadow-md">
+                      <AlertTriangle className="w-5 h-5 text-white" />
+                    </div>
                     <div className="flex-1">
-                      <p className="text-yellow-200 text-sm font-semibold">
+                      <p className="text-yellow-800 text-lg font-bold mb-2">
                         معلومات التعديلات
                       </p>
-                      <p className="text-yellow-300/80 text-xs mt-1">
+                      <p className="text-yellow-700 text-sm leading-relaxed">
                         لديك {totalEdits} تعديل معلق. اضغط "حفظ التعديلات"
                         لتطبيق التغييرات وتحديث الرسم البياني.
                       </p>

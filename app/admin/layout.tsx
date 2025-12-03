@@ -78,10 +78,20 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-linear-to-br from-slate-900 via-blue-900 to-slate-900 flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-blue-200">جاري التحقق من الصلاحيات...</p>
+      <div className="min-h-screen bg-linear-to-br from-blue-50 via-indigo-50 to-purple-50 flex items-center justify-center">
+        <div className="text-center space-y-6">
+          <div className="relative">
+            <div className="w-20 h-20 rounded-full bg-linear-to-r from-blue-500 to-indigo-600 flex items-center justify-center shadow-xl">
+              <Shield className="w-10 h-10 text-white animate-pulse" />
+            </div>
+            <div className="absolute inset-0 rounded-full bg-linear-to-r from-blue-400 to-indigo-500 opacity-75 animate-ping"></div>
+          </div>
+          <div className="space-y-2">
+            <h2 className="text-2xl font-bold text-blue-700">
+              جاري التحقق من الصلاحيات
+            </h2>
+            <p className="text-blue-500 text-lg">يرجى الانتظار...</p>
+          </div>
         </div>
       </div>
     );
@@ -89,20 +99,28 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
 
   if (!isAdmin) {
     return (
-      <div className="min-h-screen bg-linear-to-br from-slate-900 via-blue-900 to-slate-900 flex items-center justify-center">
-        <Card className="w-full max-w-md border-red-800/50 bg-red-950/50">
-          <CardHeader className="text-center">
-            <Shield className="w-16 h-16 text-red-400 mx-auto mb-4" />
-            <CardTitle className="text-red-200">غير مصرح للوصول</CardTitle>
+      <div className="min-h-screen bg-linear-to-br from-blue-50 via-indigo-50 to-purple-50 flex items-center justify-center">
+        <Card className="w-full max-w-lg border border-red-200 bg-linear-to-br from-white to-red-50 shadow-2xl rounded-2xl overflow-hidden">
+          <CardHeader className="text-center bg-linear-to-r from-red-50 to-red-100 border-b border-red-200">
+            <div className="w-20 h-20 mx-auto rounded-full bg-linear-to-r from-red-500 to-red-600 flex items-center justify-center shadow-xl mb-4">
+              <Shield className="w-10 h-10 text-white" />
+            </div>
+            <CardTitle className="text-2xl font-bold text-red-700">
+              غير مصرح للوصول
+            </CardTitle>
           </CardHeader>
-          <CardContent className="text-center space-y-4">
-            <p className="text-red-300">هذه الصفحة مخصصة للمديرين فقط</p>
-            <p className="text-red-400 text-sm">
-              يرجى التواصل مع الإدارة للحصول على الصلاحيات المناسبة
-            </p>
+          <CardContent className="text-center space-y-6 p-8">
+            <div className="space-y-3">
+              <p className="text-red-600 text-lg font-medium">
+                هذه الصفحة مخصصة للمديرين فقط
+              </p>
+              <p className="text-red-500 text-sm">
+                يرجى التواصل مع الإدارة للحصول على الصلاحيات المناسبة
+              </p>
+            </div>
             <Link href="/">
-              <Button className="w-full bg-blue-600 hover:bg-blue-700">
-                <Home className="w-4 h-4 ml-2" />
+              <Button className="w-full bg-linear-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 py-3 rounded-xl">
+                <Home className="w-5 h-5 ml-2" />
                 العودة للصفحة الرئيسية
               </Button>
             </Link>
@@ -113,49 +131,56 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   }
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-[#1D546C] via-[#123A4C]/80 to-[#0986ED]">
+    <div className="min-h-screen bg-linear-to-br from-blue-50 via-indigo-50 to-purple-50">
       {/* Admin Header */}
-      <header className="sticky top-0 z-50 border-b border-[#0986ED]/30 bg-[#123A4CF2]/95 backdrop-blur-xl shadow-lg">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
+      <header className="sticky top-0 z-50 border-b border-blue-200 bg-linear-to-r from-white/95 to-blue-50/95 backdrop-blur-xl shadow-lg">
+        <div className="container mx-auto px-6 py-4 flex items-center justify-between">
           {/* Logo & Title */}
           <div className="flex items-center gap-4">
-            <Shield className="w-8 h-8 text-[#C1E1FF]" />
-            <div>
-              <h1 className="text-xl font-bold text-[#F4F4F4]">لوحة التحكم</h1>
+            <div className="w-12 h-12 rounded-full bg-linear-to-r from-blue-500 to-indigo-600 flex items-center justify-center shadow-lg">
+              <Shield className="w-6 h-6 text-white" />
+            </div>
+            <div className="space-y-1">
+              <h1 className="text-2xl font-bold bg-linear-to-r from-blue-600 to-indigo-700 bg-clip-text text-transparent">
+                لوحة التحكم الإدارية
+              </h1>
+              <p className="text-sm text-blue-500 font-medium">
+                إدارة نظام جودة البيانات
+              </p>
             </div>
           </div>
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button className="flex flex-row-reverse items-center gap-3 px-2 py-2 bg-white/10 hover:bg-white/20 rounded-2xl border border-white/20 shadow-md backdrop-blur-xl transition-all duration-300 hover:shadow-xl hover:-translate-y-0.5 cursor-pointer focus:outline-none focus:ring-2 focus:ring-white/30">
-                <div className="p-2 rounded-full bg-[#FFE08F]/30 shadow-sm">
-                  <UserIcon className="w-5 h-5 text-[#FFE08F]" />
+              <button className="flex flex-row-reverse items-center gap-3 px-4 py-3 bg-linear-to-r from-white/80 to-blue-50/80 hover:from-white/90 hover:to-blue-50/90 rounded-2xl border border-blue-200 shadow-lg backdrop-blur-xl transition-all duration-300 hover:shadow-xl hover:-translate-y-0.5 cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-300">
+                <div className="p-2 rounded-full bg-linear-to-r from-blue-500 to-indigo-600 shadow-md">
+                  <UserIcon className="w-5 h-5 text-white" />
                 </div>
-                <div className="text-left leading-tight">
-                  <div className="text-sm font-semibold text-[#F4F4F4] drop-shadow-sm">
+                <div className="text-right leading-tight">
+                  <div className="text-sm font-bold text-blue-700">
                     {authSession?.name || "مستخدم"}
                   </div>
-                  <div className="text-sm text-white/60 font-medium">
-                    {authSession?.role === "admin" ? "مدير" : "مستخدم"}
+                  <div className="text-xs text-blue-500 font-semibold">
+                    {authSession?.role === "admin" ? "مدير النظام" : "مستخدم"}
                   </div>
                 </div>
               </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent
               align="end"
-              className="w-64 mt-2 bg-white/95 backdrop-blur-xl border border-gray-200/50 shadow-2xl rounded-2xl p-2"
+              className="w-72 mt-3 bg-white/95 backdrop-blur-xl border border-blue-200 shadow-2xl rounded-2xl p-3"
               sideOffset={8}
             >
-              <DropdownMenuLabel className="px-4 py-3 ">
-                <div className="flex flex-row-reverse items-center gap-3">
-                  <div className="p-2 rounded-full bg-blue-100">
-                    <UserIcon className="w-5 h-5 text-blue-600" />
+              <DropdownMenuLabel className="px-4 py-4">
+                <div className="flex flex-row-reverse items-center gap-4">
+                  <div className="p-3 rounded-full bg-linear-to-r from-blue-100 to-indigo-100">
+                    <UserIcon className="w-6 h-6 text-blue-600" />
                   </div>
                   <div className="text-right">
-                    <div className="font-semibold text-gray-900 text-">
+                    <div className="font-bold text-blue-700 text-lg">
                       {authSession?.name || "مستخدم"}
                     </div>
-                    <div className="text-sm text-left text-gray-500 font-medium">
+                    <div className="text-sm text-blue-500 font-semibold">
                       {authSession?.role === "admin"
                         ? "مدير النظام"
                         : "مستخدم عادي"}
@@ -164,33 +189,43 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                 </div>
               </DropdownMenuLabel>
 
-              <DropdownMenuSeparator className="my-2 bg-gray-200/50" />
+              <DropdownMenuSeparator className="my-3 bg-blue-200" />
 
-              <DropdownMenuItem className="px-4 py-3 text-right hover:bg-blue-50/80 rounded-xl cursor-pointer transition-colors duration-200 focus:bg-blue-50/80">
+              <DropdownMenuItem className="px-4 py-3 text-right hover:bg-blue-50 rounded-xl cursor-pointer transition-all duration-200 focus:bg-blue-50 mb-2">
                 <div className="flex flex-row-reverse items-center gap-3 w-full">
-                  <User className="w-4 h-4 text-gray-600" />
-                  <span className="font-medium text-gray-700">
+                  <div className="p-2 rounded-full bg-blue-100">
+                    <User className="w-4 h-4 text-blue-600" />
+                  </div>
+                  <span className="font-semibold text-blue-700">
                     الملف الشخصي
                   </span>
                 </div>
               </DropdownMenuItem>
 
-              <DropdownMenuItem className="px-4 py-3 text-right hover:bg-blue-50/80 rounded-xl cursor-pointer transition-colors duration-200 focus:bg-blue-50/80">
+              <DropdownMenuItem className="px-4 py-3 text-right hover:bg-indigo-50 rounded-xl cursor-pointer transition-all duration-200 focus:bg-indigo-50 mb-2">
                 <div className="flex flex-row-reverse items-center gap-3 w-full">
-                  <Settings className="w-4 h-4 text-gray-600" />
-                  <span className="font-medium text-gray-700">الإعدادات</span>
+                  <div className="p-2 rounded-full bg-indigo-100">
+                    <Settings className="w-4 h-4 text-indigo-600" />
+                  </div>
+                  <span className="font-semibold text-indigo-700">
+                    الإعدادات
+                  </span>
                 </div>
               </DropdownMenuItem>
 
-              <DropdownMenuSeparator className="my-2 bg-gray-200/50" />
+              <DropdownMenuSeparator className="my-3 bg-blue-200" />
 
               <DropdownMenuItem
                 onClick={handleLogout}
-                className="px-4 py-3 text-right hover:bg-red-50/80 rounded-xl cursor-pointer transition-colors duration-200 focus:bg-red-50/80"
+                className="px-4 py-3 text-right hover:bg-red-50 rounded-xl cursor-pointer transition-all duration-200 focus:bg-red-50"
               >
                 <div className="flex flex-row-reverse items-center gap-3 w-full">
-                  <LogOut className="w-4 h-4 text-red-500" />
-                  <span className="font-medium text-red-600">تسجيل الخروج</span>
+                  <div className="p-2 rounded-full bg-red-100">
+                    <LogOut className="w-4 h-4 text-red-500" />
+                  </div>
+                  <span className="font-semibold text-red-600">
+                    تسجيل الخروج
+                  </span>
                 </div>
               </DropdownMenuItem>
             </DropdownMenuContent>
@@ -199,13 +234,13 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
       </header>
 
       {/* Admin Navigation */}
-      {/* <nav className="bg-[#123A4CF2] backdrop-blur-md border-b border-blue-800/30 shadow-sm">
-        <div className="container mx-auto px-4 py-3 flex gap-2">
+      <nav className="bg-linear-to-r from-white/80 to-blue-50/80 backdrop-blur-md border-b border-blue-200 shadow-md">
+        <div className="container mx-auto px-6 py-4 flex gap-3">
           <Link href="/admin">
             <Button
               variant="outline"
               size="sm"
-              className="bg-blue-600/20 hover:bg-blue-600/40 hover:text-white border-blue-500/50 text-[#B0D6E8]"
+              className="bg-linear-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 border-0 text-white shadow-lg hover:shadow-xl transition-all duration-300 rounded-xl px-4 py-2"
             >
               <Activity className="w-4 h-4 ml-2" />
               مراجعة التعديلات
@@ -215,7 +250,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
             <Button
               variant="outline"
               size="sm"
-              className="border-slate-600/50 hover:bg-blue-600/20 hover:text-white text-[#B0D6E8]"
+              className="border-blue-200 hover:bg-linear-to-r hover:from-indigo-500 hover:to-indigo-600 hover:border-0 hover:text-white text-blue-600 shadow-md hover:shadow-lg transition-all duration-300 rounded-xl px-4 py-2"
             >
               <Users className="w-4 h-4 ml-2" />
               إدارة المستخدمين
@@ -225,17 +260,17 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
             <Button
               variant="outline"
               size="sm"
-              className="border-slate-600/50 hover:bg-blue-600/20 hover:text-white text-[#B0D6E8]"
+              className="border-blue-200 hover:bg-linear-to-r hover:from-purple-500 hover:to-purple-600 hover:border-0 hover:text-white text-blue-600 shadow-md hover:shadow-lg transition-all duration-300 rounded-xl px-4 py-2"
             >
               <FileText className="w-4 h-4 ml-2" />
               التقارير
             </Button>
           </Link>
         </div>
-      </nav> */}
+      </nav>
 
       {/* Main Content */}
-      <main className="container mx-auto px-4 py-6">{children}</main>
+      <main className="container mx-auto px-6 py-8">{children}</main>
     </div>
   );
 }

@@ -20,6 +20,7 @@ import IndicatorsList from "@/components/indicators-list";
 import IssuesReport from "@/components/issues-report";
 import { AuditTrailViewer } from "@/components/audit-trail-viewer";
 import { Navigation } from "@/components/navigation";
+import { ProjectDashboard } from "@/components/project-dashboard";
 import { useQAProcessor } from "@/hooks/use-qa-processor";
 import { useBackendQAProcessor } from "@/hooks/use-backend-qa-processor";
 import { LoginForm } from "@/components/login-form";
@@ -154,7 +155,7 @@ function MainPageContent() {
     setCurrentProject(project);
     setActiveProject(project.id);
 
-    setActiveTab("summary");
+    setActiveTab("dashboard");
     setHasUnsavedChanges(false);
   };
 
@@ -300,8 +301,21 @@ function MainPageContent() {
     console.log("Exporting results for:", currentProject?.fileName);
   };
 
+  const handleViewIndicators = () => {
+    setActiveTab("indicators");
+  };
+
+  const handleViewSummary = () => {
+    setActiveTab("summary");
+  };
+
+  const handleRefreshData = () => {
+    // TODO: Implement data refresh logic
+    console.log("Refreshing project data:", currentProject?.fileName);
+  };
+
   return (
-    <div className="min-h-screen bg-[#1D546C]  from-[#0986ed] via-[#0986ed]/20 to-[#0986ed]">
+    <div className="min-h-screen bg-linear-to-br from-blue-50 via-indigo-50 to-purple-50">
       <Header
         currentProject={currentProject}
         authSession={authSession}
@@ -335,6 +349,43 @@ function MainPageContent() {
             />
           </TabsContent>
 
+          <TabsContent value="dashboard" className="">
+            {currentProject ? (
+              <ProjectDashboard
+                project={currentProject}
+                onViewIndicators={handleViewIndicators}
+                onViewSummary={handleViewSummary}
+                onExportData={handleExportResults}
+                onRefreshData={handleRefreshData}
+              />
+            ) : (
+              <Card className="bg-gradient-to-br from-white to-blue-50 border border-blue-200 shadow-xl hover:shadow-2xl transition-all duration-300 rounded-2xl">
+                <CardContent className="py-20">
+                  <div className="text-center space-y-8">
+                    <div className="w-24 h-24 rounded-full bg-gradient-to-r from-blue-100 to-indigo-100 flex items-center justify-center mx-auto shadow-lg">
+                      <FolderOpen className="w-12 h-12 text-blue-500" />
+                    </div>
+                    <h3 className="text-3xl font-bold bg-gradient-to-r from-gray-700 to-gray-900 bg-clip-text text-transparent">
+                      لا يوجد مشروع مفتوح
+                    </h3>
+                    <p className="text-blue-600 text-xl font-medium">
+                      الرجاء فتح مشروع من قائمة المشاريع
+                    </p>
+                    <Button
+                      onClick={() => (
+                        setActiveTab("projects"), setCurrentProject(null)
+                      )}
+                      className="gap-3 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white font-semibold py-4 px-10 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 active:scale-95"
+                    >
+                      <FolderOpen className="w-5 h-5" />
+                      الذهاب إلى المشاريع
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+          </TabsContent>
+
           <TabsContent value="summary" className="space-y-6 p-6">
             {currentProject && currentQAResults ? (
               <QASummary
@@ -344,21 +395,23 @@ function MainPageContent() {
                 reviewedCount={reviewedCount}
               />
             ) : (
-              <Card className="border-[#0986ed]/30 bg-white/95 backdrop-blur-sm shadow-lg">
-                <CardContent className="py-16">
-                  <div className="text-center space-y-6">
-                    <FolderOpen className="w-20 h-20 text-[#0986ed]/60 mx-auto" />
-                    <h3 className="text-2xl font-bold text-[#1f254b]">
+              <Card className="bg-gradient-to-br from-white to-blue-50 border border-blue-200 shadow-xl hover:shadow-2xl transition-all duration-300 rounded-2xl">
+                <CardContent className="py-20">
+                  <div className="text-center space-y-8">
+                    <div className="w-24 h-24 rounded-full bg-gradient-to-r from-blue-100 to-indigo-100 flex items-center justify-center mx-auto shadow-lg">
+                      <FolderOpen className="w-12 h-12 text-blue-500" />
+                    </div>
+                    <h3 className="text-3xl font-bold bg-gradient-to-r from-gray-700 to-gray-900 bg-clip-text text-transparent">
                       لا يوجد مشروع مفتوح
                     </h3>
-                    <p className="text-[#1f254b]/70 text-lg">
+                    <p className="text-blue-600 text-xl font-medium">
                       الرجاء فتح مشروع من قائمة المشاريع
                     </p>
                     <Button
                       onClick={() => (
                         setActiveTab("projects"), setCurrentProject(null)
                       )}
-                      className="gap-3 bg-linear-to-r from-[#0986ed] to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold py-3 px-8 rounded-lg shadow-lg hover:shadow-xl transition-all duration-200"
+                      className="gap-3 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white font-semibold py-4 px-10 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 active:scale-95"
                     >
                       <FolderOpen className="w-5 h-5" />
                       الذهاب إلى المشاريع
@@ -380,23 +433,25 @@ function MainPageContent() {
                 projectId={currentProject.id}
               />
             ) : (
-              <Card className="border-blue-800/50 bg-blue-900/20">
-                <CardContent className="py-12">
-                  <div className="text-center space-y-4">
-                    <FolderOpen className="w-16 h-16 text-blue-400 mx-auto" />
-                    <h3 className="text-xl font-semibold text-blue-200">
+              <Card className="bg-gradient-to-br from-white to-blue-50 border border-blue-200 shadow-xl hover:shadow-2xl transition-all duration-300 rounded-2xl">
+                <CardContent className="py-20">
+                  <div className="text-center space-y-8">
+                    <div className="w-24 h-24 rounded-full bg-gradient-to-r from-blue-100 to-indigo-100 flex items-center justify-center mx-auto shadow-lg">
+                      <FolderOpen className="w-12 h-12 text-blue-500" />
+                    </div>
+                    <h3 className="text-3xl font-bold bg-gradient-to-r from-gray-700 to-gray-900 bg-clip-text text-transparent">
                       لا يوجد مشروع مفتوح
                     </h3>
-                    <p className="text-blue-300">
+                    <p className="text-blue-600 text-xl font-medium">
                       الرجاء فتح مشروع من قائمة المشاريع
                     </p>
                     <Button
                       onClick={() => (
                         setActiveTab("projects"), setCurrentProject(null)
                       )}
-                      className="gap-2 bg-blue-600 hover:bg-blue-700"
+                      className="gap-3 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white font-semibold py-4 px-10 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 active:scale-95"
                     >
-                      <FolderOpen className="w-4 h-4" />
+                      <FolderOpen className="w-5 h-5" />
                       الذهاب إلى المشاريع
                     </Button>
                   </div>
@@ -414,23 +469,25 @@ function MainPageContent() {
                 userName={authSession?.name || "مستخدم"}
               />
             ) : (
-              <Card className="border-blue-800/50 bg-blue-900/20">
-                <CardContent className="py-12">
-                  <div className="text-center space-y-4">
-                    <FolderOpen className="w-16 h-16 text-blue-400 mx-auto" />
-                    <h3 className="text-xl font-semibold text-blue-200">
+              <Card className="bg-gradient-to-br from-white to-blue-50 border border-blue-200 shadow-xl hover:shadow-2xl transition-all duration-300 rounded-2xl">
+                <CardContent className="py-20">
+                  <div className="text-center space-y-8">
+                    <div className="w-24 h-24 rounded-full bg-gradient-to-r from-blue-100 to-indigo-100 flex items-center justify-center mx-auto shadow-lg">
+                      <FolderOpen className="w-12 h-12 text-blue-500" />
+                    </div>
+                    <h3 className="text-3xl font-bold bg-gradient-to-r from-gray-700 to-gray-900 bg-clip-text text-transparent">
                       لا يوجد مشروع مفتوح
                     </h3>
-                    <p className="text-blue-300">
+                    <p className="text-blue-600 text-xl font-medium">
                       الرجاء فتح مشروع من قائمة المشاريع
                     </p>
                     <Button
                       onClick={() => (
                         setActiveTab("projects"), setCurrentProject(null)
                       )}
-                      className="gap-2 bg-blue-600 hover:bg-blue-700"
+                      className="gap-3 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white font-semibold py-4 px-10 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 active:scale-95"
                     >
-                      <FolderOpen className="w-4 h-4" />
+                      <FolderOpen className="w-5 h-5" />
                       الذهاب إلى المشاريع
                     </Button>
                   </div>
@@ -447,23 +504,25 @@ function MainPageContent() {
                 qaResults={currentProject.qaResults?.issues || []}
               />
             ) : (
-              <Card className="border-blue-800/50 bg-blue-900/20">
-                <CardContent className="py-12">
-                  <div className="text-center space-y-4">
-                    <FolderOpen className="w-16 h-16 text-blue-400 mx-auto" />
-                    <h3 className="text-xl font-semibold text-blue-200">
+              <Card className="bg-gradient-to-br from-white to-blue-50 border border-blue-200 shadow-xl hover:shadow-2xl transition-all duration-300 rounded-2xl">
+                <CardContent className="py-20">
+                  <div className="text-center space-y-8">
+                    <div className="w-24 h-24 rounded-full bg-gradient-to-r from-blue-100 to-indigo-100 flex items-center justify-center mx-auto shadow-lg">
+                      <FolderOpen className="w-12 h-12 text-blue-500" />
+                    </div>
+                    <h3 className="text-3xl font-bold bg-gradient-to-r from-gray-700 to-gray-900 bg-clip-text text-transparent">
                       لا يوجد مشروع مفتوح
                     </h3>
-                    <p className="text-blue-300">
+                    <p className="text-blue-600 text-xl font-medium">
                       الرجاء فتح مشروع من قائمة المشاريع
                     </p>
                     <Button
                       onClick={() => (
                         setActiveTab("projects"), setCurrentProject(null)
                       )}
-                      className="gap-2 bg-blue-600 hover:bg-blue-700"
+                      className="gap-3 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white font-semibold py-4 px-10 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 active:scale-95"
                     >
-                      <FolderOpen className="w-4 h-4" />
+                      <FolderOpen className="w-5 h-5" />
                       الذهاب إلى المشاريع
                     </Button>
                   </div>

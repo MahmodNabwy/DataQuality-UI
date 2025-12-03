@@ -53,24 +53,24 @@ function UserProfile() {
 
   return (
     <div className="flex items-center gap-4">
-      <div className="flex flex-row-reverse items-center gap-3 px-4 py-3 bg-white/10 hover:bg-white/20 rounded-2xl border border-white/20 shadow-md backdrop-blur-xl transition-all duration-300">
-        <div className="p-2 rounded-full bg-[#FFE08F]/30 shadow-sm">
-          <User className="w-5 h-5 text-[#FFE08F]" />
+      <div className="flex flex-row-reverse items-center gap-4 px-6 py-4 bg-linear-to-r from-white/10 to-blue-50/10 hover:from-white/15 hover:to-blue-50/15 rounded-2xl border border-white/30 shadow-lg backdrop-blur-xl transition-all duration-300 hover:shadow-xl">
+        <div className="p-3 rounded-full bg-linear-to-r from-blue-400/30 to-indigo-500/30 shadow-lg">
+          <User className="w-6 h-6 text-white" />
         </div>
         <div className="text-left leading-tight">
-          <div className="text-lg font-semibold text-[#F4F4F4] drop-shadow-sm">
+          <div className="text-xl font-bold text-white drop-shadow-md">
             {authSession?.name || "مستخدم"}
           </div>
-          <div className="text-sm text-white/60 font-medium">
-            {authSession?.role === "admin" ? "مدير" : "مستخدم"}
+          <div className="text-sm text-blue-200 font-semibold">
+            {authSession?.role === "admin" ? "مدير النظام" : "مستخدم"}
           </div>
         </div>
       </div>
       <Button
         onClick={handleLogout}
-        className="gap-2 bg-linear-to-r cursor-pointer from-red-500 to-red-600 hover:from-red-600 hover:to-red-700  text-white text-sm py-2.5 px-6 font-semibold rounded-xl transition-all duration-300 shadow-md hover:shadow-xl transform hover:-translate-y-0.5"
+        className="gap-3 bg-linear-to-r cursor-pointer from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white text-sm py-3 px-8 font-bold rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
       >
-        <XCircle className="w-4 h-4" />
+        <XCircle className="w-5 h-5" />
         تسجيل الخروج
       </Button>
     </div>
@@ -345,10 +345,20 @@ export default function AdminAuditPage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-[#1D546C]  ">
-        <div className="text-center">
-          <RefreshCw className="w-8 h-8 text-blue-400 animate-spin mx-auto mb-4" />
-          <p className="text-blue-200">جاري تحميل سجل التعديلات...</p>
+      <div className="flex items-center justify-center min-h-screen bg-linear-to-br from-blue-50 via-indigo-50 to-purple-50">
+        <div className="text-center space-y-6">
+          <div className="relative">
+            <div className="w-20 h-20 rounded-full bg-linear-to-r from-blue-500 to-indigo-600 flex items-center justify-center shadow-xl">
+              <RefreshCw className="w-10 h-10 text-white animate-spin" />
+            </div>
+            <div className="absolute inset-0 rounded-full bg-linear-to-r from-blue-400 to-indigo-500 opacity-75 animate-ping"></div>
+          </div>
+          <div className="space-y-2">
+            <h2 className="text-2xl font-bold text-blue-700">
+              جاري تحميل لوحة المراجعة
+            </h2>
+            <p className="text-blue-500 text-lg">يرجى الانتظار...</p>
+          </div>
         </div>
       </div>
     );
@@ -357,128 +367,189 @@ export default function AdminAuditPage() {
   return (
     <>
       {/* Main Content */}
-      <div className="container mx-auto p-6 space-y-6 ">
-        {/* Statistics Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-          {[
-            {
-              title: "عدد النشرات",
-              value: stats.totalPublications,
-              icon: <FileText className="h-8 w-8 text-white" />,
-              bg: "from-[#0A80D0] to-[#145064]",
-            },
-            {
-              title: "إجمالي التغييرات",
-              value: stats.totalChanges,
-              icon: <Activity className="h-8 w-8 text-white" />,
-              bg: "from-[#145064] to-[#0A80D0]",
-            },
-            {
-              title: "عدد المؤشرات",
-              value: stats.totalIndicators,
-              icon: <BarChart className="h-8 w-8 text-white" />,
-              bg: "from-[#0F3D52] to-[#0A80D0]",
-            },
-            {
-              title: "عدد المؤشرات الفرعية",
-              value: stats.totalFilters,
-              icon: <Filter className="h-8 w-8 text-white" />,
-              bg: "from-[#1D546C] to-[#0A80D0]",
-            },
-            {
-              title: "عدد المستخدمين",
-              value: stats.totalUsers,
-              icon: <Users className="h-8 w-8 text-white" />,
-              bg: "from-[#0F3D52] to-[#0A80D0]",
-            },
-          ].map((card, idx) => (
-            <Card
-              key={idx}
-              className={`rounded-2xl border border-blue-600/40 shadow-xl shadow-blue-900/40
-          bg-linear-to-br ${card.bg} backdrop-blur-sm hover:shadow-blue-800/60 transition-all`}
-            >
-              <CardContent className="p-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-blue-100">{card.title}</p>
-                    <p className="text-2xl font-bold text-white">
-                      {card.value}
-                    </p>
-                  </div>
-                  {card.icon}
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-
-        {/* Publications */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {publications.map((pub) => (
-            <Card
-              key={pub.publicationName}
-              className="rounded-2xl border border-blue-700/30 shadow-lg shadow-blue-900/40
-          bg-linear-to-br from-[#145064]/80 via-[#1D546C]/40 to-[#0986ED]/20
-          backdrop-blur-md hover:shadow-blue-800/60 transition-all"
-            >
-              <CardHeader>
-                <CardTitle className="flex items-center justify-between text-white">
-                  <span className="font-semibold">{pub.publicationName}</span>
-                  <Badge className="bg-blue-600/30 border-blue-300/40 text-white">
-                    {pub.changes.length} تغيير
-                  </Badge>
-                </CardTitle>
-              </CardHeader>
-
-              <CardContent className="space-y-4">
-                {/* Buttons Row */}
-                <div className="grid grid-cols-2 gap-2">
-                  <Button
-                    className=" bg-green-600 
-                          hover:bg-green-700 
-                          text-white 
-                          text-sm 
-                          shadow-md 
-                          hover:shadow-lg 
-                          transition-all 
-                          duration-200 
-                          rounded-lg
-                          cursor-pointer"
-                    onClick={() => finishAudit(pub)}
-                  >
-                    <CheckCircle className="w-4 h-4 ml-1" />
-                    إنهاء المراجعة
-                  </Button>
-
-                  <Button
-                    variant="outline"
-                    className="text-white cursor-pointer border-blue-400 hover:bg-blue-900/20 hover:text-white text-sm shadow-md hover:shadow-lg transition-all duration-200 rounded-lg"
-                    onClick={() => exportPublicationToExcel(pub)}
-                  >
-                    <Download className="w-4 h-4 ml-1" /> تحميل Excel
-                  </Button>
-                </div>
-
-                <Button
-                  variant="outline"
-                  className="w-full cursor-pointer text-white border-blue-400 hover:bg-blue-900/20 hover:text-white text-sm shadow-md hover:shadow-lg transition-all duration-200 rounded-lg"
-                  onClick={() => setSelectedPublication(pub)}
-                >
-                  <Eye className="w-4 h-4 ml-2" />
-                  عرض التغييرات ({pub.changes.length})
-                </Button>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-
-        {/* Empty State */}
-        {publications.length === 0 && (
-          <div className="text-center py-12">
-            <FileText className="w-16 h-16 text-blue-300 mx-auto mb-4" />
-            <p className="text-blue-200">لا توجد نشرات متاحة</p>
+      <div className="min-h-screen bg-linear-to-br from-blue-50 via-indigo-50 to-purple-50 p-6">
+        <div className="container mx-auto max-w-7xl space-y-8">
+          {/* Header */}
+          <div className="text-center space-y-4 mb-10">
+            <h1 className="text-4xl font-bold bg-linear-to-r from-blue-600 to-indigo-700 bg-clip-text text-transparent">
+              لوحة مراجعة التعديلات
+            </h1>
+            <p className="text-blue-600 text-lg">
+              قم بمراجعة واعتماد التعديلات المطلوبة على البيانات
+            </p>
           </div>
-        )}
+
+          {/* Statistics Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
+            {[
+              {
+                title: "عدد النشرات",
+                value: stats.totalPublications,
+                icon: <FileText className="h-10 w-10 text-white" />,
+                gradient: "from-blue-500 to-blue-600",
+                iconBg: "from-blue-400 to-blue-500",
+              },
+              {
+                title: "إجمالي التغييرات",
+                value: stats.totalChanges,
+                icon: <Activity className="h-10 w-10 text-white" />,
+                gradient: "from-indigo-500 to-indigo-600",
+                iconBg: "from-indigo-400 to-indigo-500",
+              },
+              {
+                title: "عدد المؤشرات",
+                value: stats.totalIndicators,
+                icon: <BarChart className="h-10 w-10 text-white" />,
+                gradient: "from-purple-500 to-purple-600",
+                iconBg: "from-purple-400 to-purple-500",
+              },
+              {
+                title: "عدد المؤشرات الفرعية",
+                value: stats.totalFilters,
+                icon: <Filter className="h-10 w-10 text-white" />,
+                gradient: "from-cyan-500 to-cyan-600",
+                iconBg: "from-cyan-400 to-cyan-500",
+              },
+              {
+                title: "عدد المستخدمين",
+                value: stats.totalUsers,
+                icon: <Users className="h-10 w-10 text-white" />,
+                gradient: "from-emerald-500 to-emerald-600",
+                iconBg: "from-emerald-400 to-emerald-500",
+              },
+            ].map((card, idx) => (
+              <Card
+                key={idx}
+                className={`rounded-2xl border border-blue-200 shadow-xl hover:shadow-2xl transition-all duration-300 bg-linear-to-br ${card.gradient} transform hover:-translate-y-1`}
+              >
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between">
+                    <div className="space-y-2">
+                      <p className="text-sm font-semibold text-blue-100">
+                        {card.title}
+                      </p>
+                      <p className="text-3xl font-bold text-white">
+                        {card.value.toLocaleString()}
+                      </p>
+                    </div>
+                    <div
+                      className={`p-4 rounded-full bg-linear-to-r ${card.iconBg} shadow-lg`}
+                    >
+                      {card.icon}
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+
+          {/* Publications */}
+          <div className="space-y-6">
+            <div className="flex items-center justify-between">
+              <h2 className="text-2xl font-bold text-blue-700 flex items-center gap-3">
+                <div className="w-8 h-8 rounded-full bg-linear-to-r from-blue-500 to-indigo-600 flex items-center justify-center">
+                  <FileText className="w-4 h-4 text-white" />
+                </div>
+                النشرات المتاحة للمراجعة
+              </h2>
+              <Badge className="bg-linear-to-r from-blue-500 to-indigo-600 text-white px-4 py-2 text-lg shadow-md">
+                {publications.length} نشرة
+              </Badge>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {publications.map((pub) => (
+                <Card
+                  key={pub.publicationName}
+                  className="rounded-2xl border border-blue-200 shadow-xl hover:shadow-2xl transition-all duration-300 bg-linear-to-br from-white to-blue-50 transform hover:-translate-y-1 overflow-hidden"
+                >
+                  <CardHeader className="bg-linear-to-r from-blue-50 to-indigo-50 border-b border-blue-100">
+                    <CardTitle className="flex items-center justify-between">
+                      <span className="text-xl font-bold text-blue-700 truncate">
+                        {pub.publicationName}
+                      </span>
+                      <Badge className="bg-linear-to-r from-amber-500 to-orange-600 text-white px-3 py-1 shadow-md">
+                        {pub.changes.length} تغيير
+                      </Badge>
+                    </CardTitle>
+                  </CardHeader>
+
+                  <CardContent className="p-6 space-y-4">
+                    {/* Quick Stats */}
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="text-center p-3 bg-blue-50 rounded-lg border border-blue-200">
+                        <div className="text-2xl font-bold text-blue-600">
+                          {pub.changes.filter((c) => c.isApproved).length}
+                        </div>
+                        <div className="text-sm text-blue-500">معتمد</div>
+                      </div>
+                      <div className="text-center p-3 bg-amber-50 rounded-lg border border-amber-200">
+                        <div className="text-2xl font-bold text-amber-600">
+                          {
+                            pub.changes.filter(
+                              (c) => !c.isApproved && !c.isRejected
+                            ).length
+                          }
+                        </div>
+                        <div className="text-sm text-amber-500">
+                          في الانتظار
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Action Buttons */}
+                    <div className="space-y-3">
+                      <div className="grid grid-cols-2 gap-3">
+                        <Button
+                          className="bg-linear-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white text-sm shadow-lg hover:shadow-xl transition-all duration-300 rounded-xl cursor-pointer"
+                          onClick={() => finishAudit(pub)}
+                        >
+                          <CheckCircle className="w-4 h-4 ml-1" />
+                          إنهاء المراجعة
+                        </Button>
+
+                        <Button
+                          variant="outline"
+                          className="bg-linear-to-r from-gray-50 to-white hover:from-gray-100 hover:to-gray-50 text-gray-700 border border-gray-300 hover:border-gray-400 text-sm shadow-md hover:shadow-lg transition-all duration-200 rounded-xl cursor-pointer"
+                          onClick={() => exportPublicationToExcel(pub)}
+                        >
+                          <Download className="w-4 h-4 ml-1" />
+                          تحميل Excel
+                        </Button>
+                      </div>
+
+                      <Button
+                        variant="outline"
+                        className="w-full bg-linear-to-r from-blue-50 to-indigo-50 hover:from-blue-100 hover:to-indigo-100 text-blue-700 border-2 border-blue-300 hover:border-blue-500 text-sm font-semibold shadow-md hover:shadow-lg transition-all duration-200 rounded-xl cursor-pointer"
+                        onClick={() => setSelectedPublication(pub)}
+                      >
+                        <Eye className="w-4 h-4 ml-2" />
+                        عرض التغييرات ({pub.changes.length})
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+
+          {/* Empty State */}
+          {publications.length === 0 && (
+            <div className="text-center py-16 space-y-6">
+              <div className="w-32 h-32 mx-auto rounded-full bg-linear-to-r from-blue-100 to-indigo-100 flex items-center justify-center shadow-lg">
+                <FileText className="w-16 h-16 text-blue-400" />
+              </div>
+              <div className="space-y-3">
+                <h3 className="text-2xl font-bold text-blue-700">
+                  لا توجد نشرات متاحة
+                </h3>
+                <p className="text-blue-500 text-lg">
+                  لم يتم العثور على أي نشرات تحتاج للمراجعة في الوقت الحالي
+                </p>
+              </div>
+            </div>
+          )}
+        </div>
 
         {/* Publication Changes Modal */}
         {selectedPublication && (
@@ -487,43 +558,47 @@ export default function AdminAuditPage() {
             onClick={() => setSelectedPublication(null)}
           >
             <Card
-              className="w-full max-w-5xl max-h-[90vh] overflow-hidden border-[#0986ed]/30 bg-[#1a4e67f2]/95 backdrop-blur shadow-2xl"
+              className="w-full max-w-6xl max-h-[90vh] overflow-hidden border border-blue-200 bg-linear-to-br from-white to-blue-50 backdrop-blur shadow-2xl rounded-2xl"
               onClick={(e) => e.stopPropagation()}
             >
-              <CardHeader>
-                <CardTitle className="flex items-center justify-between text-[#F4F4F4]">
-                  <span>
+              <CardHeader className="bg-linear-to-r from-blue-50 to-indigo-50 border-b border-blue-100">
+                <CardTitle className="flex items-center justify-between">
+                  <span className="text-2xl font-bold text-blue-700">
                     تغييرات نشرة: {selectedPublication.publicationName}
                   </span>
                   <Button
                     variant="ghost"
                     size="sm"
                     onClick={() => setSelectedPublication(null)}
-                    className="text-white/70 hover:text-white hover:bg-white/10"
+                    className="text-blue-600 hover:text-blue-800 hover:bg-blue-100 rounded-full p-2"
                   >
-                    <X className="w-4 h-4" />
+                    <X className="w-5 h-5" />
                   </Button>
                 </CardTitle>
               </CardHeader>
-              <CardContent className="overflow-y-auto max-h-[calc(90vh-8rem)]">
-                <div className="space-y-4">
+              <CardContent className="overflow-y-auto max-h-[calc(90vh-8rem)] p-6">
+                <div className="space-y-6">
                   {selectedPublication.changes.map((change, index) => (
                     <Card
                       key={index}
-                      className="border-blue-700/40 bg-[#053964]/50 backdrop-blur-sm"
+                      className="border border-blue-200 bg-linear-to-r from-white to-blue-50 shadow-md hover:shadow-lg transition-all duration-200 rounded-xl overflow-hidden"
                     >
-                      <CardContent className="pt-4">
-                        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                          <div className="space-y-2">
-                            <div className="flex items-center gap-2">
-                              <User className="w-4 h-4 text-blue-400" />
-                              <span className="text-sm font-medium text-blue-100">
+                      <CardContent className="p-6">
+                        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                          <div className="space-y-3">
+                            <div className="flex items-center gap-3">
+                              <div className="p-2 rounded-full bg-blue-100">
+                                <User className="w-4 h-4 text-blue-600" />
+                              </div>
+                              <span className="text-sm font-semibold text-blue-700">
                                 {change.changedBy || "غير محدد"}
                               </span>
                             </div>
-                            <div className="flex items-center gap-2">
-                              <Calendar className="w-4 h-4 text-blue-300" />
-                              <span className="text-sm text-blue-200">
+                            <div className="flex items-center gap-3">
+                              <div className="p-2 rounded-full bg-indigo-100">
+                                <Calendar className="w-4 h-4 text-indigo-600" />
+                              </div>
+                              <span className="text-sm text-gray-600">
                                 {new Date(change.changedAt).toLocaleString(
                                   "ar-EG"
                                 )}
@@ -531,70 +606,78 @@ export default function AdminAuditPage() {
                             </div>
                           </div>
 
-                          <div className="space-y-1">
-                            <p className="text-lg font-medium text-white">
+                          <div className="space-y-2">
+                            <h4 className="text-lg font-bold text-blue-700">
                               {change.indicatorName}
-                            </p>
-                            <p className="text-sm text-blue-200">
+                            </h4>
+                            <p className="text-sm text-indigo-600 font-medium">
                               {change.filterName}
                             </p>
-                            <p className="text-sm text-blue-300">
-                              السنة: {change.year}
+                            <p className="text-sm text-gray-600">
+                              السنة:{" "}
+                              <span className="font-bold text-purple-600">
+                                {change.year}
+                              </span>
                             </p>
                           </div>
 
-                          <div className="space-y-1">
-                            <div className="flex items-center gap-2 text-sm">
-                              <span className="text-red-300  ">
-                                {change.oldValue}
+                          <div className="space-y-3">
+                            <div className="flex items-center justify-center gap-3 p-3 bg-gray-50 rounded-lg border">
+                              <span className="px-3 py-1 bg-red-100 text-red-700 rounded-full text-sm font-bold">
+                                {change.oldValue.toLocaleString()}
                               </span>
-                              <span className="text-blue-200">←</span>
-                              <span className="text-green-300 font-medium">
-                                {change.newValue}
+                              <span className="text-gray-500 font-bold">←</span>
+                              <span className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm font-bold">
+                                {change.newValue.toLocaleString()}
                               </span>
                             </div>
-                            <p className="text-sm text-blue-200">
-                              جدول: {change.tableNumber}
+                            <p className="text-sm text-center text-gray-600">
+                              جدول:{" "}
+                              <span className="font-semibold text-blue-600">
+                                {change.tableNumber}
+                              </span>
                             </p>
                             {change.comment && (
-                              <p className="text-sm bg-blue-950/50 p-2 rounded mt-1 text-blue-100 border border-blue-800/30">
-                                {change.comment}
-                              </p>
+                              <div className="p-3 bg-blue-50 rounded-lg border border-blue-200">
+                                <p className="text-sm text-blue-700 font-medium">
+                                  {change.comment}
+                                </p>
+                              </div>
                             )}
                           </div>
 
-                          <div className="flex flex-col gap-2">
+                          <div className="flex flex-col gap-3">
                             {change.isApproved ? (
-                              <div className="flex items-center justify-center gap-1 p-2 bg-green-600/20 border border-green-500/40 rounded-lg">
-                                <span className="text-green-300 text-sm font-medium">
+                              <div className="flex items-center justify-center gap-2 p-4 bg-green-50 border-2 border-green-200 rounded-xl">
+                                <CheckCircle className="w-5 h-5 text-green-600" />
+                                <span className="text-green-700 font-bold">
                                   تم الاعتماد
                                 </span>
-                                <CheckCircle className="w-4 h-4 text-green-400 ml-2" />
                               </div>
                             ) : change.isRejected ||
                               change.isApproved == false ? (
-                              <div className="flex items-center justify-center gap-1 p-2 bg-orange-600/20 border border-orange-500/40 rounded-lg">
-                                <span className="text-orange-300 text-sm font-medium">
-                                  تم الارسال للمراجعة مرة اخري
+                              <div className="flex items-center justify-center gap-2 p-4 bg-orange-50 border-2 border-orange-200 rounded-xl">
+                                <AlertTriangle className="w-5 h-5 text-orange-600" />
+                                <span className="text-orange-700 font-bold text-center">
+                                  تم الإرسال للمراجعة مرة أخرى
                                 </span>
-                                <AlertTriangle className="w-4 h-4 text-orange-400 ml-2" />
                               </div>
                             ) : (
-                              <>
+                              <div className="flex flex-col gap-2">
                                 <Button
                                   size="sm"
-                                  className="bg-green-600 hover:bg-green-700 text-white"
+                                  className="bg-linear-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 rounded-xl"
                                   onClick={() =>
                                     handleApproveChange(change, true)
                                   }
                                 >
-                                  <CheckCircle className="w-3 h-3 mr-1" />
+                                  <CheckCircle className="w-4 h-4 mr-1" />
                                   موافق
                                 </Button>
                                 <Button
                                   size="sm"
                                   variant="outline"
-                                  className="border-red-500 text-red-300 hover:bg-red-500/10 hover:text-white"
+                                  className="bg-linear-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-300 rounded-xl"
                                   onClick={() => {
                                     setSelectedChange(change);
                                     setShowRejectionDialog(true);
@@ -603,7 +686,7 @@ export default function AdminAuditPage() {
                                   <XCircle className="w-3 h-3 mr-1" />
                                   رفض
                                 </Button>
-                              </>
+                              </div>
                             )}
                           </div>
                         </div>
@@ -627,40 +710,66 @@ export default function AdminAuditPage() {
             }}
           >
             <Card
-              className="w-full max-w-md border-[#0986ed]/30 bg-[#1a4e67f2]/95 backdrop-blur shadow-2xl"
+              className="w-full max-w-md border border-blue-200 bg-linear-to-br from-white to-blue-50 shadow-2xl rounded-2xl"
               onClick={(e) => e.stopPropagation()}
             >
-              <CardHeader>
-                <CardTitle className="text-[#F4F4F4]">رفض التعديل</CardTitle>
+              <CardHeader className="bg-linear-to-r from-red-50 to-red-100 border-b border-red-200 rounded-t-2xl">
+                <CardTitle className="text-red-700 flex items-center gap-3">
+                  <div className="p-2 rounded-full bg-red-200">
+                    <XCircle className="w-5 h-5 text-red-600" />
+                  </div>
+                  رفض التعديل
+                </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-2">
-                  <p className="text-sm text-blue-100">
-                    <strong>المؤشر:</strong> {selectedChange.indicatorName}
-                  </p>
-                  <p className="text-sm text-blue-100">
-                    <strong>الفلتر:</strong> {selectedChange.filterName}
-                  </p>
-                  <p className="text-sm text-blue-100">
-                    <strong>التغيير:</strong> {selectedChange.oldValue} ←{" "}
-                    {selectedChange.newValue}
-                  </p>
+              <CardContent className="space-y-6 p-6">
+                <div className="space-y-4 p-4 bg-gray-50 rounded-xl border border-gray-200">
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm font-medium text-gray-600">
+                      المؤشر:
+                    </span>
+                    <span className="font-bold text-blue-700">
+                      {selectedChange.indicatorName}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm font-medium text-gray-600">
+                      الفلتر:
+                    </span>
+                    <span className="font-bold text-indigo-700">
+                      {selectedChange.filterName}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm font-medium text-gray-600">
+                      التغيير:
+                    </span>
+                    <div className="flex items-center gap-2">
+                      <span className="px-2 py-1 bg-red-100 text-red-700 rounded text-sm font-bold">
+                        {selectedChange.oldValue}
+                      </span>
+                      <span className="text-gray-500">←</span>
+                      <span className="px-2 py-1 bg-green-100 text-green-700 rounded text-sm font-bold">
+                        {selectedChange.newValue}
+                      </span>
+                    </div>
+                  </div>
                 </div>
 
-                <div>
-                  <label className="text-sm mb-2 block text-blue-100">
-                    سبب الرفض <span className="text-red-400">*</span>
+                <div className="space-y-3">
+                  <label className="text-sm font-bold text-red-700 flex items-center gap-2">
+                    <AlertTriangle className="w-4 h-4" />
+                    سبب الرفض <span className="text-red-500">*</span>
                   </label>
                   <Textarea
-                    placeholder="اكتب سبب رفض التعديل..."
+                    placeholder="اكتب سبب رفض التعديل بشكل واضح ومفصل..."
                     value={rejectionComment}
                     onChange={(e) => setRejectionComment(e.target.value)}
-                    className="bg-blue-950/40 border-blue-800/50 text-blue-100 placeholder:text-blue-300/50"
+                    className="bg-linear-to-r from-white to-red-50 border-2 border-red-300 focus:border-red-500 text-gray-900 placeholder:text-red-400 min-h-[120px] rounded-xl"
                     required
                   />
                 </div>
 
-                <div className="flex gap-2 justify-end pt-4">
+                <div className="flex gap-3 justify-end pt-6 border-t border-gray-200">
                   <Button
                     variant="outline"
                     onClick={() => {
@@ -668,7 +777,7 @@ export default function AdminAuditPage() {
                       setSelectedChange(null);
                       setRejectionComment("");
                     }}
-                    className="border-blue-700/50 text-blue-300 hover:bg-blue-800/20"
+                    className="bg-linear-to-r from-gray-50 to-white hover:from-gray-100 hover:to-gray-50 text-gray-700 border border-gray-300 hover:border-gray-400 rounded-xl px-6 py-3"
                   >
                     إلغاء
                   </Button>
@@ -684,7 +793,7 @@ export default function AdminAuditPage() {
                       }
                       handleRejectChange(selectedChange);
                     }}
-                    className="bg-red-500 hover:bg-red-700 text-white"
+                    className="bg-linear-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white rounded-xl px-6 py-3 shadow-lg hover:shadow-xl transition-all duration-300"
                   >
                     <XCircle className="w-4 h-4 mr-2" />
                     رفض التعديل
@@ -706,39 +815,65 @@ export default function AdminAuditPage() {
             }}
           >
             <Card
-              className="w-full max-w-md border-[#0986ed]/30 bg-[#1a4e67f2]/95 backdrop-blur shadow-2xl"
+              className="w-full max-w-md border border-blue-200 bg-linear-to-br from-white to-blue-50 shadow-2xl rounded-2xl"
               onClick={(e) => e.stopPropagation()}
             >
-              <CardHeader>
-                <CardTitle className="text-[#F4F4F4]">اعتماد التعديل</CardTitle>
+              <CardHeader className="bg-linear-to-r from-green-50 to-green-100 border-b border-green-200 rounded-t-2xl">
+                <CardTitle className="text-green-700 flex items-center gap-3">
+                  <div className="p-2 rounded-full bg-green-200">
+                    <CheckCircle className="w-5 h-5 text-green-600" />
+                  </div>
+                  اعتماد التعديل
+                </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-2">
-                  <p className="text-sm text-blue-100">
-                    <strong>المؤشر:</strong> {selectedChange.indicatorName}
-                  </p>
-                  <p className="text-sm text-blue-100">
-                    <strong>الفلتر:</strong> {selectedChange.filterName}
-                  </p>
-                  <p className="text-sm text-blue-100">
-                    <strong>التغيير:</strong> {selectedChange.oldValue} ←{" "}
-                    {selectedChange.newValue}
-                  </p>
+              <CardContent className="space-y-6 p-6">
+                <div className="space-y-4 p-4 bg-gray-50 rounded-xl border border-gray-200">
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm font-medium text-gray-600">
+                      المؤشر:
+                    </span>
+                    <span className="font-bold text-blue-700">
+                      {selectedChange.indicatorName}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm font-medium text-gray-600">
+                      الفلتر:
+                    </span>
+                    <span className="font-bold text-indigo-700">
+                      {selectedChange.filterName}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm font-medium text-gray-600">
+                      التغيير:
+                    </span>
+                    <div className="flex items-center gap-2">
+                      <span className="px-2 py-1 bg-red-100 text-red-700 rounded text-sm font-bold">
+                        {selectedChange.oldValue}
+                      </span>
+                      <span className="text-gray-500">←</span>
+                      <span className="px-2 py-1 bg-green-100 text-green-700 rounded text-sm font-bold">
+                        {selectedChange.newValue}
+                      </span>
+                    </div>
+                  </div>
                 </div>
 
-                <div>
-                  <label className="text-sm mb-2 block text-blue-100">
+                <div className="space-y-3">
+                  <label className="text-sm font-bold text-green-700 flex items-center gap-2">
+                    <CheckCircle className="w-4 h-4" />
                     تعليق الاعتماد
                   </label>
                   <Textarea
-                    placeholder="أضف تعليق على قرار الاعتماد..."
+                    placeholder="أضف تعليق على قرار الاعتماد (اختياري)..."
                     value={approvalComment}
                     onChange={(e) => setApprovalComment(e.target.value)}
-                    className="bg-blue-950/40 border-blue-800/50 text-blue-100 placeholder:text-blue-300/50"
+                    className="bg-linear-to-r from-white to-green-50 border-2 border-green-300 focus:border-green-500 text-gray-900 placeholder:text-green-400 min-h-[120px] rounded-xl"
                   />
                 </div>
 
-                <div className="flex gap-2 justify-end pt-4">
+                <div className="flex gap-3 justify-end pt-6 border-t border-gray-200">
                   <Button
                     variant="outline"
                     onClick={() => {
@@ -746,20 +881,20 @@ export default function AdminAuditPage() {
                       setSelectedChange(null);
                       setApprovalComment("");
                     }}
-                    className="border-blue-700/50 text-blue-300 hover:bg-blue-800/20"
+                    className="bg-linear-to-r from-gray-50 to-white hover:from-gray-100 hover:to-gray-50 text-gray-700 border border-gray-300 hover:border-gray-400 rounded-xl px-6 py-3"
                   >
                     إلغاء
                   </Button>
                   <Button
                     onClick={() => handleApproveChange(selectedChange, false)}
-                    className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+                    className="bg-linear-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white rounded-xl px-6 py-3 shadow-lg hover:shadow-xl transition-all duration-300"
                   >
                     <XCircle className="w-4 h-4 mr-2" />
                     رفض
                   </Button>
                   <Button
                     onClick={() => handleApproveChange(selectedChange, true)}
-                    className="bg-green-600 hover:bg-green-700 text-white"
+                    className="bg-linear-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white rounded-xl px-6 py-3 shadow-lg hover:shadow-xl transition-all duration-300"
                   >
                     <CheckCircle className="w-4 h-4 mr-2" />
                     اعتماد

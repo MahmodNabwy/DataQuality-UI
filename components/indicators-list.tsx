@@ -21,6 +21,9 @@ import {
   History,
   Search,
   Percent,
+  FolderOpen,
+  AlertTriangle,
+  User,
 } from "lucide-react";
 import type { QAResults } from "@/lib/qa-engine";
 import {
@@ -925,7 +928,7 @@ export default function IndicatorsList({
       case "poor":
         return {
           label: "ضعيف",
-          color: "bg-red-500/20 border-red-500/50 text-red-300",
+          color: "bg-red-500/20 border-red-500/50 text-red-500",
           icon: "⚠️",
         };
       default:
@@ -957,115 +960,120 @@ export default function IndicatorsList({
   };
 
   return (
-    <div className="space-y-4">
-      <Card className="border-[#0986ed]/30 bg-[#1a4e67f2]/95 backdrop-blur">
-        <CardContent className="pt-6">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div
-              className="text-center p-4 border border-blue-700/40 rounded-2xl 
-  bg-linear-to-br from-[#053964] via-[#0986ed]/10 to-[#0b5fa8]/40 
-  shadow-lg shadow-blue-900/30 backdrop-blur-sm"
-            >
-              <Percent className="w-8 h-8 text-yellow-400 mx-auto mb-2" />
-              <p className="text-blue-300 text-sm mb-2">تقدم الفحص</p>
-              <div className="relative pt-1">
-                <div className="overflow-hidden h-4 text-xs flex rounded-full bg-blue-950/50 border border-blue-800/30">
+    <div className="min-h-screen bg-linear-to-br from-blue-50 via-indigo-50 to-purple-50 space-y-8 p-6">
+      <Card className="border border-blue-200 bg-linear-to-br from-white/95 to-blue-50/95 backdrop-blur-sm shadow-2xl rounded-3xl overflow-hidden">
+        <CardContent className="pt-8">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+            <div className="text-center p-6 bg-linear-to-br from-purple-500 to-indigo-600 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
+              <div className="w-14 h-14 mx-auto mb-4 rounded-full bg-white/20 flex items-center justify-center">
+                <Percent className="w-8 h-8 text-white" />
+              </div>
+              <p className="text-purple-100 text-sm mb-3 font-medium">
+                تقدم الفحص
+              </p>
+              <div className="relative pt-2">
+                <div className="overflow-hidden h-3 text-xs flex rounded-full bg-white/20 border border-white/30">
                   <div
                     style={{ width: `${progressPercentage}%` }}
-                    className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-gradient-to-r from-green-500 to-blue-500 transition-all duration-500"
+                    className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-linear-to-r from-green-400 to-emerald-500 transition-all duration-500 rounded-full"
                   />
                 </div>
-                <p className="text-2xl font-bold text-blue-100 mt-2">
+                <p className="text-2xl font-bold text-white mt-3">
                   {reviewedCount} / {totalIndicators}
                 </p>
-                <p className="text-blue-300 text-xs">
+                <p className="text-purple-100 text-sm font-medium">
                   {progressPercentage.toFixed(1)}% مكتمل
                 </p>
               </div>
             </div>
-            <div
-              className="text-center p-4 border border-blue-700/40 rounded-2xl 
-  bg-linear-to-br from-[#053964] via-[#0986ed]/10 to-[#0b5fa8]/40 
-  shadow-lg shadow-blue-900/30 backdrop-blur-sm"
-            >
-              <CheckCircle className="w-8 h-8 text-green-400 mx-auto mb-2" />
-              <p className="text-2xl font-bold text-white">{healthyCount}</p>
-              <p className="text-white text-sm">مؤشرات سليمة</p>
+            <div className="text-center p-6 bg-linear-to-br from-green-500 to-emerald-600 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
+              <div className="w-14 h-14 mx-auto mb-4 rounded-full bg-white/20 flex items-center justify-center">
+                <CheckCircle className="w-8 h-8 text-white" />
+              </div>
+              <p className="text-3xl font-bold text-white mb-2">
+                {healthyCount}
+              </p>
+              <p className="text-green-100 text-sm font-semibold">
+                مؤشرات سليمة
+              </p>
             </div>
-            <div
-              className="text-center p-4 border border-blue-700/40 rounded-2xl 
-  bg-linear-to-br from-[#053964] via-[#0986ed]/10 to-[#0b5fa8]/40 
-  shadow-lg shadow-blue-900/30 backdrop-blur-sm"
-            >
-              <AlertCircle className="w-8 h-8 text-red-400 mx-auto mb-2" />
-              <p className="text-2xl font-bold text-white">{issuesCount}</p>
-              <p className="text-white text-sm">تحتاج فحص</p>
+            <div className="text-center p-6 bg-linear-to-br from-red-500 to-pink-600 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
+              <div className="w-14 h-14 mx-auto mb-4 rounded-full bg-white/20 flex items-center justify-center">
+                <AlertCircle className="w-8 h-8 text-white" />
+              </div>
+              <p className="text-3xl font-bold text-white mb-2">
+                {issuesCount}
+              </p>
+              <p className="text-red-100 text-sm font-semibold">تحتاج فحص</p>
             </div>
-            <div
-              className="text-center p-4 border border-blue-700/40 rounded-2xl 
-  bg-linear-to-br from-[#053964] via-[#0986ed]/10 to-[#0b5fa8]/40 
-  shadow-lg shadow-blue-900/30 backdrop-blur-sm"
-            >
-              <CheckCheck className="w-8 h-8 text-purple-400 mx-auto mb-2" />
-              <p className="text-2xl font-bold text-white">{reviewedCount}</p>
-              <p className="text-white text-sm">تم الفحص</p>
+            <div className="text-center p-6 bg-linear-to-br from-blue-500 to-indigo-600 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
+              <div className="w-14 h-14 mx-auto mb-4 rounded-full bg-white/20 flex items-center justify-center">
+                <CheckCheck className="w-8 h-8 text-white" />
+              </div>
+              <p className="text-3xl font-bold text-white mb-2">
+                {reviewedCount}
+              </p>
+              <p className="text-blue-100 text-sm font-semibold">تم الفحص</p>
             </div>
           </div>
         </CardContent>
       </Card>
       {/* عدد التعديلات */}
       {editSession.dataEdits.length > 0 && (
-        <Card className="border-[#0986ed]/30 bg-[#1a4e67f2]/95 backdrop-blur">
+        <Card className="border border-orange-200 bg-linear-to-br from-white/95 to-orange-50/95 backdrop-blur-sm shadow-2xl rounded-3xl overflow-hidden">
           <CardContent className="pt-6">
-            <div className="flex items-center justify-between">
-              <div className="flex gap-2">
+            <div className="flex items-center justify-between p-6 bg-linear-to-r from-orange-50 to-amber-50 rounded-2xl border border-orange-200 shadow-lg">
+              <div className="flex items-center gap-4">
+                <div className="w-14 h-14 bg-linear-to-br from-orange-500 to-amber-500 rounded-2xl flex items-center justify-center shadow-xl">
+                  <Edit3 className="w-7 h-7 text-white" />
+                </div>
+                <div>
+                  <p className="text-xl font-bold text-orange-800 mb-1">
+                    لديك {editSession.dataEdits.length} تعديل محفوظ
+                  </p>
+                  <p className="text-sm text-orange-600 font-medium">
+                    تم تطبيق التعديلات على البيانات والرسومات البيانية
+                  </p>
+                </div>
+              </div>
+              <div className="flex gap-3">
                 <Button
                   onClick={exportEditedData}
-                  className="bg-green-600 hover:bg-green-700 text-white"
+                  className="bg-linear-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white flex items-center gap-2 shadow-lg hover:shadow-xl transition-all duration-300 rounded-xl px-6 py-3"
                   size="sm"
                 >
-                  <Download className="w-4 h-4 ml-2" />
+                  <Download className="w-4 h-4" />
                   تحميل التعديلات
                 </Button>
                 <Button
                   onClick={handleClearEdits}
                   variant="outline"
-                  className="bg-red-600/20 border-red-500/50 text-red-300 hover:bg-red-600/30"
+                  className="border-red-200 text-red-600 hover:bg-red-50 flex items-center gap-2 shadow-md hover:shadow-lg transition-all duration-300 rounded-xl px-6 py-3"
                   size="sm"
                 >
-                  <Trash2 className="w-4 h-4 ml-2" />
+                  <Trash2 className="w-4 h-4" />
                   حذف التعديلات
                 </Button>
-              </div>
-              <div className="flex items-center justify-between gap-3">
-                <div>
-                  <p className="text-yellow-100 font-semibold">
-                    لديك {editSession.dataEdits.length} تعديل محفوظ
-                  </p>
-                  <p className="text-yellow-300 text-sm">
-                    تم تطبيق التعديلات على البيانات والرسومات البيانية
-                  </p>
-                </div>
               </div>
             </div>
           </CardContent>
         </Card>
       )}
 
-      <div className="space-y-3">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-2">
+      <div className="bg-linear-to-br from-white/95 to-blue-50/95 rounded-3xl shadow-2xl border border-blue-200 p-8 space-y-8 backdrop-blur-sm">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
           <div className="relative md:col-span-2">
-            <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-black mx-auto mb-2" />
+            <Search className="absolute right-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-blue-400" />
             <Input
               placeholder="ابحث عن المؤشرات (عربي/إنجليزي)..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="bg-[#fffffff2] via-[#fffffff2]/20 to-[#fffffff2] pr-10"
+              className="bg-white/80 border-blue-200 pr-12 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-400 shadow-md hover:shadow-lg transition-all duration-300 h-12 text-lg"
             />
           </div>
 
           <Select value={searchYearFilter} onValueChange={setSearchYearFilter}>
-            <SelectTrigger className="bg-[#fffffff2] via-[#fffffff2]/20 to-[#fffffff2] cursor-pointer">
+            <SelectTrigger className="bg-white/80 border-blue-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-400 shadow-md hover:shadow-lg transition-all duration-300 h-12">
               <SelectValue placeholder="تصفية حسب السنة" />
             </SelectTrigger>
             <SelectContent>
@@ -1082,7 +1090,7 @@ export default function IndicatorsList({
             value={searchQualityFilter}
             onValueChange={setSearchQualityFilter}
           >
-            <SelectTrigger className="bg-[#fffffff2] via-[#fffffff2]/20 to-[#fffffff2] cursor-pointer">
+            <SelectTrigger className="bg-white/80 border-blue-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-400 shadow-md hover:shadow-lg transition-all duration-300 h-12 cursor-pointer">
               <SelectValue placeholder="تصفية حسب الجودة" />
             </SelectTrigger>
             <SelectContent>
@@ -1095,10 +1103,10 @@ export default function IndicatorsList({
           </Select>
         </div>
 
-        <div className="flex gap-2 items-center">
+        <div className="flex gap-4 items-center">
           <Select value={issueTypeFilter} onValueChange={setIssueTypeFilter}>
-            <SelectTrigger className="w-[250px] bg-[#fffffff2] via-[#fffffff2]/20 to-[#fffffff2]">
-              <Filter className="w-4 h-4 ml-2" />
+            <SelectTrigger className="w-[280px] bg-white/80 border-blue-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-400 shadow-md hover:shadow-lg transition-all duration-300 h-12">
+              <Filter className="w-5 h-5 ml-2 text-blue-500" />
               <SelectValue placeholder="نوع المشكلة" />
             </SelectTrigger>
             <SelectContent>
@@ -1124,9 +1132,9 @@ export default function IndicatorsList({
               }}
               variant="outline"
               size="sm"
-              className="bg-red-600/20 border-red-500/50 text-red-300 hover:bg-red-600/30"
+              className="border-red-200 text-red-600 hover:bg-red-50 hover:text-red-700 font-semibold shadow-sm transition-all duration-200 flex items-center gap-2"
             >
-              <X className="w-4 h-4 ml-2" />
+              <X className="w-4 h-4" />
               مسح البحث
             </Button>
           )}
@@ -1137,19 +1145,19 @@ export default function IndicatorsList({
             <>
               <Button
                 onClick={exportReviewedReport}
-                className="bg-green-600 hover:bg-green-700 text-white"
+                className="bg-linear-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-semibold shadow-lg transition-all duration-200 flex items-center gap-2"
                 size="sm"
               >
-                <Download className="w-4 h-4 ml-2" />
+                <Download className="w-4 h-4" />
                 تنزيل معلومات الفحص
               </Button>
               <Button
                 onClick={handleClearSession}
                 variant="outline"
-                className="bg-red-600/20 border-red-500/50 text-red-300 hover:bg-red-600/30 hover:text-white"
+                className="border-red-200 text-red-600 hover:bg-red-50 hover:text-red-700 font-semibold shadow-sm transition-all duration-200 flex items-center gap-2"
                 size="sm"
               >
-                <Trash2 className="w-4 h-4 ml-2" />
+                <Trash2 className="w-4 h-4" />
                 مسح البيانات
               </Button>
             </>
@@ -1161,32 +1169,33 @@ export default function IndicatorsList({
           onValueChange={(v) => setStatusFilter(v as typeof statusFilter)}
           className="w-full"
         >
-          <TabsList className="grid w-full grid-cols-4 gap-2 bg-[#1a4e67f2] border border-blue-800/50">
+          <TabsList className="grid w-full grid-cols-4 gap-3 bg-blue-50/50 rounded-2xl shadow-lg border border-blue-200 p-3 backdrop-blur-sm">
             <TabsTrigger
               value="all"
-              className="bg-blue-600/50 text-blue-100 cursor-pointer"
+              className="data-[state=active]:bg-linear-to-r data-[state=active]:from-blue-600 data-[state=active]:to-indigo-600 data-[state=active]:text-white data-[state=active]:shadow-lg rounded-xl font-semibold transition-all duration-300 flex items-center gap-2 py-3 hover:bg-blue-100"
             >
+              <FolderOpen className="w-4 h-4" />
               الكل ({totalIndicators})
             </TabsTrigger>
             <TabsTrigger
               value="healthy"
-              className="bg-green-600/50 text-lime-200 cursor-pointer"
+              className="data-[state=active]:bg-linear-to-r data-[state=active]:from-green-500 data-[state=active]:to-emerald-600 data-[state=active]:text-white data-[state=active]:shadow-lg rounded-xl font-semibold transition-all duration-300 flex items-center gap-2 py-3 hover:bg-green-100"
             >
-              <CheckCircle className="w-4 h-4 ml-2" />
+              <CheckCircle className="w-4 h-4" />
               سليم ({healthyCount})
             </TabsTrigger>
             <TabsTrigger
-              value="issu"
-              className="bg-red-600/50 text-red-200 cursor-pointer"
+              value="issues"
+              className="data-[state=active]:bg-linear-to-r data-[state=active]:from-red-500 data-[state=active]:to-pink-600 data-[state=active]:text-white data-[state=active]:shadow-lg rounded-xl font-semibold transition-all duration-300 flex items-center gap-2 py-3 hover:bg-red-100"
             >
-              <AlertCircle className="w-4 h-4 ml-2" />
+              <AlertCircle className="w-4 h-4" />
               بحاجة للفحص ({issuesCount})
             </TabsTrigger>
             <TabsTrigger
               value="reviewed"
-              className="bg-yellow-600 text-yellow-200 cursor-pointer"
+              className="data-[state=active]:bg-linear-to-r data-[state=active]:from-purple-500 data-[state=active]:to-violet-600 data-[state=active]:text-white data-[state=active]:shadow-lg rounded-xl font-semibold transition-all duration-300 flex items-center gap-2 py-3 hover:bg-purple-100"
             >
-              <CheckCheck className="w-4 h-4 ml-2" />
+              <CheckCheck className="w-4 h-4" />
               تم الفحص ({reviewedCount})
             </TabsTrigger>
           </TabsList>
@@ -1216,7 +1225,7 @@ export default function IndicatorsList({
           }
         />
       ) : (
-        <div className="grid gap-4">
+        <div className="grid gap-6">
           {indicators.map((indicator) => {
             const ratingConfig = getRatingConfig(indicator.qualityRating);
             const indicatorHasEdits = hasEdits(indicator.name);
@@ -1225,10 +1234,10 @@ export default function IndicatorsList({
               <Card
                 key={indicator.name}
                 id={`indicator-${indicator.name}`}
-                className={`border-blue-800/50 transition-all duration-300 ${
+                className={`border border-blue-200 transition-all duration-300 shadow-xl hover:shadow-2xl rounded-2xl overflow-hidden ${
                   lastOpenedIndicator === indicator.name
-                    ? "bg-[#053964] shadow-lg shadow-purple-500/20"
-                    : "bg-blue-950/30"
+                    ? "bg-linear-to-br from-white to-blue-50 ring-2 ring-blue-400 ring-opacity-60 shadow-blue-400/20"
+                    : "bg-linear-to-br from-white/95 to-blue-50/95 hover:from-white hover:to-blue-100/50"
                 }`}
               >
                 <CardHeader>
@@ -1236,15 +1245,15 @@ export default function IndicatorsList({
                     {/* Actions */}
                     <div className="flex items-center gap-2">
                       {indicatorHasEdits && (
-                        <Badge className="bg-green-900/20 text-sm gap-2 border-green-500/50 text-green-300">
-                          <Edit3 className="w-3 h-3 ml-1" />
+                        <Badge className="bg-linear-to-r from-green-100 to-emerald-100 text-sm gap-2 border-green-200 text-green-700 font-semibold shadow-sm">
+                          <Edit3 className="w-3 h-3" />
                           تم التعديل
                         </Badge>
                       )}
                       {indicator.hasAuditHistory && (
                         <div className="flex items-center gap-2">
-                          <Badge className="bg-purple-600/20 border-purple-500/50 text-purple-300 text-sm gap-2">
-                            <History className="w-3 h-3 ml-1" />
+                          <Badge className="bg-linear-to-r from-purple-100 to-violet-100 border-purple-200 text-purple-700 text-sm gap-2 font-semibold shadow-sm">
+                            <History className="w-3 h-3" />
                             تعديل {indicator.auditHistoryCount}
                           </Badge>
                         </div>
@@ -1255,7 +1264,7 @@ export default function IndicatorsList({
                             size="sm"
                             variant="outline"
                             onClick={() => unmarkAsReviewed(indicator.name)}
-                            className="bg-red-600/20 border-red-500/50 text-red-300 hover:bg-red-600/30"
+                            className="border-red-200 text-red-600 hover:bg-red-50 font-semibold"
                           >
                             إعادة الفحص
                           </Button>
@@ -1263,9 +1272,9 @@ export default function IndicatorsList({
                             size="sm"
                             variant="outline"
                             onClick={() => openNoteDialog(indicator.name)}
-                            className="bg-purple-600/20 border-purple-500/50 text-purple-300 hover:bg-purple-600/30"
+                            className="bg-linear-to-r from-purple-100 to-violet-100 border-purple-200 text-purple-700 hover:from-purple-200 hover:to-violet-200 hover:text-purple-800 font-semibold shadow-sm transition-all duration-200"
                           >
-                            <StickyNote className="w-4 h-4 ml-2" />
+                            <StickyNote className="w-4 h-4" />
                             {indicator.reviewedNotes
                               ? "تعديل الملاحظة "
                               : "إضافة ملاحظة"}
@@ -1276,9 +1285,9 @@ export default function IndicatorsList({
                           size="sm"
                           variant="outline"
                           onClick={() => openNoteDialog(indicator.name)}
-                          className="bg-green-600/20 border-green-500/50 cursor-pointer text-green-300 hover:bg-green-600/30 hover:text-green"
+                          className="bg-linear-to-r from-green-100 to-emerald-100 border-green-200 text-green-700 hover:from-green-200 hover:to-emerald-200 hover:text-green-800 font-semibold shadow-sm transition-all duration-200"
                         >
-                          <CheckCheck className="w-4 h-4 ml-2" />
+                          <CheckCheck className="w-4 h-4" />
                           تأكيد الفحص
                         </Button>
                       )}
@@ -1287,9 +1296,9 @@ export default function IndicatorsList({
                           size="sm"
                           variant="outline"
                           onClick={() => setEditMode(indicator.name)}
-                          className="bg-yellow-600/20 border-yellow-500/50 text-yellow-300  hover:text-yellow  hover:bg-yellow-600/30"
+                          className="bg-linear-to-r from-orange-100 to-amber-100 border-orange-200 text-orange-700 hover:from-orange-200 hover:to-amber-200 hover:text-orange-800 font-semibold shadow-sm transition-all duration-200"
                         >
-                          <Edit3 className="w-4 h-4 ml-2" />
+                          <Edit3 className="w-4 h-4" />
                           تعديل البيانات
                         </Button>
                       )}
@@ -1306,14 +1315,16 @@ export default function IndicatorsList({
                       onClick={() => toggleExpand(indicator.name)}
                     >
                       <div>
-                        <CardTitle className="text-lg text-blue-100">
+                        <CardTitle className="text-xl font-bold text-gray-700 mb-2">
                           {indicator.name}
                         </CardTitle>
                         {indicator.reviewedNotes && (
-                          <p className="text-blue-400 mt-1 text-xl flex flex-row-reverse items-center gap-1">
-                            <StickyNote className="w-3 h-3" />
-                            {indicator.reviewedNotes}
-                          </p>
+                          <div className="inline-flex items-center gap-2 px-3 py-2 bg-linear-to-r from-purple-50 to-violet-50 border border-purple-200 rounded-xl text-purple-700 font-medium shadow-sm">
+                            <StickyNote className="w-4 h-4" />
+                            <span className="text-sm">
+                              {indicator.reviewedNotes}
+                            </span>
+                          </div>
                         )}
                       </div>
                       <ChevronDown
@@ -1327,57 +1338,67 @@ export default function IndicatorsList({
                   </div>
                 </CardHeader>
                 <CardContent>
-                  <div className="grid grid-cols-2 md:grid-cols-5 gap-4 text-sm mb-4">
-                    <div className="p-3 bg-blue-900/30 rounded-lg border border-blue-800/40">
-                      <p className="text-blue-300 text-xs">عدد الصفوف</p>
-                      <p className="text-2xl font-semibold text-blue-100 mt-1">
+                  <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
+                    <div className="p-4 bg-linear-to-br from-gray-50 to-blue-50 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-all duration-200">
+                      <p className="text-gray-600 text-sm font-medium mb-2">
+                        عدد الصفوف
+                      </p>
+                      <p className="text-2xl font-bold text-gray-800">
                         {indicator.rowCount}
                       </p>
                     </div>
-                    <div className="p-3 bg-blue-900/30 rounded-lg border border-blue-800/40">
-                      <p className="text-blue-300 text-sm">
-                        عدد المؤشرات الفرعية{" "}
+                    <div className="p-4 bg-linear-to-br from-gray-50 to-blue-50 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-all duration-200">
+                      <p className="text-gray-600 text-sm font-medium mb-2">
+                        عدد المؤشرات الفرعية
                       </p>
-                      <p className="text-2xl font-semibold text-blue-100 mt-1">
+                      <p className="text-2xl font-bold text-gray-800">
                         {indicator.filters.length}
                       </p>
                     </div>
-                    <div className="p-3 bg-blue-900/30 rounded-lg border border-blue-800/40">
-                      <p className="text-blue-300 text-sm">عدد السنوات</p>
-                      <p className="text-2xl font-semibold text-blue-100 mt-1">
+                    <div className="p-4 bg-linear-to-br from-gray-50 to-blue-50 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-all duration-200">
+                      <p className="text-gray-600 text-sm font-medium mb-2">
+                        عدد السنوات
+                      </p>
+                      <p className="text-2xl font-bold text-gray-800">
                         {indicator.yearsCount}
                       </p>
                     </div>
-                    <div className="p-3 bg-blue-900/30 rounded-lg border border-blue-800/40">
-                      <p className="text-blue-300 text-sm">درجة الجودة</p>
+                    <div className="p-4 bg-linear-to-br from-gray-50 to-blue-50 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-all duration-200">
+                      <p className="text-gray-600 text-sm font-medium mb-2">
+                        درجة الجودة
+                      </p>
                       <p
-                        className={`text-2xl font-semibold mt-1 ${
+                        className={`text-2xl font-bold ${
                           indicator.qualityScore >= 95
-                            ? "text-green-400"
+                            ? "text-green-600"
                             : indicator.qualityScore >= 80
-                            ? "text-blue-400"
+                            ? "text-blue-600"
                             : indicator.qualityScore >= 60
-                            ? "text-yellow-400"
-                            : "text-red-400"
+                            ? "text-yellow-600"
+                            : "text-red-600"
                         }`}
                       >
                         {indicator.qualityScore}
                       </p>
                     </div>
-                    <div className="p-3 bg-blue-900/30 rounded-lg border border-blue-800/40">
-                      <p className="text-blue-300 text-sm">الحالة</p>
-                      <div className="flex items-center flex-row-reverse gap-2 mt-1">
+                    <div className="p-4 bg-linear-to-br from-gray-50 to-blue-50 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-all duration-200">
+                      <p className="text-gray-600 text-sm font-medium mb-2">
+                        الحالة
+                      </p>
+                      <div className="flex items-center flex-row-reverse gap-2">
                         {indicator.hasIssues ? (
                           <>
-                            <AlertCircle className="w-4 h-4 text-red-400" />
-                            <span className="text-red-300 text-sm">
+                            <AlertCircle className="w-5 h-5 text-red-500" />
+                            <span className="text-red-600 text-sm font-medium">
                               بحاجة للفحص
                             </span>
                           </>
                         ) : (
                           <>
-                            <CheckCircle className="w-4 h-4 text-green-400" />
-                            <span className="text-green-300 text-sm">سليم</span>
+                            <CheckCircle className="w-5 h-5 text-green-500" />
+                            <span className="text-green-600 text-sm font-medium">
+                              سليم
+                            </span>
                           </>
                         )}
                       </div>
@@ -1392,12 +1413,12 @@ export default function IndicatorsList({
                         </Badge>
                       )}
                       {indicator.issuesBreakdown.warning > 0 && (
-                        <Badge className="bg-yellow-500/20 text-sm border-yellow-500/50 text-yellow-300">
+                        <Badge className="bg-yellow-600 text-sm border-yellow-500 text-yellow-200">
                           تحذير: {indicator.issuesBreakdown.warning}
                         </Badge>
                       )}
                       {indicator.issuesBreakdown.info > 0 && (
-                        <Badge className="bg-blue-500/20 text-sm border-blue-500/50 text-blue-300">
+                        <Badge className="bg-blue-600 text-sm border-blue-500 text-blue-200">
                           معلومة: {indicator.issuesBreakdown.info}
                         </Badge>
                       )}
@@ -1430,24 +1451,27 @@ export default function IndicatorsList({
       )}
 
       <Dialog open={noteDialogOpen} onOpenChange={setNoteDialogOpen}>
-        <DialogContent className="bg-blue-950 border-blue-800/50 text-blue-100">
+        <DialogContent className="bg-linear-to-br from-white to-blue-50 border border-blue-200 text-blue-900 shadow-2xl rounded-2xl max-w-lg">
           <DialogHeader>
-            <DialogTitle>إضافة ملاحظات للمؤشر</DialogTitle>
-            <DialogDescription className="text-blue-300">
+            <DialogTitle className="text-2xl font-bold text-blue-800">
+              إضافة ملاحظات للمؤشر
+            </DialogTitle>
+            <DialogDescription className="text-blue-600 font-medium text-lg">
               {currentIndicator}
             </DialogDescription>
           </DialogHeader>
-          <div className="space-y-4">
+          <div className="space-y-6">
             <Textarea
               placeholder="اكتب ملاحظاتك هنا... (اختياري)"
               value={noteText}
               onChange={(e) => setNoteText(e.target.value)}
-              className="bg-blue-950/40 border-blue-800/50 text-blue-100 min-h-[120px]"
+              className="bg-white/80 border-blue-200 text-blue-900 min-h-[120px] rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-400 shadow-md"
             />
-            <div className="flex gap-2 justify-end">
+            <div className="flex gap-3 justify-end">
               <Button
                 variant="outline"
                 onClick={() => setNoteDialogOpen(false)}
+                className="border-gray-300 text-gray-700 hover:bg-gray-50 font-semibold transition-all duration-200 rounded-xl px-6 py-3 shadow-md hover:shadow-lg"
               >
                 إلغاء
               </Button>
@@ -1455,7 +1479,7 @@ export default function IndicatorsList({
                 onClick={() =>
                   currentIndicator && markAsReviewed(currentIndicator)
                 }
-                className="bg-blue-600 hover:bg-blue-700"
+                className="bg-linear-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold shadow-lg transition-all duration-200 rounded-xl px-6 py-3 hover:shadow-xl"
               >
                 تأكيد
               </Button>
