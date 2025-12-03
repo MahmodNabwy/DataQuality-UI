@@ -75,7 +75,16 @@ export function ProjectDashboard({
                     variant="secondary"
                     className="bg-blue-100 text-blue-700"
                   >
-                    آخر تحديث: {project.qaResults.processedAt}
+                    آخر تحديث:{" "}
+                    {new Date(project.qaResults.processedAt).toLocaleDateString(
+                      "ar-EG",
+                      {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                        calendar: "gregory",
+                      }
+                    )}
                   </Badge>
                 </div>
               </div>
@@ -177,22 +186,22 @@ export function ProjectDashboard({
           onValueChange={(value) => setActiveView(value as any)}
           className="w-full"
         >
-          <TabsList className="grid w-full grid-cols-3 bg-white rounded-2xl shadow-lg border border-blue-100 p-2">
+          <TabsList className="grid w-full grid-cols-3 bg-white rounded-2xl shadow-lg border border-blue-100  ">
             <TabsTrigger
               value="overview"
-              className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-indigo-600 data-[state=active]:text-white rounded-xl font-semibold transition-all duration-200"
+              className="cursor-pointer data-[state=active]:bg-linear-to-r data-[state=active]:from-blue-600 data-[state=active]:to-indigo-600 data-[state=active]:text-white rounded-xl font-semibold transition-all duration-200"
             >
               نظرة عامة
             </TabsTrigger>
             <TabsTrigger
               value="indicators"
-              className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-indigo-600 data-[state=active]:text-white rounded-xl font-semibold transition-all duration-200"
+              className="cursor-pointer data-[state=active]:bg-linear-to-r data-[state=active]:from-blue-600 data-[state=active]:to-indigo-600 data-[state=active]:text-white rounded-xl font-semibold transition-all duration-200"
             >
               المؤشرات التفصيلية
             </TabsTrigger>
             <TabsTrigger
               value="summary"
-              className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-indigo-600 data-[state=active]:text-white rounded-xl font-semibold transition-all duration-200"
+              className="cursor-pointer data-[state=active]:bg-linear-to-r data-[state=active]:from-blue-600 data-[state=active]:to-indigo-600 data-[state=active]:text-white rounded-xl font-semibold transition-all duration-200"
             >
               تقرير شامل
             </TabsTrigger>
@@ -203,7 +212,7 @@ export function ProjectDashboard({
               {/* Quick Actions */}
               <Card className="bg-white rounded-2xl shadow-xl border border-blue-100">
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-3 text-xl font-bold text-gray-900">
+                  <CardTitle className="flex items-center justify-between gap-3 text-xl font-bold text-gray-900">
                     <Settings className="w-6 h-6 text-blue-600" />
                     الإجراءات السريعة
                   </CardTitle>
@@ -211,13 +220,15 @@ export function ProjectDashboard({
                 <CardContent className="space-y-4">
                   <Button
                     onClick={onViewIndicators}
-                    className="w-full justify-between bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-xl py-3 h-auto"
+                    className="w-full cursor-pointer  justify-between bg-linear-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-xl py-3 h-auto"
                   >
                     <div className="flex items-center gap-3">
                       <TableOfContents className="w-5 h-5" />
                       <div className="text-right">
-                        <div className="font-semibold">عرض جميع المؤشرات</div>
-                        <div className="text-sm opacity-90">
+                        <div className="font-semibold cursor-pointer  text-white">
+                          عرض جميع المؤشرات
+                        </div>
+                        <div className="text-sm cursor-pointer  opacity-90">
                           تصفح وإدارة المؤشرات بالتفصيل
                         </div>
                       </div>
@@ -227,13 +238,15 @@ export function ProjectDashboard({
 
                   <Button
                     onClick={onViewSummary}
-                    className="w-full justify-between bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white rounded-xl py-3 h-auto"
+                    className="w-full cursor-pointer  justify-between bg-linear-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white rounded-xl py-3 h-auto"
                   >
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-3 ">
                       <Activity className="w-5 h-5" />
                       <div className="text-right">
-                        <div className="font-semibold">عرض التقرير الشامل</div>
-                        <div className="text-sm opacity-90">
+                        <div className="font-semibold cursor-pointer ">
+                          عرض التقرير الشامل
+                        </div>
+                        <div className="text-sm opacity-90 ">
                           ملخص كامل لنتائج التحليل
                         </div>
                       </div>
@@ -244,7 +257,7 @@ export function ProjectDashboard({
               </Card>
 
               {/* Progress Overview */}
-              <Card className="bg-white rounded-2xl shadow-xl border border-blue-100">
+              {/* <Card className="bg-white rounded-2xl shadow-xl border border-blue-100">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-3 text-xl font-bold text-gray-900">
                     <PieChart className="w-6 h-6 text-green-600" />
@@ -262,7 +275,7 @@ export function ProjectDashboard({
 
                     <div className="w-full bg-gray-200 rounded-full h-3">
                       <div
-                        className="bg-gradient-to-r from-green-500 to-blue-500 h-3 rounded-full transition-all duration-500"
+                        className="bg-linear-to-r from-green-500 to-blue-500 h-3 rounded-full transition-all duration-500"
                         style={{ width: `${mockStats.completionRate}%` }}
                       ></div>
                     </div>
@@ -285,7 +298,7 @@ export function ProjectDashboard({
                     </div>
                   </div>
                 </CardContent>
-              </Card>
+              </Card> */}
             </div>
           </TabsContent>
 
@@ -303,7 +316,7 @@ export function ProjectDashboard({
                   </p>
                   <Button
                     onClick={onViewIndicators}
-                    className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"
+                    className="text-white cursor-pointer bg-linear-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"
                   >
                     عرض جميع المؤشرات
                   </Button>
@@ -326,7 +339,7 @@ export function ProjectDashboard({
                   </p>
                   <Button
                     onClick={onViewSummary}
-                    className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700"
+                    className="cursor-pointer text-white bg-linear-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700"
                   >
                     عرض التقرير الكامل
                   </Button>

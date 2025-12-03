@@ -106,40 +106,50 @@ export function LoginForm({ onLogin }: LoginFormProps) {
   };
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-[#0a1736] via-[#0986ed]/15 to-[#0a1736] flex items-center justify-center p-6 relative overflow-hidden">
-      {/* Decorative Blur Lights */}
-      <div className="absolute w-96 h-96 bg-[#0986ed]/20 rounded-full blur-3xl top-10 left-10" />
-      <div className="absolute w-96 h-96 bg-blue-900/20 rounded-full blur-3xl bottom-10 right-10" />
+    <div className="min-h-screen bg-linear-to-br from-blue-50 via-indigo-50 to-purple-50 flex items-center justify-center p-5 relative overflow-hidden">
+      {/* Decorative Background Elements */}
+      <div className="absolute w-80 h-80 bg-linear-to-r from-blue-400/20 to-indigo-500/20 rounded-full blur-3xl top-10 left-10 animate-pulse" />
+      <div className="absolute w-60 h-60 bg-linear-to-r from-purple-400/20 to-pink-500/20 rounded-full blur-3xl bottom-10 right-10 animate-pulse animation-delay-1000" />
+      <div className="absolute w-48 h-48 bg-linear-to-r from-indigo-400/15 to-blue-500/15 rounded-full blur-2xl top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 animate-pulse animation-delay-500" />
 
-      <Card className="w-full max-w-lg border-[#0986ed]/30 bg-white/90 backdrop-blur-xl shadow-2xl shadow-blue-900/40 rounded-2xl animate-fade-in">
-        <CardHeader className="text-center pb-8">
-          <CardTitle className="text-3xl font-bold text-[#1f254b] mb-2 drop-shadow-sm">
+      <Card className="w-full max-w-xl border border-blue-200 bg-linear-to-br from-white/95 to-blue-50/95 backdrop-blur-xl shadow-2xl rounded-3xl animate-fade-in overflow-hidden">
+        <CardHeader className="text-center pb-6 pt-8 bg-linear-to-r from-blue-50 to-indigo-50 border-b border-blue-100">
+          <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-linear-to-r from-blue-500 to-indigo-600 flex items-center justify-center shadow-xl">
+            <Shield className="w-10 h-10 text-white" />
+          </div>
+          <CardTitle className="text-2xl font-bold bg-linear-to-r from-blue-600 to-indigo-700 bg-clip-text text-transparent mb-3">
             نظام فحص جودة البيانات الإحصائية
           </CardTitle>
-          <CardDescription className="text-[#1f254b]/70 text-lg font-medium tracking-wide">
+          <CardDescription className="text-blue-600 text-lg font-semibold tracking-wide">
             Data Quality Control System
           </CardDescription>
         </CardHeader>
 
-        <CardContent className="space-y-6">
-          <form onSubmit={handleSubmit} className="space-y-6" autoComplete="on">
+        <CardContent className="space-y-8 p-10">
+          <form onSubmit={handleSubmit} className="space-y-8" autoComplete="on">
             {/* Error Alert */}
             {error && (
-              <Alert className="bg-red-50 border-red-200 animate-fade-in-scale shadow-sm">
-                <AlertCircle className="h-4 w-4 text-red-600" />
-                <AlertDescription className="text-red-800 font-medium">
-                  {error}
-                </AlertDescription>
+              <Alert className="bg-red-50 border-2 border-red-200 animate-fade-in-scale shadow-lg rounded-xl">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 rounded-full bg-red-100">
+                    <AlertCircle className="h-5 w-5 text-red-600" />
+                  </div>
+                  <AlertDescription className="text-red-800 font-semibold text-lg">
+                    {error}
+                  </AlertDescription>
+                </div>
               </Alert>
             )}
 
             {/* Email */}
-            <div className="space-y-3">
+            <div className="space-y-4">
               <Label
                 htmlFor="email"
-                className="text-[#1f254b] font-semibold flex items-center gap-2"
+                className="text-blue-700 font-bold text-lg flex items-center gap-3"
               >
-                <Mail className="w-4 h-4 text-[#0986ed]" />
+                <div className="p-2 rounded-full bg-blue-100">
+                  <Mail className="w-5 h-5 text-blue-600" />
+                </div>
                 البريد الإلكتروني
               </Label>
 
@@ -150,18 +160,21 @@ export function LoginForm({ onLogin }: LoginFormProps) {
                 autoComplete="email username"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="bg-white border-[#0986ed]/30 text-[#1f254b] focus:border-[#0986ed] focus:ring-2 focus:ring-[#0986ed]/30 h-12 text-lg rounded-lg transition-all duration-200 shadow-sm"
+                className="bg-white/80 border-2 border-blue-200 text-blue-900 focus:border-blue-500 focus:ring-2 focus:ring-blue-300 h-14 text-lg rounded-xl transition-all duration-300 shadow-md hover:shadow-lg placeholder:text-blue-400"
+                placeholder="أدخل البريد الإلكتروني"
                 required
               />
             </div>
 
             {/* Password */}
-            <div className="space-y-3">
+            <div className="space-y-4">
               <Label
                 htmlFor="password"
-                className="text-[#1f254b] font-semibold flex items-center gap-2"
+                className="text-blue-700 font-bold text-lg flex items-center gap-3"
               >
-                <Lock className="w-4 h-4 text-[#0986ed]" />
+                <div className="p-2 rounded-full bg-blue-100">
+                  <Lock className="w-5 h-5 text-blue-600" />
+                </div>
                 كلمة المرور
               </Label>
 
@@ -173,14 +186,15 @@ export function LoginForm({ onLogin }: LoginFormProps) {
                   autoComplete="current-password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="bg-white border-[#0986ed]/30 text-[#1f254b] focus:border-[#0986ed] focus:ring-2 focus:ring-[#0986ed]/30 h-12 text-lg rounded-lg pl-12 transition-all duration-200 shadow-sm"
+                  className="bg-white/80 border-2 border-blue-200 text-blue-900 focus:border-blue-500 focus:ring-2 focus:ring-blue-300 h-14 text-lg rounded-xl pl-14 transition-all duration-300 shadow-md hover:shadow-lg placeholder:text-blue-400"
+                  placeholder="أدخل كلمة المرور"
                   required
                 />
 
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-[#0986ed]/60 hover:text-[#0986ed] transition-colors"
+                  className="absolute left-4 top-1/2 transform -translate-y-1/2 text-blue-500 hover:text-blue-700 transition-colors p-2 rounded-full hover:bg-blue-100"
                 >
                   {showPassword ? (
                     <EyeOff className="w-5 h-5" />
@@ -194,16 +208,19 @@ export function LoginForm({ onLogin }: LoginFormProps) {
             {/* Submit Button */}
             <Button
               type="submit"
-              className="w-full bg-gradient-to-r from-[#0986ed] to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold py-3 h-12 text-lg rounded-lg shadow-lg hover:shadow-xl transition-all duration-200"
+              className="w-full bg-linear-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white font-bold py-4 h-16 text-xl rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1"
               disabled={isLoading}
             >
               {isLoading ? (
-                <div className="flex items-center gap-2">
-                  <div className="animate-spin h-5 w-5 border-2 border-white border-t-transparent rounded-full" />
-                  جاري تسجيل الدخول...
+                <div className="flex items-center gap-3">
+                  <div className="animate-spin h-6 w-6 border-3 border-white border-t-transparent rounded-full" />
+                  <span className="text-lg">جاري تسجيل الدخول...</span>
                 </div>
               ) : (
-                "تسجيل الدخول"
+                <div className="flex items-center gap-3">
+                  <User className="w-8 h-8" />
+                  <span className="text-lg">تسجيل الدخول</span>
+                </div>
               )}
             </Button>
           </form>

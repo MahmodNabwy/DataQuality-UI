@@ -11,6 +11,8 @@ import {
   Search,
   X,
   UploadIcon,
+  CheckCircle,
+  Lock,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -336,7 +338,11 @@ export default function ProjectsManager({
               return (
                 <Card
                   key={project.id}
-                  className="bg-linear-to-br from-white to-blue-50 border border-blue-200 shadow-xl hover:shadow-2xl transition-all duration-300 rounded-2xl group hover:scale-105"
+                  className={`transition-all duration-300 rounded-2xl group ${
+                    project.status === "ended"
+                      ? "bg-linear-to-br from-green-50 to-emerald-50 border border-green-200 shadow-lg opacity-90"
+                      : "bg-linear-to-br from-white to-blue-50 border border-blue-200 shadow-xl hover:shadow-2xl hover:scale-105"
+                  }`}
                 >
                   <CardContent className="p-6">
                     <div className="flex items-start justify-between mb-6">
@@ -390,6 +396,17 @@ export default function ProjectsManager({
                     </div>
 
                     <div className="flex items-center gap-2 mb-6">
+                      {project.status === "ended" && (
+                        <Badge className="bg-linear-to-r from-green-500 to-emerald-600 text-white shadow-md px-3 py-1">
+                          <CheckCircle className="w-4 h-4 mr-2" />
+                          تم إنهاء التدقيق
+                        </Badge>
+                      )}
+                      {project.status === "active" && (
+                        <Badge className="bg-linear-to-r from-blue-500 to-indigo-600 text-white shadow-md px-3 py-1">
+                          نشط
+                        </Badge>
+                      )}
                       {project.qaResults &&
                         project.qaResults.issues &&
                         project.qaResults.issues.length > 0 && (
@@ -400,13 +417,29 @@ export default function ProjectsManager({
                         )}
                     </div>
 
-                    <Button
-                      onClick={() => onProjectSelect(project)}
-                      className="w-full bg-linear-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white font-semibold py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 active:scale-95"
-                    >
-                      <FolderOpen className="w-5 h-5 mr-2" />
-                      فتح المشروع
-                    </Button>
+                    {project.status === "ended" ? (
+                      <div className="space-y-3">
+                        <div className="w-full bg-linear-to-r from-green-100 to-emerald-100 border-2 border-green-300 text-green-700 font-semibold py-3 rounded-xl shadow-md flex items-center justify-center">
+                          <CheckCircle className="w-5 h-5 mr-2" />
+                          تم إنهاء التدقيق من قبل الإدارة
+                        </div>
+                        <Button
+                          disabled
+                          className="w-full bg-gray-300 text-gray-500 cursor-not-allowed font-semibold py-3 rounded-xl shadow-md"
+                        >
+                          <Lock className="w-5 h-5 mr-2" />
+                          المشروع مغلق
+                        </Button>
+                      </div>
+                    ) : (
+                      <Button
+                        onClick={() => onProjectSelect(project)}
+                        className="w-full bg-linear-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white font-semibold py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 active:scale-95"
+                      >
+                        <FolderOpen className="w-5 h-5 mr-2" />
+                        فتح المشروع
+                      </Button>
+                    )}
                   </CardContent>
                 </Card>
               );

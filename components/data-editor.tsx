@@ -1144,53 +1144,77 @@ export function DataEditor({
           }}
         >
           <Card
-            className="w-full max-w-5xl max-h-[90vh] overflow-hidden border-[#0986ed]/30 bg-[#1a4e67f2]/95 backdrop-blur shadow-2xl"
+            className="w-full max-w-2xl max-h-[90vh] overflow-hidden bg-linear-to-br from-white to-blue-50 border border-blue-200 shadow-2xl rounded-2xl"
             onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside the modal
           >
-            <CardHeader>
-              <CardTitle className="flex items-center justify-between text-[#F4F4F4]">
+            <CardHeader className="bg-linear-to-r from-blue-50 to-indigo-50 border-b border-blue-100">
+              <CardTitle className="flex items-center justify-between py-4 px-4">
                 <Button
                   variant="ghost"
                   size="sm"
                   onClick={() => setShowMetadataDialog(false)}
-                  className="text-white/70 hover:text-white hover:bg-white/10"
+                  className="text-blue-600 hover:text-blue-800 hover:bg-blue-100 rounded-full p-2"
                 >
-                  <X className="w-4 h-4" />
+                  <X className="w-5 h-5" />
                 </Button>
-                معلومات التعديل
+                <div className="flex items-center gap-3">
+                  <span className="text-xl font-bold text-blue-700">
+                    معلومات التعديل
+                  </span>
+                  <div className="w-10 h-10 rounded-full bg-linear-to-r from-blue-500 to-indigo-600 flex items-center justify-center shadow-lg">
+                    <Save className="w-5 h-5 text-white" />
+                  </div>
+                </div>
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <label className="text-blue-300 text-sm mb-2 block">
-                  رقم الجدول <span className="text-red-400">*</span>
+            <CardContent className="p-8 space-y-6">
+              <div className="space-y-3">
+                <label className="text-blue-700 text-sm font-semibold flex items-center justify-end gap-2">
+                  <div className="w-2 h-2 rounded-full bg-blue-500"></div>
+                  رقم الجدول <span className="text-red-500">*</span>
                 </label>
                 <Input
                   placeholder="مثال: جدول 3.2"
                   value={tableNumber}
                   onChange={(e) => setTableNumber(e.target.value)}
-                  className="bg-[#053964]/50 border-blue-700/40 text-white placeholder:text-white/70 focus:border-[#0986ED] focus:ring-2 focus:ring-[#0986ED]/30 focus:outline-none transition-all duration-200 backdrop-blur-sm"
+                  className="bg-linear-to-r from-white to-blue-50 border-2 border-blue-300 focus:border-blue-500 text-blue-900 placeholder:text-blue-400 focus:ring-2 focus:ring-blue-200 transition-all duration-200 rounded-xl h-12 text-lg"
                   required
                 />
               </div>
-              <div>
-                <label className="text-blue-300 text-sm mb-2 block">
-                  تعليق على التعديل <span className="text-red-400">*</span>
+
+              <div className="space-y-3">
+                <label className="text-blue-700 text-sm font-semibold flex items-center justify-end gap-2">
+                  <div className="w-2 h-2 rounded-full bg-blue-500"></div>
+                  تعليق على التعديل <span className="text-red-500">*</span>
                 </label>
                 <Textarea
                   placeholder="اكتب سبب التعديل أو أي ملاحظات..."
                   value={comment}
                   onChange={(e) => setComment(e.target.value)}
-                  className="bg-[#053964]/50 border-blue-700/40 text-white min-h-[100px] placeholder:text-white/70 focus:border-[#0986ED] focus:ring-2 focus:ring-[#0986ED]/30 focus:outline-none transition-all duration-200 backdrop-blur-sm"
+                  className="bg-linear-to-r from-white to-blue-50 border-2 border-blue-300 focus:border-blue-500 text-blue-900 placeholder:text-blue-400 focus:ring-2 focus:ring-blue-200 transition-all duration-200 rounded-xl min-h-[120px] text-lg resize-none"
                   required
                 />
               </div>
 
-              <div className="flex gap-2 justify-start pt-4">
+              <div className="flex gap-4 justify-end pt-6 border-t border-blue-100">
+                <Button
+                  variant="outline"
+                  disabled={isSubmitting}
+                  onClick={() => {
+                    setShowMetadataDialog(false);
+                    setTableNumber("");
+                    setComment("");
+                    setPendingEdits([]);
+                  }}
+                  className="bg-linear-to-r cursor-pointer  from-gray-50 to-white hover:from-gray-100 hover:to-gray-50 text-gray-700 border border-gray-300 hover:border-gray-400 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 rounded-xl px-8 py-3 shadow-md hover:shadow-lg"
+                >
+                  <X className="w-4 h-4 ml-2" />
+                  إلغاء
+                </Button>
                 <Button
                   onClick={handleSaveWithMetadata}
                   disabled={isSubmitting}
-                  className="bg-green-600 hover:bg-green-700 text-white disabled:opacity-50"
+                  className="bg-linear-to-r cursor-pointer  from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white disabled:opacity-50 rounded-xl px-8 py-3 shadow-lg hover:shadow-xl transition-all duration-200"
                 >
                   {isSubmitting ? (
                     <>
@@ -1203,20 +1227,6 @@ export function DataEditor({
                       حفظ التعديلات
                     </>
                   )}
-                </Button>
-                <Button
-                  variant="outline"
-                  disabled={isSubmitting}
-                  onClick={() => {
-                    setShowMetadataDialog(false);
-                    setTableNumber("");
-                    setComment("");
-                    setPendingEdits([]);
-                  }}
-                  className="border-blue-700/50 text-blue-300 hover:text-white hover:bg-blue-700/20 hover:border-blue-600/70 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-md hover:shadow-lg active:scale-95"
-                >
-                  <X className="w-4 h-4 ml-2" />
-                  إلغاء
                 </Button>
               </div>
             </CardContent>

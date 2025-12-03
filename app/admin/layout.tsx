@@ -78,9 +78,9 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-linear-to-br from-blue-50 via-indigo-50 to-purple-50 flex items-center justify-center">
+      <div className="min-h-screen w-full bg-linear-to-br from-blue-50 via-indigo-50 to-purple-50 flex items-center justify-center p-4">
         <div className="text-center space-y-6">
-          <div className="relative">
+          <div className="relative flex items-center justify-center">
             <div className="w-20 h-20 rounded-full bg-linear-to-r from-blue-500 to-indigo-600 flex items-center justify-center shadow-xl">
               <Shield className="w-10 h-10 text-white animate-pulse" />
             </div>
@@ -99,8 +99,8 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
 
   if (!isAdmin) {
     return (
-      <div className="min-h-screen bg-linear-to-br from-blue-50 via-indigo-50 to-purple-50 flex items-center justify-center">
-        <Card className="w-full max-w-lg border border-red-200 bg-linear-to-br from-white to-red-50 shadow-2xl rounded-2xl overflow-hidden">
+      <div className="min-h-screen w-full bg-linear-to-br from-blue-50 via-indigo-50 to-purple-50 flex items-center justify-center p-4">
+        <Card className="w-full max-w-lg mx-auto border border-red-200 bg-linear-to-br from-white to-red-50 shadow-2xl rounded-2xl overflow-hidden">
           <CardHeader className="text-center bg-linear-to-r from-red-50 to-red-100 border-b border-red-200">
             <div className="w-20 h-20 mx-auto rounded-full bg-linear-to-r from-red-500 to-red-600 flex items-center justify-center shadow-xl mb-4">
               <Shield className="w-10 h-10 text-white" />
@@ -142,7 +142,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
             </div>
             <div className="space-y-1">
               <h1 className="text-2xl font-bold bg-linear-to-r from-blue-600 to-indigo-700 bg-clip-text text-transparent">
-                لوحة التحكم الإدارية
+                لوحة التحكم{" "}
               </h1>
               <p className="text-sm text-blue-500 font-medium">
                 إدارة نظام جودة البيانات

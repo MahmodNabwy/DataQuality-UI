@@ -1,48 +1,51 @@
-"use client"
+"use client";
 
-import type React from "react"
-import { useCallback, useState } from "react"
-import { Upload } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import type React from "react";
+import { useCallback, useState } from "react";
+import { Upload } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 interface FileUploaderProps {
-  onFileUpload: (file: File) => Promise<void>
-  isProcessing: boolean
+  onFileUpload: (file: File) => Promise<void>;
+  isProcessing: boolean;
 }
 
-export default function FileUploader({ onFileUpload, isProcessing }: FileUploaderProps) {
-  const [isDragging, setIsDragging] = useState(false)
+export default function FileUploader({
+  onFileUpload,
+  isProcessing,
+}: FileUploaderProps) {
+  const [isDragging, setIsDragging] = useState(false);
 
   const handleDragOver = useCallback((e: React.DragEvent) => {
-    e.preventDefault()
-    setIsDragging(true)
-  }, [])
+    e.preventDefault();
+    setIsDragging(true);
+  }, []);
 
   const handleDragLeave = useCallback(() => {
-    setIsDragging(false)
-  }, [])
+    setIsDragging(false);
+  }, []);
 
   const handleDrop = useCallback(
     (e: React.DragEvent) => {
-      e.preventDefault()
-      setIsDragging(false)
-      const files = e.dataTransfer.files
+      e.preventDefault();
+      setIsDragging(false);
+      const files = e.dataTransfer.files;
       if (files[0]) {
-        onFileUpload(files[0])
+        onFileUpload(files[0]);
       }
     },
-    [onFileUpload],
-  )
+    [onFileUpload]
+  );
 
   const handleFileSelect = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
-      const files = e.currentTarget.files
+      const files = e.currentTarget.files;
       if (files?.[0]) {
-        onFileUpload(files[0])
+        onFileUpload(files[0]);
       }
     },
-    [onFileUpload],
-  )
+    [onFileUpload]
+  );
 
   return (
     <div
@@ -56,13 +59,23 @@ export default function FileUploader({ onFileUpload, isProcessing }: FileUploade
       }`}
     >
       <Upload
-        className={`w-16 h-16 mx-auto mb-4 transition-colors ${isDragging ? "text-blue-400" : "text-blue-300"}`}
+        className={`w-16 h-16 mx-auto mb-4 transition-colors ${
+          isDragging ? "text-blue-400" : "text-blue-300"
+        }`}
       />
-      <p className="text-lg font-semibold mb-2 text-blue-100">اسحب الملف هنا أو انقر للاختيار</p>
-      <p className="text-sm text-blue-300 mb-6">ملفات Excel (.xlsx, .xls)</p>
+      <p className="text-lg font-semibold mb-2 text-blue-500">
+        اسحب الملف هنا أو انقر للاختيار
+      </p>
+      <p className="text-sm text-blue-400 mb-6">ملفات Excel (.xlsx, .xls)</p>
 
       <label>
-        <input type="file" accept=".xlsx,.xls" onChange={handleFileSelect} disabled={isProcessing} className="hidden" />
+        <input
+          type="file"
+          accept=".xlsx,.xls"
+          onChange={handleFileSelect}
+          disabled={isProcessing}
+          className="hidden"
+        />
         <Button
           disabled={isProcessing}
           asChild
@@ -72,5 +85,5 @@ export default function FileUploader({ onFileUpload, isProcessing }: FileUploade
         </Button>
       </label>
     </div>
-  )
+  );
 }

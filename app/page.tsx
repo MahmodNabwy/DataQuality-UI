@@ -433,13 +433,13 @@ function MainPageContent() {
                 projectId={currentProject.id}
               />
             ) : (
-              <Card className="bg-gradient-to-br from-white to-blue-50 border border-blue-200 shadow-xl hover:shadow-2xl transition-all duration-300 rounded-2xl">
+              <Card className="bg-linear-to-br from-white to-blue-50 border border-blue-200 shadow-xl hover:shadow-2xl transition-all duration-300 rounded-2xl">
                 <CardContent className="py-20">
                   <div className="text-center space-y-8">
-                    <div className="w-24 h-24 rounded-full bg-gradient-to-r from-blue-100 to-indigo-100 flex items-center justify-center mx-auto shadow-lg">
+                    <div className="w-24 h-24 rounded-full bg-linear-to-r from-blue-100 to-indigo-100 flex items-center justify-center mx-auto shadow-lg">
                       <FolderOpen className="w-12 h-12 text-blue-500" />
                     </div>
-                    <h3 className="text-3xl font-bold bg-gradient-to-r from-gray-700 to-gray-900 bg-clip-text text-transparent">
+                    <h3 className="text-3xl font-bold bg-linear-to-r from-gray-700 to-gray-900 bg-clip-text text-transparent">
                       لا يوجد مشروع مفتوح
                     </h3>
                     <p className="text-blue-600 text-xl font-medium">
@@ -449,7 +449,7 @@ function MainPageContent() {
                       onClick={() => (
                         setActiveTab("projects"), setCurrentProject(null)
                       )}
-                      className="gap-3 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white font-semibold py-4 px-10 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 active:scale-95"
+                      className="gap-3 bg-linear-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white font-semibold py-4 px-10 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 active:scale-95"
                     >
                       <FolderOpen className="w-5 h-5" />
                       الذهاب إلى المشاريع

@@ -916,13 +916,13 @@ export default function IndicatorsList({
       case "good":
         return {
           label: "جيد",
-          color: "bg-blue-500/20 border-blue-500/50 text-blue-300",
+          color: "bg-blue-500  border-blue-500/50 text-blue-300",
           icon: "✨",
         };
       case "fair":
         return {
           label: "متوسط",
-          color: "bg-yellow-500/20 border-yellow-500/50 text-yellow-300",
+          color: "bg-yellow-500 border-yellow-500/50 text-yellow-300",
           icon: "⚡",
         };
       case "poor":
@@ -1022,8 +1022,8 @@ export default function IndicatorsList({
       {editSession.dataEdits.length > 0 && (
         <Card className="border border-orange-200 bg-linear-to-br from-white/95 to-orange-50/95 backdrop-blur-sm shadow-2xl rounded-3xl overflow-hidden">
           <CardContent className="pt-6">
-            <div className="flex items-center justify-between p-6 bg-linear-to-r from-orange-50 to-amber-50 rounded-2xl border border-orange-200 shadow-lg">
-              <div className="flex items-center gap-4">
+            <div className="flex items-center flex-row-reverse justify-between p-6 bg-linear-to-r from-orange-50 to-amber-50 rounded-2xl border border-orange-200 shadow-lg">
+              <div className="flex flex-row-reverse items-center gap-4">
                 <div className="w-14 h-14 bg-linear-to-br from-orange-500 to-amber-500 rounded-2xl flex items-center justify-center shadow-xl">
                   <Edit3 className="w-7 h-7 text-white" />
                 </div>
@@ -1045,15 +1045,6 @@ export default function IndicatorsList({
                   <Download className="w-4 h-4" />
                   تحميل التعديلات
                 </Button>
-                <Button
-                  onClick={handleClearEdits}
-                  variant="outline"
-                  className="border-red-200 text-red-600 hover:bg-red-50 flex items-center gap-2 shadow-md hover:shadow-lg transition-all duration-300 rounded-xl px-6 py-3"
-                  size="sm"
-                >
-                  <Trash2 className="w-4 h-4" />
-                  حذف التعديلات
-                </Button>
               </div>
             </div>
           </CardContent>
@@ -1073,7 +1064,7 @@ export default function IndicatorsList({
           </div>
 
           <Select value={searchYearFilter} onValueChange={setSearchYearFilter}>
-            <SelectTrigger className="bg-white/80 border-blue-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-400 shadow-md hover:shadow-lg transition-all duration-300 h-12">
+            <SelectTrigger className="bg-white/80 rtl border-blue-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-400 shadow-md hover:shadow-lg transition-all duration-300 h-12">
               <SelectValue placeholder="تصفية حسب السنة" />
             </SelectTrigger>
             <SelectContent>
@@ -1169,31 +1160,31 @@ export default function IndicatorsList({
           onValueChange={(v) => setStatusFilter(v as typeof statusFilter)}
           className="w-full"
         >
-          <TabsList className="grid w-full grid-cols-4 gap-3 bg-blue-50/50 rounded-2xl shadow-lg border border-blue-200 p-3 backdrop-blur-sm">
+          <TabsList className="grid w-full grid-cols-4 gap-3 bg-blue-50/50 rounded-2xl shadow-lg border border-blue-200   backdrop-blur-sm">
             <TabsTrigger
               value="all"
-              className="data-[state=active]:bg-linear-to-r data-[state=active]:from-blue-600 data-[state=active]:to-indigo-600 data-[state=active]:text-white data-[state=active]:shadow-lg rounded-xl font-semibold transition-all duration-300 flex items-center gap-2 py-3 hover:bg-blue-100"
+              className="cursor-pointer data-[state=active]:bg-linear-to-r data-[state=active]:from-blue-600 data-[state=active]:to-indigo-600 data-[state=active]:text-white data-[state=active]:shadow-lg rounded-xl font-semibold transition-all duration-300 flex items-center gap-2   hover:bg-blue-100"
             >
               <FolderOpen className="w-4 h-4" />
               الكل ({totalIndicators})
             </TabsTrigger>
             <TabsTrigger
               value="healthy"
-              className="data-[state=active]:bg-linear-to-r data-[state=active]:from-green-500 data-[state=active]:to-emerald-600 data-[state=active]:text-white data-[state=active]:shadow-lg rounded-xl font-semibold transition-all duration-300 flex items-center gap-2 py-3 hover:bg-green-100"
+              className="cursor-pointer data-[state=active]:bg-linear-to-r data-[state=active]:from-green-500 data-[state=active]:to-emerald-600 data-[state=active]:text-white data-[state=active]:shadow-lg rounded-xl font-semibold transition-all duration-300 flex items-center gap-2   hover:bg-green-100"
             >
               <CheckCircle className="w-4 h-4" />
               سليم ({healthyCount})
             </TabsTrigger>
             <TabsTrigger
               value="issues"
-              className="data-[state=active]:bg-linear-to-r data-[state=active]:from-red-500 data-[state=active]:to-pink-600 data-[state=active]:text-white data-[state=active]:shadow-lg rounded-xl font-semibold transition-all duration-300 flex items-center gap-2 py-3 hover:bg-red-100"
+              className="cursor-pointer data-[state=active]:bg-linear-to-r data-[state=active]:from-red-500 data-[state=active]:to-pink-600 data-[state=active]:text-white data-[state=active]:shadow-lg rounded-xl font-semibold transition-all duration-300 flex items-center gap-2   hover:bg-red-100"
             >
               <AlertCircle className="w-4 h-4" />
               بحاجة للفحص ({issuesCount})
             </TabsTrigger>
             <TabsTrigger
               value="reviewed"
-              className="data-[state=active]:bg-linear-to-r data-[state=active]:from-purple-500 data-[state=active]:to-violet-600 data-[state=active]:text-white data-[state=active]:shadow-lg rounded-xl font-semibold transition-all duration-300 flex items-center gap-2 py-3 hover:bg-purple-100"
+              className="cursor-pointer data-[state=active]:bg-linear-to-r data-[state=active]:from-purple-500 data-[state=active]:to-violet-600 data-[state=active]:text-white data-[state=active]:shadow-lg rounded-xl font-semibold transition-all duration-300 flex items-center gap-2   hover:bg-purple-100"
             >
               <CheckCheck className="w-4 h-4" />
               تم الفحص ({reviewedCount})
@@ -1245,7 +1236,7 @@ export default function IndicatorsList({
                     {/* Actions */}
                     <div className="flex items-center gap-2">
                       {indicatorHasEdits && (
-                        <Badge className="bg-linear-to-r from-green-100 to-emerald-100 text-sm gap-2 border-green-200 text-green-700 font-semibold shadow-sm">
+                        <Badge className="bg-linear-to-r from-blue-100 to-indigo-100 text-sm gap-2 border-blue-200 text-blue-700 font-semibold shadow-sm">
                           <Edit3 className="w-3 h-3" />
                           تم التعديل
                         </Badge>
@@ -1328,7 +1319,7 @@ export default function IndicatorsList({
                         )}
                       </div>
                       <ChevronDown
-                        className={`w-4 h-4 transition-transform text-blue-400 ${
+                        className={`w-6 h-6 transition-transform text-blue-400 ${
                           expandedIndicators.has(indicator.name)
                             ? "rotate-180"
                             : ""
@@ -1359,9 +1350,16 @@ export default function IndicatorsList({
                       <p className="text-gray-600 text-sm font-medium mb-2">
                         عدد السنوات
                       </p>
-                      <p className="text-2xl font-bold text-gray-800">
-                        {indicator.yearsCount}
-                      </p>
+                      <div className="space-y-1">
+                        <p className="text-2xl font-bold text-gray-800">
+                          {indicator.yearsCount} /{" "}
+                          {indicator.years.length > 0
+                            ? Math.max(...indicator.years) -
+                              Math.min(...indicator.years) +
+                              1
+                            : 0}
+                        </p>
+                      </div>
                     </div>
                     <div className="p-4 bg-linear-to-br from-gray-50 to-blue-50 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-all duration-200">
                       <p className="text-gray-600 text-sm font-medium mb-2">

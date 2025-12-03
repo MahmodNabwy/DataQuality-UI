@@ -100,6 +100,7 @@ interface AuditChange {
 }
 
 interface PublicationGroup {
+  projectId: string;
   publicationName: string;
   totalChanges: number;
   changes: AuditChange[];
@@ -113,6 +114,9 @@ export default function AdminAuditPage() {
   const [selectedPublication, setSelectedPublication] =
     useState<PublicationGroup | null>(null);
   const [loading, setLoading] = useState(true);
+  const [downloadingFileId, setDownloadingFileId] = useState<string | null>(
+    null
+  );
   const [selectedChange, setSelectedChange] = useState<AuditChange | null>(
     null
   );
@@ -121,6 +125,9 @@ export default function AdminAuditPage() {
   const [showChangesDialog, setShowChangesDialog] = useState(false);
   const [showRejectionDialog, setShowRejectionDialog] = useState(false);
   const [rejectionComment, setRejectionComment] = useState("");
+  const [finishingAuditIds, setFinishingAuditIds] = useState<Set<string>>(
+    new Set()
+  );
 
   // Statistics
   const [stats, setStats] = useState({
@@ -290,56 +297,169 @@ export default function AdminAuditPage() {
     }
   };
 
-  const exportPublicationToExcel = (publication: PublicationGroup) => {
-    const exportData = publication.changes.map((change) => ({
-      "اسم المؤشر": change.indicatorName,
-      "اسم الفلتر": change.filterName,
-      السنة: change.year,
-      الشهر: change.month || "-",
-      الربع: change.quarter || "-",
-      "القيمة القديمة": change.oldValue,
-      "القيمة الجديدة": change.newValue,
-      "رقم الجدول": change.tableNumber,
-      التعليق: change.comment,
-      المستخدم: change.changedBy || "غير محدد",
-      "تاريخ التعديل": new Date(change.changedAt).toLocaleString("ar-EG"),
-    }));
+  const exportPublicationToExcel = async (publication: PublicationGroup) => {
+    // Prevent concurrent requests for the same publication
+    if (downloadingFileId === publication.projectId) {
+      return;
+    }
 
-    const worksheet = XLSX.utils.json_to_sheet(exportData);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(
-      workbook,
-      worksheet,
-      publication.publicationName
-    );
+    try {
+      // Set downloading state for this publication
+      setDownloadingFileId(publication.projectId);
 
-    const wbout = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
-    const blob = new Blob([wbout], { type: "application/octet-stream" });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = `${publication.publicationName}-${
-      new Date().toISOString().split("T")[0]
-    }.xlsx`;
-    link.click();
-    URL.revokeObjectURL(url);
+      const token = AuthService.getTokenFromSession();
+      if (!token) {
+        toast({
+          title: "خطأ في المصادقة",
+          description: "يرجى تسجيل الدخول مرة أخرى",
+          variant: "error",
+        });
+        return;
+      }
+
+      // Show loading toast
+      toast({
+        title: "جاري إنشاء الملف",
+        description: "يرجى الانتظار أثناء تحضير ملف Excel...",
+        variant: "success",
+      });
+
+      const response = await fetch(
+        `${API_BASE_URL}/File/generate-final-result/${publication.projectId}`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+
+      // Get the blob data
+      const blob = await response.blob();
+
+      // Get filename from response headers or use default with publication name, finalResult, and current date/time
+      const contentDisposition = response.headers.get("Content-Disposition");
+      const now = new Date();
+      const dateTimeString = now
+        .toISOString()
+        .replace(/[:.]/g, "-")
+        .slice(0, -5); // Format: 2024-12-03T14-30-45
+      let fileName = `${publication.publicationName}-finalResult-${dateTimeString}.xlsx`;
+
+      if (contentDisposition) {
+        const fileNameMatch = contentDisposition.match(
+          /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/
+        );
+        if (fileNameMatch && fileNameMatch[1]) {
+          const serverFileName = fileNameMatch[1].replace(/['"]/g, "");
+          // Extract extension from server filename if available
+          const extension = serverFileName.split(".").pop() || "xlsx";
+          fileName = `${publication.publicationName} -Final Result- ${dateTimeString}.${extension}`;
+        }
+      }
+
+      // Create download link
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = fileName;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+
+      // Show success toast
+      toast({
+        title: "تم تحميل الملف بنجاح",
+        description: `تم تحميل ملف Excel لنشرة "${publication.publicationName}"`,
+        variant: "success",
+      });
+    } catch (error) {
+      console.error("Error downloading Excel file:", error);
+
+      // Show error toast
+      toast({
+        title: "حدث خطأ أثناء تحميل الملف",
+        description: "لم يتم تحميل ملف Excel. يرجى المحاولة مرة أخرى",
+        variant: "error",
+      });
+    } finally {
+      // Always clear the downloading state
+      setDownloadingFileId(null);
+    }
   };
 
   const finishAudit = async (publication: PublicationGroup) => {
-    try {
-      const token = AuthService.getTokenFromSession();
-      if (!token) return;
+    // Prevent concurrent requests for the same publication
+    if (finishingAuditIds.has(publication.projectId)) {
+      return;
+    }
 
-      // Here you would make the API call to finish audit for this publication
-      console.log(
-        "Finishing audit for publication:",
-        publication.publicationName
+    try {
+      // Add to processing set
+      setFinishingAuditIds((prev) => new Set(prev).add(publication.projectId));
+
+      const token = AuthService.getTokenFromSession();
+      if (!token) {
+        toast({
+          title: "خطأ في المصادقة",
+          description: "يرجى تسجيل الدخول مرة أخرى",
+          variant: "error",
+        });
+        return;
+      }
+
+      // Show loading toast
+      toast({
+        title: "جاري إنهاء المراجعة",
+        description: `يتم الآن إنهاء مراجعة نشرة "${publication.publicationName}"...`,
+        variant: "success",
+      });
+
+      const response = await fetch(
+        `${API_BASE_URL}/Projects/${publication.projectId}/mark-as-ended`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
       );
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+
+      // Show success toast
+      toast({
+        title: "تم إنهاء المراجعة بنجاح",
+        description: `تم إنهاء مراجعة نشرة "${publication.publicationName}" وتم تغيير حالتها إلى منتهية`,
+        variant: "success",
+      });
 
       // Refresh data after action
       await fetchAuditChanges();
     } catch (error) {
       console.error("Error finishing audit:", error);
+
+      // Show error toast
+      toast({
+        title: "حدث خطأ أثناء إنهاء المراجعة",
+        description: "لم يتم إنهاء المراجعة. يرجى المحاولة مرة أخرى",
+        variant: "error",
+      });
+    } finally {
+      // Always remove from processing set
+      setFinishingAuditIds((prev) => {
+        const newSet = new Set(prev);
+        newSet.delete(publication.projectId);
+        return newSet;
+      });
     }
   };
 
@@ -501,20 +621,40 @@ export default function AdminAuditPage() {
                     <div className="space-y-3">
                       <div className="grid grid-cols-2 gap-3">
                         <Button
-                          className="bg-linear-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white text-sm shadow-lg hover:shadow-xl transition-all duration-300 rounded-xl cursor-pointer"
+                          className="bg-linear-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white text-sm shadow-lg hover:shadow-xl transition-all duration-300 rounded-xl cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                           onClick={() => finishAudit(pub)}
+                          disabled={finishingAuditIds.has(pub.projectId)}
                         >
-                          <CheckCircle className="w-4 h-4 ml-1" />
-                          إنهاء المراجعة
+                          {finishingAuditIds.has(pub.projectId) ? (
+                            <>
+                              <RefreshCw className="w-4 h-4 ml-1 animate-spin" />
+                              جاري الإنهاء...
+                            </>
+                          ) : (
+                            <>
+                              <CheckCircle className="w-4 h-4 ml-1" />
+                              إنهاء المراجعة
+                            </>
+                          )}
                         </Button>
 
                         <Button
                           variant="outline"
-                          className="bg-linear-to-r from-gray-50 to-white hover:from-gray-100 hover:to-gray-50 text-gray-700 border border-gray-300 hover:border-gray-400 text-sm shadow-md hover:shadow-lg transition-all duration-200 rounded-xl cursor-pointer"
+                          className="bg-linear-to-r from-gray-50 to-white hover:from-gray-100 hover:to-gray-50 text-gray-700 border border-gray-300 hover:border-gray-400 text-sm shadow-md hover:shadow-lg transition-all duration-200 rounded-xl cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                           onClick={() => exportPublicationToExcel(pub)}
+                          disabled={downloadingFileId === pub.projectId}
                         >
-                          <Download className="w-4 h-4 ml-1" />
-                          تحميل Excel
+                          {downloadingFileId === pub.projectId ? (
+                            <>
+                              <RefreshCw className="w-4 h-4 ml-1 animate-spin" />
+                              جاري التحميل...
+                            </>
+                          ) : (
+                            <>
+                              <Download className="w-4 h-4 ml-1" />
+                              تحميل Excel
+                            </>
+                          )}
                         </Button>
                       </div>
 
