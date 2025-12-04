@@ -194,7 +194,7 @@ static clearToken() {
     localStorage.removeItem('backend_auth_token')
 }
 
-static async login(email: string, password: string): Promise<BackendAuthResponse> {
+  static async login(email: string, password: string): Promise<BackendAuthResponse> {
     try {
       const response = await fetch(`${API_BASE_URL}/auth/login`, {
         method: 'POST',
@@ -218,14 +218,14 @@ static async login(email: string, password: string): Promise<BackendAuthResponse
         message: 'خطأ في الاتصال بالخادم'
       }
     }
-}
+  }
 
-static async getCurrentUser(): Promise<BackendUser | null> {
+  static async getCurrentUser(): Promise<BackendUser | null> {
     try {
       const token = this.getTokenFromSession()
       if (!token) return null
 
-      const response = await fetch(`${API_BASE_URL}/users/me`, {
+      const response = await fetch(`${API_BASE_URL}/auth/me`, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
@@ -233,16 +233,16 @@ static async getCurrentUser(): Promise<BackendUser | null> {
       })
 
       if (response.ok) {
-        const data = await response.json()
-        return data.data
+        const userData = await response.json()
+        return userData
+      } else {
+        return null
       }
-      return null
     } catch (error) {
       console.error('Error getting current user:', error)
       return null
     }
-}
-}
+  } }
 
 // Project Service
 export class ProjectService {

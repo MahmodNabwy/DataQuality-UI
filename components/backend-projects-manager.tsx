@@ -156,7 +156,7 @@ export default function BackendProjectsManager({
         toast({
           title: "تم الحذف",
           description: "تم حذف المشروع المحلي بنجاح",
-          variant: "default",
+          variant: "success",
         });
       } else if (type === "backend") {
         console.log("[Projects] Deleting backend project:", projectId);
@@ -167,13 +167,13 @@ export default function BackendProjectsManager({
           toast({
             title: "تم الحذف",
             description: "تم حذف المشروع من الخادم بنجاح",
-            variant: "default",
+            variant: "success",
           });
         } else {
           toast({
             title: "خطأ في الحذف",
             description: result.error || "فشل في حذف المشروع",
-            variant: "destructive",
+            variant: "error",
           });
         }
       }
@@ -182,7 +182,7 @@ export default function BackendProjectsManager({
       toast({
         title: "خطأ",
         description: "حدث خطأ أثناء حذف المشروع",
-        variant: "destructive",
+        variant: "error",
       });
     }
 
@@ -206,7 +206,7 @@ export default function BackendProjectsManager({
       toast({
         title: "غير متصل",
         description: "يرجى التأكد من تسجيل الدخول والاتصال بالخادم",
-        variant: "destructive",
+        variant: "error",
       });
       return;
     }
@@ -218,7 +218,7 @@ export default function BackendProjectsManager({
       description: isBackendMode
         ? "سيتم عرض المشاريع المحلية"
         : "سيتم عرض مشاريع الخادم",
-      variant: "default",
+      variant: "success",
     });
   };
 
@@ -265,9 +265,7 @@ export default function BackendProjectsManager({
               ) : (
                 <WifiOff className="h-5 w-5 text-red-400" />
               )}
-              <span className="text-blue-100">
-                {isBackendConnected ? "متصل بالخادم" : "غير متصل بالخادم"}
-              </span>
+
               {isLoadingBackend && (
                 <div className="animate-spin h-4 w-4 border-2 border-blue-400 border-t-transparent rounded-full" />
               )}

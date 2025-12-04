@@ -45,19 +45,28 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
     const checkAdminAccess = async () => {
       try {
         const token = AuthService.getTokenFromSession();
-        if (!token) {
-          setLoading(false);
+        const session = loadAuthSession();
+
+        // If no token or session, redirect to login
+        if (!token || !session) {
+          window.location.href = "/login";
           return;
         }
 
-        const profile = loadUserProfile();
-        setUserProfile(profile);
-
-        // Check if user has admin role (you can customize this logic)
-        const hasAdminAccess = profile?.role === "admin";
+        // Check if user has admin role
+        const hasAdminAccess = session.role === "admin";
         setIsAdmin(hasAdminAccess);
+        setUserProfile(session);
+
+        // If user is not admin, redirect to login
+        if (!hasAdminAccess) {
+          window.location.href = "/login";
+          return;
+        }
       } catch (error) {
         console.error("Error checking admin access:", error);
+        // On error, redirect to login
+        window.location.href = "/login";
       } finally {
         setLoading(false);
       }

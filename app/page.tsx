@@ -66,6 +66,14 @@ function MainPageContent() {
   const { authSession, isBackendAuthenticated, logout } = useAuth();
   const [activeTab, setActiveTab] = useState("projects");
 
+  // Check if admin user should be redirected to admin panel
+  useEffect(() => {
+    if (authSession?.role === "admin") {
+      window.location.href = "/admin";
+      return;
+    }
+  }, [authSession]);
+
   // Backend Integration States
   const [isBackendMode, setIsBackendMode] = useState(false);
   const [showBackendLogin, setShowBackendLogin] = useState(false);
@@ -104,29 +112,25 @@ function MainPageContent() {
   const { toast } = useToast();
 
   // Check backend status and authentication
-  useEffect(() => {
-    if (authSession && authSession.token) {
-      checkBackendAuth(authSession);
-    }
-  }, [authSession]);
+  // useEffect(() => {
+  //   if (authSession && authSession.token) {
+  //     checkBackendAuth(authSession);
+  //   }
+  // }, [authSession]);
 
   const checkBackendAuth = async (session: AuthSession) => {
     try {
       const available = await isBackendAvailable();
-      if (available) {
-        // Try to get current user to verify token
-        const user = await AuthService.getCurrentUser();
-        if (user) {
-          setIsBackendMode(true);
-          toast({
-            title: "متصل بالخادم",
-            description: `تم تسجيل الدخول كـ ${user.name}`,
-            variant: "default",
-          });
-        } else {
-          // Token invalid or expired, show backend login
-          setShowBackendLogin(true);
-        }
+      if (available && session.token) {
+        setIsBackendMode(true);
+        toast({
+          title: "تم تسجيل الدخول بنجاح",
+          description: `تم تسجيل الدخول كـ ${session.name}`,
+          variant: "success",
+        });
+      } else {
+        // Show backend login if needed
+        setShowBackendLogin(true);
       }
     } catch (error) {
       console.error("Backend auth check failed:", error);

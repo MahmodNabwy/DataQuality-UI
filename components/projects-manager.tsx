@@ -133,14 +133,14 @@ export default function ProjectsManager({
           toast({
             title: "تم حذف المشروع بنجاح",
             description: "تم حذف المشروع من الخادم",
-            variant: "default",
+            variant: "success",
           });
           loadProjects(); // Reload projects from backend
         } else {
           toast({
             title: "خطأ في حذف المشروع",
             description: result.error || "حدث خطأ أثناء حذف المشروع",
-            variant: "destructive",
+            variant: "error",
           });
         }
       } catch (error) {
@@ -148,7 +148,7 @@ export default function ProjectsManager({
         toast({
           title: "خطأ في حذف المشروع",
           description: "حدث خطأ أثناء الاتصال بالخادم",
-          variant: "destructive",
+          variant: "error",
         });
       }
     } else {
@@ -161,21 +161,29 @@ export default function ProjectsManager({
   };
 
   const handleFileUploadWrapper = async (file: File) => {
+    console.log("File upload attempted:", file.name);
+    console.log("Publication name:", publicationName);
+
     if (!publicationName.trim()) {
+      console.log("Publication name is empty, showing error");
       toast({
         title: "خطأ في البيانات",
         description: "يرجى إدخال اسم النشرة",
         variant: "error",
       });
-      return;
+      return; // This was missing!
     }
 
+    console.log("Starting upload process...");
     setIsBackendProcessing(true);
     try {
+      console.log("Calling backend API...");
       const analysisResult = await FileAnalysisService.uploadAndAnalyze(
         file,
         publicationName.trim()
       );
+
+      console.log("Backend response:", analysisResult);
 
       if (analysisResult != null) {
         toast({
@@ -229,7 +237,7 @@ export default function ProjectsManager({
             <CardTitle className="text-2xl font-bold bg-linear-to-r from-blue-600 to-indigo-700 bg-clip-text text-transparent">
               إنشاء مشروع جديد
             </CardTitle>
-            <CardDescription className="text-blue-600 text-lg">
+            <CardDescription className="text-blue-600 text-lg" dir="rtl">
               ارفع ملف Excel جديد لبدء فحص جودة البيانات
             </CardDescription>
           </CardHeader>
@@ -244,7 +252,9 @@ export default function ProjectsManager({
                     type="text"
                     placeholder="أدخل اسم النشرة..."
                     value={publicationName}
-                    onChange={(e) => setPublicationName(e.target.value)}
+                    onChange={(e) => {
+                      setPublicationName(e.target.value);
+                    }}
                     className="bg-white border-blue-300 text-gray-900 placeholder:text-blue-500 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 shadow-sm transition-all duration-200"
                     required
                     disabled={isProcessing || isBackendProcessing}
@@ -268,7 +278,9 @@ export default function ProjectsManager({
               </div>
             ) : (
               <Button
-                onClick={() => setShowUploader(true)}
+                onClick={() => {
+                  setShowUploader(true);
+                }}
                 className="w-full bg-linear-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white font-semibold py-4 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 active:scale-95"
                 disabled={isBackendProcessing}
               >
@@ -419,9 +431,9 @@ export default function ProjectsManager({
 
                     {project.status === "ended" ? (
                       <div className="space-y-3">
-                        <div className="w-full bg-linear-to-r from-green-100 to-emerald-100 border-2 border-green-300 text-green-700 font-semibold py-3 rounded-xl shadow-md flex items-center justify-center">
+                        <div className="w-full bg-linear-to-r from-green-100 to-emerald-100 border-2 border-green-300 text-green-700 font-semibold py-3 rounded-xl shadow-md flex items-center gap-2 justify-center">
                           <CheckCircle className="w-5 h-5 mr-2" />
-                          تم إنهاء التدقيق من قبل الإدارة
+                          تم الأنتهاء من المراجعة
                         </div>
                         <Button
                           disabled
@@ -434,7 +446,7 @@ export default function ProjectsManager({
                     ) : (
                       <Button
                         onClick={() => onProjectSelect(project)}
-                        className="w-full bg-linear-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white font-semibold py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 active:scale-95"
+                        className="cursor-pointer w-full bg-linear-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white font-semibold py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 active:scale-95"
                       >
                         <FolderOpen className="w-5 h-5 mr-2" />
                         فتح المشروع

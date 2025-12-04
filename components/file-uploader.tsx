@@ -31,6 +31,7 @@ export default function FileUploader({
       setIsDragging(false);
       const files = e.dataTransfer.files;
       if (files[0]) {
+        console.log("File dropped:", files[0].name);
         onFileUpload(files[0]);
       }
     },
@@ -41,6 +42,7 @@ export default function FileUploader({
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const files = e.currentTarget.files;
       if (files?.[0]) {
+        console.log("File selected:", files[0].name);
         onFileUpload(files[0]);
       }
     },

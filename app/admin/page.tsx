@@ -184,7 +184,7 @@ export default function AdminAuditPage() {
 
   useEffect(() => {
     fetchAuditChanges();
-  }, [fetchAuditChanges]);
+  }, []); // Remove fetchAuditChanges from dependencies
 
   const handleApproveChange = async (
     change: AuditChange,

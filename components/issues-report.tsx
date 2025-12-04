@@ -842,16 +842,27 @@ export default function IssuesReport({}: IssuesReportProps) {
                               {isEditing ? (
                                 <Input
                                   type="number"
+                                  step="0.01"
                                   value={
-                                    editData?.newValue || change.rejectedValue
+                                    editData?.newValue !== undefined
+                                      ? editData.newValue
+                                      : change.rejectedValue
                                   }
-                                  onChange={(e) =>
+                                  onChange={(e) => {
+                                    const value = e.target.value;
+                                    // Handle empty string as 0 or parse as number
+                                    const numValue =
+                                      value === "" ? 0 : Number(value);
                                     handleInputChange(
                                       key,
                                       "newValue",
-                                      Number(e.target.value)
-                                    )
-                                  }
+                                      numValue
+                                    );
+                                  }}
+                                  onFocus={(e) => {
+                                    // Select all text when input is focused for easy replacement
+                                    e.target.select();
+                                  }}
                                   className="w-40 bg-linear-to-r from-white to-blue-50 border-2 border-blue-400 text-gray-900 focus:border-blue-600 focus:ring-4 focus:ring-blue-200 shadow-lg transition-all duration-200 rounded-lg text-center font-bold"
                                 />
                               ) : isSaved ? (

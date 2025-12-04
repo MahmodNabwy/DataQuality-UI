@@ -75,15 +75,25 @@ export function LoginForm({ onLogin }: LoginFormProps) {
             token: backendResult.token,
           };
           saveAuthSession(session);
-          authLogin(session);
 
           toast({
             title: "تم تسجيل الدخول بنجاح",
             variant: "success",
           });
+
+          // Automatic role-based routing - single navigation
+          setTimeout(() => {
+            if (userData.role === "admin") {
+              // Redirect admin users to admin dashboard
+              window.location.href = "/admin";
+            } else {
+              // Redirect regular users to main page (projects list)
+              window.location.href = "/";
+            }
+          }, 1000); // Small delay to show success message
+
           return;
         } else {
-          console.log("Backend auth succeeded but no user data available");
           setError(
             "تم تسجيل الدخول بنجاح لكن لم يتم العثور على بيانات المستخدم"
           );
@@ -186,7 +196,7 @@ export function LoginForm({ onLogin }: LoginFormProps) {
                   autoComplete="current-password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="bg-white/80 border-2 border-blue-200 text-blue-900 focus:border-blue-500 focus:ring-2 focus:ring-blue-300 h-14 text-lg rounded-xl pl-14 transition-all duration-300 shadow-md hover:shadow-lg placeholder:text-blue-400"
+                  className="bg-white/80 border-2 border-blue-200 text-right text-blue-900 focus:border-blue-500 focus:ring-2 focus:ring-blue-300 h-14 text-lg rounded-xl  transition-all duration-300 shadow-md hover:shadow-lg placeholder:text-blue-400"
                   placeholder="أدخل كلمة المرور"
                   required
                 />
@@ -194,7 +204,7 @@ export function LoginForm({ onLogin }: LoginFormProps) {
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute left-4 top-1/2 transform -translate-y-1/2 text-blue-500 hover:text-blue-700 transition-colors p-2 rounded-full hover:bg-blue-100"
+                  className="absolute right-4 top-1/2 transform -translate-y-1/2 text-blue-500 hover:text-blue-700 transition-colors p-2 rounded-full hover:bg-blue-100"
                 >
                   {showPassword ? (
                     <EyeOff className="w-5 h-5" />

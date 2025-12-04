@@ -41,7 +41,7 @@ export default function BackendLoginForm({
       toast({
         title: "خطأ في البيانات",
         description: "يرجى إدخال البريد الإلكتروني وكلمة المرور",
-        variant: "destructive",
+        variant: "error",
       });
       return;
     }
@@ -69,7 +69,7 @@ export default function BackendLoginForm({
         toast({
           title: "تم تسجيل الدخول بنجاح",
           description: `أهلاً بك ${backendResult.user.name} - متصل بالخادم`,
-          variant: "default",
+          variant: "success",
         });
         return;
       } else {
@@ -78,7 +78,7 @@ export default function BackendLoginForm({
           title: "فشل تسجيل الدخول عبر الخادم",
           description:
             backendResult.message || "جاري المحاولة مع النظام المحلي...",
-          variant: "destructive",
+          variant: "error",
         });
       }
     } catch (error) {
@@ -87,7 +87,7 @@ export default function BackendLoginForm({
         title: "خطأ في تسجيل الدخول",
         description:
           error instanceof Error ? error.message : "حدث خطأ غير متوقع",
-        variant: "destructive",
+        variant: "error",
       });
     } finally {
       setIsLoading(false);
